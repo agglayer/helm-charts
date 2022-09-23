@@ -1,0 +1,18 @@
+apiVersion: v2
+name: polygon-edge
+description: Helm chart to deploy Polygon Edge to a Kubernetes environment. 
+version: 0.1.0
+appVersion: 0.5.0
+home: https://docs.polygon.technology/docs/edge/overview/
+icon: https://logowik.com/content/uploads/images/t_polygon-edge8086.jpg
+sources:
+  - https://github.com/trapesys/helm-charts/trapesys/polygon-edge
+maintainers:
+  - name: epikichi
+    url: https://github.com/epikichi
+    email: ji@epik.dev
+keywords:
+  - polygon-edge
+  - polygon
+  - ethereum
+  - blockchain

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+{{- if .Values.validator.service.annotations }}
+  annotations:
+  {{- range $key, $value := .Values.validator.service.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+  name: {{ template "polygon-edge.validator.fullname" . }}-headless
+  labels:
+    {{- include "polygon-edge.labels" (dict "context" . "component" .Values.validator.name "name" .Values.validator.name) | nindent 4 }}
+{{- if .Values.validator.service.labels }}
+{{- toYaml .Values.validator.service.labels | nindent 4 }}
+{{- end }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  publishNotReadyAddresses: true
+  ports:
+  - name: libp2p
+    protocol: TCP
+    port: {{ .Values.validator.service.libp2p.port }}
+    targetPort: {{- if .Values.validator.service.namedTargetPort }} libp2p {{- else }} {{ .Values.validator.service.libp2p.port }} {{- end }}
+    {{- if eq .Values.validator.service.type "NodePort" }}
+    nodePort: {{ .Values.validator.service.libp2p.nodePort }}
+    {{- end }}
+  selector:
+    {{- include "polygon-edge.selectorLabels" (dict "context" . "name" .Values.validator.name) | nindent 4 }}
