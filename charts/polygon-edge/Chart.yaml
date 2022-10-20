@@ -2,11 +2,11 @@ apiVersion: v2
 name: polygon-edge
 description: Helm chart to deploy Polygon Edge to a Kubernetes environment. 
 version: 0.1.0
-appVersion: 0.5.0
+appVersion: 0.6.1
 home: https://docs.polygon.technology/docs/edge/overview/
 icon: https://logowik.com/content/uploads/images/t_polygon-edge8086.jpg
 sources:
-  - https://github.com/trapesys/helm-charts/trapesys/polygon-edge
+  - https://github.com/0xPolygon/helm-charts/charts/polygon-edge
 maintainers:
   - name: epikichi
     url: https://github.com/epikichi
