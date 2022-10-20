@@ -1,0 +1,89 @@
+{{- if .Values.validator.ingress.enabled -}}
+{{- $serviceName := include "polygon-edge.validator.fullname" . -}}
+{{- $servicePort := .Values.validator.service.jsonRPC.port -}}
+{{- $paths := .Values.validator.ingress.paths -}}
+{{- $extraPaths := .Values.validator.ingress.extraPaths -}}
+{{- $pathType := .Values.validator.ingress.pathType -}}
+apiVersion: {{ include "polygon-edge.apiVersion.ingress" . }}
+kind: Ingress
+metadata:
+{{- if .Values.validator.ingress.annotations }}
+  annotations:
+  {{- range $key, $value := .Values.validator.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+  name: {{ template "polygon-edge.validator.fullname" . }}
+  labels:
+    {{- include "polygon-edge.labels" (dict "context" . "component" .Values.validator.name "name" .Values.validator.name) | nindent 4 }}
+    {{- if .Values.validator.ingress.labels }}
+    {{- toYaml .Values.validator.ingress.labels | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if eq (include "polygon-edge.apiVersion.ingress" $) "networking.k8s.io/v1" }}
+  {{- with .Values.validator.ingress.ingressClassName }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- end }}
+  rules:
+  {{- if .Values.validator.ingress.hosts }}
+    {{- range $host := .Values.validator.ingress.hosts }}
+    - host: {{ $host }}
+      http:
+        paths:
+          {{- if $extraPaths }}
+          {{- toYaml $extraPaths | nindent 10 }}
+          {{- end }}
+          {{- range $p := $paths }}
+          - path: {{ $p }}
+            {{- if eq (include "polygon-edge.apiVersion.ingress" $) "networking.k8s.io/v1" }}
+            pathType: {{ $pathType }}
+            {{- end }}
+            backend:
+              {{- if eq (include "polygon-edge.apiVersion.ingress" $) "networking.k8s.io/v1" }}
+              service:
+                name: {{ $serviceName }}
+                port:
+                  {{- if kindIs "float64" $servicePort }}
+                  number: {{ $servicePort }}
+                  {{- else }}
+                  name: {{ $servicePort }}
+                  {{- end }}
+              {{- else }}
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+              {{- end }}
+          {{- end -}}
+    {{- end -}}
+  {{- else }}
+    - http:
+        paths:
+          {{- if $extraPaths }}
+          {{- toYaml $extraPaths | nindent 10 }}
+          {{- end }}
+          {{- range $p := $paths }}
+          - path: {{ $p }}
+            {{- if eq (include "polygon-edge.apiVersion.ingress" $) "networking.k8s.io/v1" }}
+            pathType: {{ $pathType }}
+            {{- end }}
+            backend:
+              {{- if eq (include "polygon-edge.apiVersion.ingress" $) "networking.k8s.io/v1" }}
+              service:
+                name: {{ $serviceName }}
+                port:
+                  {{- if kindIs "float64" $servicePort }}
+                  number: {{ $servicePort }}
+                  {{- else }}
+                  name: {{ $servicePort }}
+                  {{- end }}
+              {{- else }}
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+              {{- end }}
+          {{- end -}}
+  {{- end -}}
+  {{- if .Values.validator.ingress.tls }}
+  tls:
+    {{- toYaml .Values.validator.ingress.tls | nindent 4 }}
+  {{- end -}}
+{{- end -}}

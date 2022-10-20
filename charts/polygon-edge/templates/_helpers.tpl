@@ -95,7 +95,7 @@ app.kubernetes.io/component: {{ .component }}
 {{/*
 Return the appropriate apiVersion for ingress
 */}}
-{{- define "polygon-edge.ingress.apiVersion" -}}
+{{- define "polygon-edge.apiVersion.ingress" -}}
 {{- if .Values.apiVersionOverrides.ingress -}}
 {{- print .Values.apiVersionOverrides.ingress -}}
 {{- else if semverCompare "<1.14-0" (include "polygon-edge.kubeVersion" $) -}}

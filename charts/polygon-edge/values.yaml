@@ -1,3 +1,15 @@
+# -- Override for resource names 
+nameOverride: polygon-edge
+# -- Override for the full resource. (`"polygon-edge.fullname"`)
+fullnameOverride: ""
+# -- Override the Kubernetes version
+kubeVersionOverride: ""
+
+# Additional Ingress
+apiVersionOverrides:
+  # -- Override the ingress API version
+  ingress: "" # networking.k8s.io/v1beta1
+
 global:
   image:
     # -- The repository for all Polygon Edge containers
@@ -174,7 +186,7 @@ validator:
       port: 9632
       # -- The grpc node port, if service type is `NodePort`
       nodePort: 39632
-    jsonRpc:
+    jsonRPC:
       # -- The json-rpc port
       port: 8545 
       # -- The json-rpc node port, if service type is `NodePort`
@@ -193,13 +205,35 @@ validator:
     # -- The session affinity. either `ClientIP` or `None` 
     sessionAffinity: ""
 
+  ingress:
+    # -- Enable the validator JSON RPC ingress resource 
+    enabled: false
+    # -- The annotations for validator JSONRPC ingress
+    annotations: {}
+    # -- The labels for validator JSONRPC ingress
+    lables : {}
+    # -- The ingress class name
+    ingressClassName: ""
+    # -- A list of ingress hosts
+    hosts: []
+    # -- A list of ingress paths
+    paths: 
+      - /
+    # -- The ingress path type
+    pathType: Prefix
+    # -- Extra ingress paths
+    extraPaths: []
+    # -- A list of ingress TLS configuration
+    tls: []
+
+
   metrics:
     # -- Enables Polygon Edge Validator metrics service
     enabled: false
     service:
       # -- The annotations for the Polygon Edge validator metrics service
       annotations: {}
-      # -- Labels for validator metrics service
+      # -- The labels for validator metrics service
       labels: {}
       # -- The service type 
       type: ClusterIP

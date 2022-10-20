@@ -25,10 +25,10 @@ spec:
     {{- end }}
   - name: json-rpc
     protocol: TCP
-    port: {{ .Values.validator.service.jsonRpc.port }}
-    targetPort: {{- if .Values.validator.service.namedTargetPort }} json-rpc {{- else }} {{ .Values.validator.service.jsonRpc.port }} {{- end }}
+    port: {{ .Values.validator.service.jsonRPC.port }}
+    targetPort: {{- if .Values.validator.service.namedTargetPort }} json-rpc {{- else }} {{ .Values.validator.service.jsonRPC.port }} {{- end }}
     {{- if eq .Values.validator.service.type "NodePort" }}
-    nodePort: {{ .Values.validator.service.jsonRpc.nodePort }}
+    nodePort: {{ .Values.validator.service.jsonRPC.nodePort }}
     {{- end }}
   selector:
     {{- include "polygon-edge.selectorLabels" (dict "context" . "name" .Values.validator.name) | nindent 4 }}

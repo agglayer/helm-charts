@@ -1,4 +1,5 @@
 {{- if not .Values.genesis.chainJson }}
+{{- if gt (.Values.validator.replicas | toDecimal) 0 }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -142,7 +143,7 @@ spec:
             {{- end }}
               --name {{ .Values.genesis.chainConfig.name }} \
               --dir {{ join "/" (list .Values.config.dataDir "config-tmp" "genesis.json") | quote }} \
-              $(farg=""; for i in $(seq 1 {{ .Values.validator.replicas }}); do farg=" ${farg} --ibft-validator"; farg=" ${farg} $(polygon-edge secrets output --validator {{ if eq .Values.secretsManagerConfig.type "local" }} --data-dir {{ .Values.config.dataDir }} {{ else }} --config {{ join "/" (list .Values.config.dataDir "config-tmp" (printf "%s-%s" (include "polygon-edge.validator.fullname" .) "$((i-1))") "secretsManagerConfig.json") | quote }} {{ end }}):$(polygon-edge secrets output --bls {{ if eq .Values.secretsManagerConfig.type "local" }} --data-dir {{ .Values.config.dataDir }} {{ else }} --config {{ join "/" (list .Values.config.dataDir "config-tmp" (printf "%s-%s" (include "polygon-edge.validator.fullname" .) "$((i-1))") "secretsManagerConfig.json") | quote }} {{ end }}) --bootnode /dns4/{{ printf "%s-%s" (include "polygon-edge.validator.fullname" .) "$((i-1))" }}.{{ include "polygon-edge.validator.fullname" .}}-headless/tcp/1478/p2p/$(polygon-edge secrets output --node-id {{ if (eq .Values.secretsManagerConfig.type "local") }} --data-dir {{ .Values.config.dataDir }} {{ else }} --config {{ join "/" (list .Values.config.dataDir "config-tmp" (printf "%s-%s" (include "polygon-edge.validator.fullname" .) "$((i-1))") "secretsManagerConfig.json") | quote }} {{ end }})"; done; echo -n "${farg}")
+              $(farg=""; for i in $(seq 1 {{ .Values.validator.replicas }}); do farg=" ${farg} --ibft-validator"; farg=" ${farg} $(polygon-edge secrets output --validator {{ if eq .Values.secretsManagerConfig.type "local" }} --data-dir {{ .Values.config.dataDir }} {{ else }} --config {{ join "/" (list .Values.config.dataDir "config-tmp" (printf "%s-%s" (include "polygon-edge.validator.fullname" .) "$((i-1))") "secretsManagerConfig.json") | quote }} {{ end }}):$(polygon-edge secrets output --bls {{ if eq .Values.secretsManagerConfig.type "local" }} --data-dir {{ .Values.config.dataDir }} {{ else }} --config {{ join "/" (list .Values.config.dataDir "config-tmp" (printf "%s-%s" (include "polygon-edge.validator.fullname" .) "$((i-1))") "secretsManagerConfig.json") | quote }} {{ end }}) --bootnode /dns4/{{ printf "%s-%s" (include "polygon-edge.validator.fullname" .) "$((i-1))" }}.{{ include "polygon-edge.validator.fullname" .}}-headless.{{ .Release.Namespace }}.svc.cluster.local/tcp/{{ .Values.validator.service.libp2p.port }}/p2p/$(polygon-edge secrets output --node-id {{ if (eq .Values.secretsManagerConfig.type "local") }} --data-dir {{ .Values.config.dataDir }} {{ else }} --config {{ join "/" (list .Values.config.dataDir "config-tmp" (printf "%s-%s" (include "polygon-edge.validator.fullname" .) "$((i-1))") "secretsManagerConfig.json") | quote }} {{ end }})"; done; echo -n "${farg}")
         {{- if .Values.genesis.containerSecurityContext }}
         securityContext: {{- toYaml .Values.genesis.containerSecurityContext | nindent 10 }}
         {{- end }}
@@ -295,5 +296,6 @@ spec:
       {{- end }}
 {{- if .Values.genesis.priorityClassName }}
       priorityClassName: {{ .Values.genesis.priorityClassName }}
+{{- end }}
 {{- end }}
 {{- end }}

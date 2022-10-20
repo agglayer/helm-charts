@@ -86,7 +86,7 @@ spec:
           - --grpc-address
           - {{ join ":" (list "0.0.0.0" .Values.validator.service.grpc.port) | quote }}
           - --jsonrpc
-          - {{ join ":" (list "0.0.0.0" .Values.validator.service.jsonRpc.port) | quote }}
+          - {{ join ":" (list "0.0.0.0" .Values.validator.service.jsonRPC.port) | quote }}
           - --data-dir
           - {{ .Values.config.dataDir | quote }}
           - --log-level
@@ -165,7 +165,7 @@ spec:
           containerPort: {{ .Values.validator.service.grpc.port }}
           protocol: TCP
         - name: json-rpc
-          containerPort: {{ .Values.validator.service.jsonRpc.port }}
+          containerPort: {{ .Values.validator.service.jsonRPC.port }}
           protocol: TCP
         {{ if .Values.validator.metrics.enabled }}
         - name: metrics

@@ -56,6 +56,8 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| apiVersionOverrides.ingress | string | `""` | Override the ingress API version |
+| fullnameOverride | string | `""` | Override for the full resource. (`"polygon-edge.fullname"`) |
 | global.additionalLabels | object | `{}` | Additional labels for all resources |
 | global.hostAliases | list | `[]` | A list of IP to hostname(s) relation |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | The `imagePullPolicy` for all Polygon Edge containers. If not provided, uses Chart app version |
@@ -67,6 +69,8 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | global.podAnnotations | object | `{}` | Annotations for all pods |
 | global.podLabels | object | `{}` | Labels for all pods |
 | global.securityContext | object | `{}` | The `securityContext` for all pods. |
+| kubeVersionOverride | string | `""` | Override the Kubernetes version |
+| nameOverride | string | `"polygon-edge"` | Override for resource names  |
 
 ## Polygon Edge Config
 
@@ -124,6 +128,15 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | validator.extraEnvs | list | `[]` | Extra environment variables for the Polygon Edge validator set |
 | validator.image.repository | string | `""` | The repository for Polygon Edge validator containers |
 | validator.image.tag | string | `""` | The image tag for Polygon Edge validator containers. If not provided, uses Chart app version |
+| validator.ingress.annotations | object | `{}` | The annotations for validator JSONRPC ingress |
+| validator.ingress.enabled | bool | `false` | Enable the validator JSON RPC ingress resource  |
+| validator.ingress.extraPaths | list | `[]` | Extra ingress paths |
+| validator.ingress.hosts | list | `[]` | A list of ingress hosts |
+| validator.ingress.ingressClassName | string | `""` | The ingress class name |
+| validator.ingress.lables | object | `{}` | The labels for validator JSONRPC ingress |
+| validator.ingress.pathType | string | `"Prefix"` | The ingress path type |
+| validator.ingress.paths | list | `["/"]` | A list of ingress paths |
+| validator.ingress.tls | list | `[]` | A list of ingress TLS configuration |
 | validator.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | validator.livenessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | validator.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
@@ -135,7 +148,7 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | validator.metrics.service.annotations | object | `{}` | The annotations for the Polygon Edge validator metrics service |
 | validator.metrics.service.externalIPs | list | `[]` | The service external IPs  |
 | validator.metrics.service.externalTrafficPolicy | string | `""` | The service external trafic policy  |
-| validator.metrics.service.labels | object | `{}` | Labels for validator metrics service |
+| validator.metrics.service.labels | object | `{}` | The labels for validator metrics service |
 | validator.metrics.service.loadBalancerIP | string | `""` | The load balancer IP to use, if service type is `LoadBalancer`  |
 | validator.metrics.service.loadBalancerSourceRanges | list | `[]` | The IP CIDR to whitelist, if service type is `LoadBalancer`  |
 | validator.metrics.service.namedTargetPort | bool | `true` | Uses the target port name alias instead of explicit port |
@@ -160,8 +173,8 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | validator.service.externalTrafficPolicy | string | `""` | The service external trafic policy  |
 | validator.service.grpc.nodePort | int | `39632` | The grpc node port, if service type is `NodePort` |
 | validator.service.grpc.port | int | `9632` | The grpc port |
-| validator.service.jsonRpc.nodePort | int | `38545` | The json-rpc node port, if service type is `NodePort` |
-| validator.service.jsonRpc.port | int | `8545` | The json-rpc port |
+| validator.service.jsonRPC.nodePort | int | `38545` | The json-rpc node port, if service type is `NodePort` |
+| validator.service.jsonRPC.port | int | `8545` | The json-rpc port |
 | validator.service.labels | object | `{}` | The labels for the Polygon Edge validator service |
 | validator.service.libp2p.nodePort | int | `31478` | The libp2p (peering) node port, if service type is `NodePort` |
 | validator.service.libp2p.port | int | `1478` | The libp2p (peering) port |
