@@ -81,6 +81,20 @@ spec:
         imagePullPolicy: {{ default .Values.global.image.imagePullPolicy .Values.validator.image.imagePullPolicy }}
         args:
           - server
+          - --access-control-allow-origins
+          - {{ .Values.validator.serverConfig.accessControlAllowOrigins | quote }} 
+          - --block-time
+          - {{ .Values.validator.serverConfig.blockTime | quote }}
+          - --json-rpc-batch-request-limit
+          - {{ .Values.validator.serverConfig.jsonRPCBatchRequestLimit | quote }}
+          - --json-rpc-block-range-limit
+          - {{ .Values.validator.serverConfig.jsonRPCBlockRangeLimit | quote }}
+          - --max-enqueued
+          - {{ .Values.validator.serverConfig.maxEnqueued | quote }}
+          - --max-peers
+          - {{ .Values.validator.serverConfig.maxPeers | quote }}
+          - --price-limit
+          - {{ .Values.validator.serverConfig.priceLimit | quote }}
           - --libp2p
           - {{ join ":" (list "0.0.0.0" .Values.validator.service.libp2p.port) | quote }} 
           - --grpc-address

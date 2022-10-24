@@ -279,9 +279,25 @@ validator:
     # -- Number of seconds after which the [probe] times out
     timeoutSeconds: 1
 
+  serverConfig:
+    # -- The CORS allow-origins header for the JSON-RPC endpoint 
+    accessControlAllowOrigins: "0x0"
+    # -- The minimum block time in seconds
+    blockTime: 2
+    # -- The max JSON-RPC batch request size limit (0 disables)
+    jsonRPCBatchRequestLimit: 20
+    # -- The max block range to consider when executing JSON-RPC requests (0 disables)
+    jsonRPCBlockRangeLimit: 1000
+    # -- Max number of enqueued transactions per account
+    maxEnqueued: 128
+    # -- The client's total max allowed peers
+    maxPeers: 40
+    # -- The min gas price limit to enforce for inbound transactions
+    priceLimit: 0
+
   logging:
     # -- The log format for Polygon Edge validator sets 
-    format: "text"
+    format: "syslog"
     # -- The log format for Polygon Edge validator sets
     level: info
 

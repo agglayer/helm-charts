@@ -142,7 +142,7 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | validator.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
 | validator.livenessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | validator.livenessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
-| validator.logging.format | string | `"text"` | The log format for Polygon Edge validator sets  |
+| validator.logging.format | string | `"syslog"` | The log format for Polygon Edge validator sets  |
 | validator.logging.level | string | `"info"` | The log format for Polygon Edge validator sets |
 | validator.metrics.enabled | bool | `false` | Enables Polygon Edge Validator metrics service |
 | validator.metrics.service.annotations | object | `{}` | The annotations for the Polygon Edge validator metrics service |
@@ -168,6 +168,13 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | validator.readinessProbe.successThreshold | int | `1` | Minimum consecutive successes for the [probe] to be considered successful after having failed |
 | validator.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
 | validator.replicas | int | `4` |  |
+| validator.serverConfig.accessControlAllowOrigins | string | `"0x0"` | The CORS allow-origins header for the JSON-RPC endpoint  |
+| validator.serverConfig.blockTime | int | `2` | The minimum block time in seconds |
+| validator.serverConfig.jsonRPCBatchRequestLimit | int | `20` | The max JSON-RPC batch request size limit (0 disables) |
+| validator.serverConfig.jsonRPCBlockRangeLimit | int | `1000` | The max block range to consider when executing JSON-RPC requests (0 disables) |
+| validator.serverConfig.maxEnqueued | int | `128` | Max number of enqueued transactions per account |
+| validator.serverConfig.maxPeers | int | `40` | The client's total max allowed peers |
+| validator.serverConfig.priceLimit | int | `0` | The min gas price limit to enforce for inbound transactions |
 | validator.service.annotations | object | `{}` | The annotations for the Polygon Edge validator service |
 | validator.service.externalIPs | list | `[]` | The service external IPs  |
 | validator.service.externalTrafficPolicy | string | `""` | The service external trafic policy  |
