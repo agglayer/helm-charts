@@ -165,7 +165,7 @@ spec:
                 optional: false
           {{- end }}
           {{- with .Values.genesis.extraEnvs }}
-            {{- toYaml . | nindent 8 }}
+            {{- toYaml . | nindent 10 }}
           {{- end }}
         {{- with .Values.genesis.envFrom }}
         envFrom: {{- toYaml . | nindent 8 }}
