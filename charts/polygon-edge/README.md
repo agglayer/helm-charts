@@ -101,6 +101,7 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | genesis.chainConfig.chainID | string | `"100"` | The chain ID |
 | genesis.chainConfig.consensus | string | `"ibft"` | The consensus protocol |
 | genesis.chainConfig.epochSize | string | `"100000"` | The Epoch size for the chain. |
+| genesis.chainConfig.extraArgs | list | `[]` | Additional configuration parameters as array. Example - extraArgs: ["--premine", "<account>:<ammount>"] |
 | genesis.chainConfig.ibftValidatorType | string | `"bls"` | The type of validators in IBFT  |
 | genesis.chainConfig.maxValidatorCount | string | `"9007199254740990"` | Max number of validators for a Proof of Stake  |
 | genesis.chainConfig.minValidatorCount | string | `"1"` | Min number of validators for a Proof of Stake  |
@@ -169,6 +170,7 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | validator.readinessProbe.timeoutSeconds | int | `1` | Number of seconds after which the [probe] times out |
 | validator.replicas | int | `4` |  |
 | validator.serverConfig.accessControlAllowOrigins | string | `"0x0"` | The CORS allow-origins header for the JSON-RPC endpoint  |
+| validator.serverConfig.blockGasTarget | string | `"0x0"` | Sets the target block gas limit for the chain. Default (not enforced) 0 |
 | validator.serverConfig.blockTime | int | `2` | The minimum block time in seconds |
 | validator.serverConfig.jsonRPCBatchRequestLimit | int | `20` | The max JSON-RPC batch request size limit (0 disables) |
 | validator.serverConfig.jsonRPCBlockRangeLimit | int | `1000` | The max block range to consider when executing JSON-RPC requests (0 disables) |
@@ -178,6 +180,7 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | validator.service.annotations | object | `{}` | The annotations for the Polygon Edge validator service |
 | validator.service.externalIPs | list | `[]` | The service external IPs  |
 | validator.service.externalTrafficPolicy | string | `""` | The service external trafic policy  |
+| validator.service.grpc.enabled | bool | `false` | Expose grpc service |
 | validator.service.grpc.nodePort | int | `39632` | The grpc node port, if service type is `NodePort` |
 | validator.service.grpc.port | int | `9632` | The grpc port |
 | validator.service.jsonRPC.nodePort | int | `38545` | The json-rpc node port, if service type is `NodePort` |

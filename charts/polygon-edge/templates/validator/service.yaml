@@ -16,6 +16,7 @@ metadata:
 spec:
   type: {{ .Values.validator.service.type }}
   ports:
+  {{- if .Values.validator.service.grpc.enabled }}
   - name: grpc
     protocol: TCP
     port: {{ .Values.validator.service.grpc.port }}
@@ -23,6 +24,7 @@ spec:
     {{- if eq .Values.validator.service.type "NodePort" }}
     nodePort: {{ .Values.validator.service.grpc.nodePort }}
     {{- end }}
+  {{- end }}
   - name: json-rpc
     protocol: TCP
     port: {{ .Values.validator.service.jsonRPC.port }}

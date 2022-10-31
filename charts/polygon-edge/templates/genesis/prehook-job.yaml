@@ -106,10 +106,8 @@ spec:
           - |
             # This mess of Helm templating loops through each replica and grabs their needed address/nodeID.
             polygon-edge genesis \
-            {{- if .Values.genesis.chainConfig.premine }}
               --premine \
-            {{ .Values.genesis.chainConfig.premine | quote }} \
-            {{- end }}
+            {{ required "Wallet account for premined native currency must be defined with 'genesis.chainConfig.premine'" .Values.genesis.chainConfig.premine | quote }} \
             {{- if .Values.genesis.chainConfig.maxValidatorCount }}
               --max-validator-count \
             {{ .Values.genesis.chainConfig.maxValidatorCount | quote }} \
@@ -140,6 +138,9 @@ spec:
             {{- end }}
             {{- if .Values.genesis.chainConfig.pos }}
               --pos \
+            {{- end }}
+            {{- if .Values.genesis.chainConfig.extraArgs }}
+              {{ join " " .Values.genesis.chainConfig.extraArgs }}
             {{- end }}
               --name {{ .Values.genesis.chainConfig.name }} \
               --dir {{ join "/" (list .Values.config.dataDir "config-tmp" "genesis.json") | quote }} \

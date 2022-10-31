@@ -85,6 +85,8 @@ spec:
           - {{ .Values.validator.serverConfig.accessControlAllowOrigins | quote }} 
           - --block-time
           - {{ .Values.validator.serverConfig.blockTime | quote }}
+          - --block-gas-target
+          - {{ .Values.validator.serverConfig.blockGasTarget | quote }}
           - --json-rpc-batch-request-limit
           - {{ .Values.validator.serverConfig.jsonRPCBatchRequestLimit | quote }}
           - --json-rpc-block-range-limit
@@ -121,6 +123,9 @@ spec:
         {{- if .Values.config.dns }}
           - --dns
           - dns4/$(HOSTNAME).{{ include "polygon-edge.validator.fullname" .}}-headless.{{ .Release.Namespace }}.svc.cluster.local
+        {{- end }}
+        {{- if .Values.genesis.chainConfig.pos }}
+          - --pos
         {{- end }}
         {{- with .Values.validator.extraArgs }}
         {{- . | toYaml | nindent 8 }}

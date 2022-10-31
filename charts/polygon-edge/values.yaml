@@ -91,7 +91,9 @@ genesis:
     maxValidatorCount: '9007199254740990'
     # -- Min number of validators for a Proof of Stake 
     minValidatorCount: '1'
-
+    # -- Additional configuration parameters as array. Example - extraArgs: ["--premine", "<account>:<ammount>"]
+    extraArgs: []
+    
   # -- A Pre-generated chain JSON.
   chainJson: ""
 
@@ -182,6 +184,8 @@ validator:
       # -- The libp2p (peering) node port, if service type is `NodePort`
       nodePort: 31478
     grpc:
+      # -- Expose grpc service
+      enabled: false
       # -- The grpc port
       port: 9632
       # -- The grpc node port, if service type is `NodePort`
@@ -284,6 +288,8 @@ validator:
     accessControlAllowOrigins: "0x0"
     # -- The minimum block time in seconds
     blockTime: 2
+    # -- Sets the target block gas limit for the chain. Default (not enforced) 0
+    blockGasTarget: "0x0"
     # -- The max JSON-RPC batch request size limit (0 disables)
     jsonRPCBatchRequestLimit: 20
     # -- The max block range to consider when executing JSON-RPC requests (0 disables)
