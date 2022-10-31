@@ -300,6 +300,8 @@ validator:
     maxPeers: 40
     # -- The min gas price limit to enforce for inbound transactions
     priceLimit: 0
+    # -- Location of the chain backup file
+    resotreFile: ""
 
   logging:
     # -- The log format for Polygon Edge validator sets 

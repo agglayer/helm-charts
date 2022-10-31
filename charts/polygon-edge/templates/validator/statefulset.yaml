@@ -124,8 +124,9 @@ spec:
           - --dns
           - dns4/$(HOSTNAME).{{ include "polygon-edge.validator.fullname" .}}-headless.{{ .Release.Namespace }}.svc.cluster.local
         {{- end }}
-        {{- if .Values.genesis.chainConfig.pos }}
-          - --pos
+        {{- if .Values.validator.serverConfig.resotreFile }}
+          - --restore
+          - {{ .Values.validator.serverConfig.resotreFile }}
         {{- end }}
         {{- with .Values.validator.extraArgs }}
         {{- . | toYaml | nindent 8 }}

@@ -177,6 +177,7 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | validator.serverConfig.maxEnqueued | int | `128` | Max number of enqueued transactions per account |
 | validator.serverConfig.maxPeers | int | `40` | The client's total max allowed peers |
 | validator.serverConfig.priceLimit | int | `0` | The min gas price limit to enforce for inbound transactions |
+| validator.serverConfig.resotreFile | string | `""` | Location of the chain backup file |
 | validator.service.annotations | object | `{}` | The annotations for the Polygon Edge validator service |
 | validator.service.externalIPs | list | `[]` | The service external IPs  |
 | validator.service.externalTrafficPolicy | string | `""` | The service external trafic policy  |
