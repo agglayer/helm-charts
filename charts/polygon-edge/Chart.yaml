@@ -16,3 +16,8 @@ keywords:
   - polygon
   - ethereum
   - blockchain
+dependencies:
+  - name: blockscout
+    version: 0.1.0
+    repository: "file://../blockscout"
+    condition: blockscout.enabled

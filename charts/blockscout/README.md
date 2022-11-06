@@ -47,9 +47,6 @@ Helm chart to deploy Blockscout to a Kubernetes environment.
 | blockchain.config.databaseURL | string | `""` |  |
 | blockchain.config.disableExchangeRates | bool | `true` |  |
 | blockchain.config.ectoUseSSL | bool | `false` |  |
-| blockchain.config.etheriumJsonRpcHTTPUrl | string | `""` |  |
-| blockchain.config.etheriumJsonRpcTraceUrl | string | `""` |  |
-| blockchain.config.etheriumJsonRpcWSUrl | string | `""` |  |
 | blockchain.config.fetchRewardWay | string | `"manual"` |  |
 | blockchain.config.indexerDisableBlockRewardFetcher | bool | `true` |  |
 | blockchain.config.indexerDisableCatalogedTokenUpdaterFetcher | bool | `true` |  |
@@ -60,6 +57,7 @@ Helm chart to deploy Blockscout to a Kubernetes environment.
 | blockchain.config.logoFooter | string | `"/images/blockscout_logo.svg"` |  |
 | blockchain.config.mixEnv | string | `"prod"` |  |
 | blockchain.config.secretKeyBase | string | `"VTIB3uHDNbvrY0+60ZWgUoUBKDn9ppLR8MI4CpRz4/qLyEFs54ktJfaNT6Z221No"` | https://docs.blockscout.com/for-developers/manual-deployment |
+| blockchain.extraEnvs | list | `[]` |  |
 | blockchain.jsonRpcURL | string | `"https://rpc-edgenet.polygon.technology/"` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"IfNotPresent"` |  |
@@ -87,6 +85,7 @@ Helm chart to deploy Blockscout to a Kubernetes environment.
 | postgresql.auth.database | string | `"blockscout"` |  |
 | postgresql.auth.password | string | `"changeme"` |  |
 | postgresql.auth.username | string | `"blockscout"` |  |
+| postgresql.nameOverride | string | `"blockscout-postgresql"` |  |
 | readinessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | readinessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | readinessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |

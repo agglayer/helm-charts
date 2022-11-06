@@ -8,7 +8,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "blockscout.fullname" . }}
+  name: {{ include "blockscout.fullname" . }}-blockscout
   labels:
     {{- include "blockscout.labels" (dict "context" . "component" .Values.name "name" .Values.name) | nindent 4 }}
     app.kubernetes.io/version: {{ .Values.image.tag | quote }}
@@ -42,7 +42,7 @@ spec:
           'until pg_isready -h {{ $dbHost }}; 
           do echo waiting for database; sleep 2; done;']
       containers:
-        - name: {{ include "blockscout.name" . }}
+        - name: {{ include "blockscout.name" . }}-blockscout
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["bash", "-c", "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"]
@@ -58,11 +58,11 @@ spec:
             - name: LOGO_FOOTER
               value: {{ .Values.blockchain.config.logoFooter | quote }}
             - name: ETHEREUM_JSONRPC_HTTP_URL
-              value: {{ .Values.blockchain.jsonRpcURL | quote }}
+              value: {{ tpl .Values.blockchain.jsonRpcURL . | quote }}
             - name: ETHEREUM_JSONRPC_TRACE_URL
-              value: {{ .Values.blockchain.jsonRpcURL | quote }}
+              value: {{ tpl .Values.blockchain.jsonRpcURL . | quote }}
             - name: ETHEREUM_JSONRPC_WS_URL
-              value: {{ .Values.blockchain.WebSocketURL | quote }}
+              value: {{ tpl .Values.blockchain.WebSocketURL . | quote }}
             - name: CHAIN_ID
               value: {{ .Values.blockchain.config.chainID | quote }}
             - name: SECRET_KEY_BASE
@@ -87,6 +87,9 @@ spec:
               value: {{ .Values.blockchain.config.indexerEmptyBlocksSanitizerBatchSize | quote }}
             - name: INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER
               value: {{ .Values.blockchain.config.indexerDisablePendingTransactionsFetcher | quote }}
+          {{- with .Values.blockchain.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           ports:
             - name: {{ .Values.service.namedPort | quote}}
               containerPort: {{ .Values.service.port | int }}

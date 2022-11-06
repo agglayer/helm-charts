@@ -1,5 +1,5 @@
 # -- Override for resource names 
-nameOverride: polygon-edge
+nameOverride: &nameOverride polygon-edge
 # -- Override for the full resource. (`"polygon-edge.fullname"`)
 fullnameOverride: ""
 # -- Override the Kubernetes version
@@ -44,6 +44,9 @@ global:
     create: false
     # -- Default deny all ingress
     defaultDenyIngress: false
+  
+  jsonRPCPort: &jsonrpc-port 8545
+  validatorName: &validatorName validator
 
 secretsManagerConfig:
   # -- The secrets manager type. one of the following: `local`, `aws-ssm`, `gcp-ssm`, or `hashicorp-vault`
@@ -86,7 +89,7 @@ genesis:
     # -- The maximum amount of gas used by all transactions
     blockGasLimit: '5242880'
     # -- The chain ID
-    chainID: '100'
+    chainID: &chainID '100'
     # -- Max number of validators for a Proof of Stake 
     maxValidatorCount: '9007199254740990'
     # -- Min number of validators for a Proof of Stake 
@@ -129,7 +132,7 @@ genesis:
 validator:
   replicas: 4
   # -- The identifier for the validator sets
-  name: validator
+  name: *validatorName
   image: 
     # -- The repository for Polygon Edge validator containers
     repository: ""
@@ -192,7 +195,7 @@ validator:
       nodePort: 39632
     jsonRPC:
       # -- The json-rpc port
-      port: 8545 
+      port: *jsonrpc-port 
       # -- The json-rpc node port, if service type is `NodePort`
       nodePort: 38545
 
@@ -315,3 +318,14 @@ config:
   datadog:
     # -- Enable Datadog 
     enabled: false
+
+blockscout:
+  enabled: false
+  nameOverride: *nameOverride
+  blockchain:
+    jsonRpcURL: |-
+      http://{{ include "polygon-edge.validator.fullname" $ }}:{{ .Values.global.jsonRPCPort }}
+    WebSocketURL: |-
+      ws://{{ include "polygon-edge.validator.fullname" $ }}:{{ .Values.global.jsonRPCPort }}/ws
+    config:
+      chainID: *chainID

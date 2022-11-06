@@ -36,7 +36,7 @@ Create genesis name and version as used by the chart label.
 Create validator name and version as used by the chart label.
 */}}
 {{- define "polygon-edge.validator.fullname" -}}
-{{- printf "%s-%s" (include "polygon-edge.fullname" .) .Values.validator.name | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" (include "polygon-edge.fullname" .) .Values.global.validatorName | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*

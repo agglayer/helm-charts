@@ -57,6 +57,11 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | apiVersionOverrides.ingress | string | `""` | Override the ingress API version |
+| blockscout.blockchain.WebSocketURL | string | `"ws://{{ include \"polygon-edge.validator.fullname\" $ }}:{{ .Values.global.jsonRPCPort }}/ws"` |  |
+| blockscout.blockchain.config.chainID | string | `"100"` |  |
+| blockscout.blockchain.jsonRpcURL | string | `"http://{{ include \"polygon-edge.validator.fullname\" $ }}:{{ .Values.global.jsonRPCPort }}"` |  |
+| blockscout.enabled | bool | `false` |  |
+| blockscout.nameOverride | string | `"polygon-edge"` |  |
 | fullnameOverride | string | `""` | Override for the full resource. (`"polygon-edge.fullname"`) |
 | global.additionalLabels | object | `{}` | Additional labels for all resources |
 | global.hostAliases | list | `[]` | A list of IP to hostname(s) relation |
@@ -64,11 +69,13 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | global.image.repository | string | `"docker.io/0xpolygon/polygon-edge"` | The repository for all Polygon Edge containers |
 | global.image.tag | string | `""` | The image tag for all Polygon Edge containers |
 | global.imagePullSecrets | list | `[]` | The `imagePullSecrets` for all pods |
+| global.jsonRPCPort | int | `8545` |  |
 | global.networkPolicy.create | bool | `false` | Creates `NetworkPolicy` for all deployments |
 | global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress |
 | global.podAnnotations | object | `{}` | Annotations for all pods |
 | global.podLabels | object | `{}` | Labels for all pods |
 | global.securityContext | object | `{}` | The `securityContext` for all pods. |
+| global.validatorName | string | `"validator"` |  |
 | kubeVersionOverride | string | `""` | Override the Kubernetes version |
 | nameOverride | string | `"polygon-edge"` | Override for resource names  |
 

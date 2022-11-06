@@ -1,0 +1,6 @@
+dependencies:
+- name: blockscout
+  repository: file://../blockscout
+  version: 0.1.0
+digest: sha256:593ce01a2364fe01afd045070a74ddeb9613891a82121183c3b40cb75dd5d39d
+generated: "2022-11-06T17:33:05.2089377+01:00"

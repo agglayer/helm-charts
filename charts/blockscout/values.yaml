@@ -3,6 +3,7 @@ postgresql:
     username: &dbUser blockscout
     password: &dbPass changeme
     database: &dbName blockscout
+  nameOverride: blockscout-postgresql
 
 replicaCount: 1
 
@@ -106,15 +107,13 @@ backend:
 blockchain:
   jsonRpcURL: "https://rpc-edgenet.polygon.technology/"
   WebSocketURL: "wss://rpc-edgenet.polygon.technology/ws"
+  extraEnvs: []
   config:
     coinSymbol: EDGE
     coinName: Edge Coin
     chainID: 81001
     logo: /images/blockscout_logo.svg
     logoFooter: /images/blockscout_logo.svg
-    etheriumJsonRpcHTTPUrl: ""
-    etheriumJsonRpcWSUrl: ""
-    etheriumJsonRpcTraceUrl: ""
     # -- https://docs.blockscout.com/for-developers/manual-deployment
     secretKeyBase: "VTIB3uHDNbvrY0+60ZWgUoUBKDn9ppLR8MI4CpRz4/qLyEFs54ktJfaNT6Z221No"
     databaseURL: ""
