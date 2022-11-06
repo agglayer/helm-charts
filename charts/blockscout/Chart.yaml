@@ -1,0 +1,25 @@
+apiVersion: v2
+name: blockscout
+description: Helm chart to deploy Blockscout to a Kubernetes environment. 
+version: 0.1.0
+appVersion: 4.1.8
+home: https://docs.blockscout.com/
+sources:
+  - https://github.com/0xPolygon/helm-charts/charts/blockscout
+maintainers:
+  - name: epikichi
+    url: https://github.com/epikichi
+    email: ji@epik.dev
+  - name: ZeljkoBenovic
+    url: https://github.com/ZeljkoBenovic
+    email: zeljko@zeljkobenovic.com
+keywords:
+  - blockscout
+  - block explorer
+  - ethereum
+  - blockchain
+dependencies:
+  - name: postgresql
+    version: 12.1.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: backend.local.enabled

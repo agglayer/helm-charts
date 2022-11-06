@@ -1,0 +1,126 @@
+{{- $dbHost := "" -}}
+{{- if .Values.backend.remoteDatabaseHost -}}
+{{- $dbHost = .Values.backend.remoteDatabaseHost -}}
+{{- else -}}
+{{- $dbHost = include "postgresql.primary.fullname" .Subcharts.postgresql -}}
+{{- end -}}
+{{- $dbConn := printf "postgresql://%s:%s@%s:%d/%s" .Values.backend.dbUsername .Values.backend.dbPassword $dbHost (.Values.backend.dbPort | int) .Values.backend.dbName  -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "blockscout.fullname" . }}
+  labels:
+    {{- include "blockscout.labels" (dict "context" . "component" .Values.name "name" .Values.name) | nindent 4 }}
+    app.kubernetes.io/version: {{ .Values.image.tag | quote }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "blockscout.selectorLabels" (dict "context" . "component" .Values.name "name" .Values.name) | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "blockscout.labels" (dict "context" . "component" .Values.name "name" .Values.name) | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.securityContext }}
+      securityContext: {{- toYaml .Values.securityContext | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: check-db-ready
+        image: docker.io/postgres:alpine
+        command: ['sh', '-c', 
+          'until pg_isready -h {{ $dbHost }}; 
+          do echo waiting for database; sleep 2; done;']
+      containers:
+        - name: {{ include "blockscout.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["bash", "-c", "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"]
+          env:
+            - name: COIN
+              value: {{ .Values.blockchain.config.coinSymbol | quote }}
+            - name: COIN_NAME
+              value: {{ .Values.blockchain.config.coinName | quote }}
+            - name: PORT
+              value: {{ .Values.service.port | quote }}
+            - name: LOGO
+              value: {{ .Values.blockchain.config.logo | quote }}
+            - name: LOGO_FOOTER
+              value: {{ .Values.blockchain.config.logoFooter | quote }}
+            - name: ETHEREUM_JSONRPC_HTTP_URL
+              value: {{ .Values.blockchain.jsonRpcURL | quote }}
+            - name: ETHEREUM_JSONRPC_TRACE_URL
+              value: {{ .Values.blockchain.jsonRpcURL | quote }}
+            - name: ETHEREUM_JSONRPC_WS_URL
+              value: {{ .Values.blockchain.WebSocketURL | quote }}
+            - name: CHAIN_ID
+              value: {{ .Values.blockchain.config.chainID | quote }}
+            - name: SECRET_KEY_BASE
+              value: {{ .Values.blockchain.config.secretKeyBase | quote }}
+            - name: DATABASE_URL
+              value: {{ $dbConn | quote }}
+            - name: ECTO_USE_SSL
+              value: {{ .Values.blockchain.config.ectoUseSSL | quote }}
+            - name: MIX_ENV
+              value: {{ .Values.blockchain.config.mixEnv | quote }}
+            - name: DISABLE_EXCHANGE_RATES
+              value: {{ .Values.blockchain.config.disableExchangeRates | quote }}
+            - name: FETCH_REWARD_WAY
+              value: {{ .Values.blockchain.config.fetchRewardWay | quote }}
+            - name: INDEXER_DISABLE_BLOCK_REWARD_FETCHER
+              value: {{ .Values.blockchain.config.indexerDisableBlockRewardFetcher | quote }}
+            - name: INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER
+              value: {{ .Values.blockchain.config.indexerDisableInternalTransactionsFetcher | quote }}
+            - name: INDEXER_DISABLE_CATALOGED_TOKEN_UPDATER_FETCHER
+              value: {{ .Values.blockchain.config.indexerDisableCatalogedTokenUpdaterFetcher | quote }}
+            - name: INDEXER_EMPTY_BLOCKS_SANITIZER_BATCH_SIZE
+              value: {{ .Values.blockchain.config.indexerEmptyBlocksSanitizerBatchSize | quote }}
+            - name: INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER
+              value: {{ .Values.blockchain.config.indexerDisablePendingTransactionsFetcher | quote }}
+          ports:
+            - name: {{ .Values.service.namedPort | quote}}
+              containerPort: {{ .Values.service.port | int }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.namedPort | quote}}
+            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.namedPort | quote}}
+            initialDelaySeconds: {{ .Values.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
