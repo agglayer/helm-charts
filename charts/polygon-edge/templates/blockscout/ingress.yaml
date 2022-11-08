@@ -1,0 +1,89 @@
+{{- if and .Values.extraFeatures.blockscout.enabled .Values.extraFeatures.blockscout.ingress.enabled -}}
+{{- $serviceName := include "polygon-edge.blockscout.fullname" . -}}
+{{- $servicePort := .Values.extraFeatures.blockscout.service.port -}}
+{{- $paths := .Values.extraFeatures.blockscout.ingress.paths -}}
+{{- $extraPaths := .Values.extraFeatures.blockscout.ingress.extraPaths -}}
+{{- $pathType := .Values.extraFeatures.blockscout.ingress.pathType -}}
+apiVersion: {{ include "polygon-edge.apiVersion.ingress" . }}
+kind: Ingress
+metadata:
+{{- if .Values.extraFeatures.blockscout.ingress.annotations }}
+  annotations:
+  {{- range $key, $value := .Values.extraFeatures.blockscout.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+  name: {{ template "polygon-edge.blockscout.fullname" . }}
+  labels:
+    {{- include "polygon-edge.labels" (dict "context" . "component" .Values.extraFeatures.blockscout.name "name" .Values.extraFeatures.blockscout.name) | nindent 4 }}
+    {{- if .Values.extraFeatures.blockscout.ingress.labels }}
+    {{- toYaml .Values.extraFeatures.blockscout.ingress.labels | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if eq (include "polygon-edge.apiVersion.ingress" $) "networking.k8s.io/v1" }}
+  {{- with .Values.extraFeatures.blockscout.ingress.ingressClassName }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- end }}
+  rules:
+  {{- if .Values.extraFeatures.blockscout.ingress.hosts }}
+    {{- range $host := .Values.extraFeatures.blockscout.ingress.hosts }}
+    - host: {{ $host }}
+      http:
+        paths:
+          {{- if $extraPaths }}
+          {{- toYaml $extraPaths | nindent 10 }}
+          {{- end }}
+          {{- range $p := $paths }}
+          - path: {{ $p }}
+            {{- if eq (include "polygon-edge.apiVersion.ingress" $) "networking.k8s.io/v1" }}
+            pathType: {{ $pathType }}
+            {{- end }}
+            backend:
+              {{- if eq (include "polygon-edge.apiVersion.ingress" $) "networking.k8s.io/v1" }}
+              service:
+                name: {{ $serviceName }}
+                port:
+                  {{- if kindIs "float64" $servicePort }}
+                  number: {{ $servicePort }}
+                  {{- else }}
+                  name: {{ $servicePort }}
+                  {{- end }}
+              {{- else }}
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+              {{- end }}
+          {{- end -}}
+    {{- end -}}
+  {{- else }}
+    - http:
+        paths:
+          {{- if $extraPaths }}
+          {{- toYaml $extraPaths | nindent 10 }}
+          {{- end }}
+          {{- range $p := $paths }}
+          - path: {{ $p }}
+            {{- if eq (include "polygon-edge.apiVersion.ingress" $) "networking.k8s.io/v1" }}
+            pathType: {{ $pathType }}
+            {{- end }}
+            backend:
+              {{- if eq (include "polygon-edge.apiVersion.ingress" $) "networking.k8s.io/v1" }}
+              service:
+                name: {{ $serviceName }}
+                port:
+                  {{- if kindIs "float64" $servicePort }}
+                  number: {{ $servicePort }}
+                  {{- else }}
+                  name: {{ $servicePort }}
+                  {{- end }}
+              {{- else }}
+              serviceName: {{ $serviceName }}
+              servicePort: {{ $servicePort }}
+              {{- end }}
+          {{- end -}}
+  {{- end -}}
+  {{- if .Values.extraFeatures.blockscout.ingress.tls }}
+  tls:
+    {{- toYaml .Values.extraFeatures.blockscout.ingress.tls | nindent 4 }}
+  {{- end -}}
+{{- end -}}

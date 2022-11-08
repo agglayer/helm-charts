@@ -25,16 +25,25 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 {{- end -}}
 
+{{/*
 Create genesis name and version as used by the chart label.
 */}}
 {{- define "polygon-edge.genesis.fullname" -}}
 {{- printf "%s-%s" (include "polygon-edge.fullname" .) .Values.genesis.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{/*
 Create validator name and version as used by the chart label.
 */}}
 {{- define "polygon-edge.validator.fullname" -}}
 {{- printf "%s-%s" (include "polygon-edge.fullname" .) .Values.validator.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
+Create blockscout name and version as used by the chart label.
+*/}}
+{{- define "polygon-edge.blockscout.fullname" -}}
+{{- printf "%s-%s" (include "polygon-edge.fullname" .) .Values.extraFeatures.blockscout.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*

@@ -86,7 +86,7 @@ genesis:
     # -- The maximum amount of gas used by all transactions
     blockGasLimit: '5242880'
     # -- The chain ID
-    chainID: '100'
+    chainID: &chainID '100'
     # -- Max number of validators for a Proof of Stake 
     maxValidatorCount: '9007199254740990'
     # -- Min number of validators for a Proof of Stake 
@@ -294,6 +294,8 @@ validator:
     maxPeers: 40
     # -- The min gas price limit to enforce for inbound transactions
     priceLimit: 0
+    # -- Sets the target block gas limit for the existing chain
+    blockGasTarget: 0
 
   logging:
     # -- The log format for Polygon Edge validator sets 
@@ -307,3 +309,141 @@ config:
   datadog:
     # -- Enable Datadog 
     enabled: false
+
+# -- Extra features
+extraFeatures:
+  # -- Blockexplorer - Blockscout https://docs.blockscout.com/
+  blockscout:
+    # -- Enable Blockscout 
+    enabled: false
+    # -- Identifier for blockscout resources
+    name: blockscout
+    
+    # -- Image
+    image:
+      repository: docker.io/blockscout/blockscout
+      pullPolicy: IfNotPresent
+      tag: "4.1.8"
+    
+    # -- Replica count
+    replicaCount: 1
+    # -- Pod Annotations
+    podAnnotations: {}
+    # -- Image pull secrets
+    imagePullSecrets: []
+    # -- Security context
+    securityContext: {}
+    # -- Resources
+    resources: {}
+    # -- Node selector
+    nodeSelector: {}
+    # -- Tolerations
+    tolerations: []
+    # -- Affinity
+    affinity: {}
+
+    # -- Autoscaling
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 90
+      targetMemoryUtilizationPercentage: 90
+    
+    # -- Service
+    service:
+      namedPort: http
+      port: 4000
+      annotations: {}
+      labels: {}
+      type: ClusterIP
+
+    # -- Ingress   
+    ingress:
+      enabled: false
+      # -- The ingress class name
+      ingressClassName: ""
+      annotations: {}
+      paths:
+      - /
+      pathType: Prefix
+      # -- Extra ingress paths
+      extraPaths: []
+      hosts: []
+      tls: []
+      labels: {}
+    
+    readinessProbe:
+      # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
+      failureThreshold: 3
+      # -- Number of seconds after the container has started before [probe] is initiated
+      initialDelaySeconds: 10
+      # -- How often (in seconds) to perform the [probe]
+      periodSeconds: 10
+      # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
+      successThreshold: 1
+      # -- Number of seconds after which the [probe] times out
+      timeoutSeconds: 1
+    livenessProbe:
+      # -- Minimum consecutive failures for the [probe] to be considered failed after having succeeded
+      failureThreshold: 3
+      # -- Number of seconds after the container has started before [probe] is initiated
+      initialDelaySeconds: 10
+      # -- How often (in seconds) to perform the [probe]
+      periodSeconds: 10
+      # -- Minimum consecutive successes for the [probe] to be considered successful after having failed
+      successThreshold: 1
+      # -- Number of seconds after which the [probe] times out
+      timeoutSeconds: 1
+
+    # -- Blockscout database backend
+    database:
+      # -- Enable local postgresql database
+      enabled: true
+      # -- Postgres user
+      dbUser: &dbUser blockscout
+      # -- Postgres  password
+      dbPass: &dbPass changeme
+      # -- Postgres port
+      dbPort: &dbPort 5432
+      # -- Postgres database 
+      dbName: &dbName blockscout
+      # -- External database connection
+      external: 
+        # -- Remote database connection string
+        connString: ""
+    
+    # -- Blockchain configuration
+    config:
+      coinSymbol: EDGE
+      coinName: Edge Coin
+      chainID: *chainID
+      logo: /images/blockscout_logo.svg
+      logoFooter: /images/blockscout_logo.svg
+      # -- https://docs.blockscout.com/for-developers/manual-deployment
+      secretKeyBase: "VTIB3uHDNbvrY0+60ZWgUoUBKDn9ppLR8MI4CpRz4/qLyEFs54ktJfaNT6Z221No"
+      ectoUseSSL: false
+      mixEnv: prod
+      disableExchangeRates: true
+      fetchRewardWay: manual
+      indexerDisableBlockRewardFetcher: true
+      indexerDisableInternalTransactionsFetcher: true
+      indexerDisableCatalogedTokenUpdaterFetcher: true
+      indexerEmptyBlocksSanitizerBatchSize: 1000
+      indexerDisablePendingTransactionsFetcher: true
+      # - Extra environment variables for Blockscout configuration
+      extraEnvs: []
+
+# -- PostgreSQL subchart as backend for Blockscout
+postgresql:
+  nameOverride: polygon-edge-blockscout-database
+  auth:
+    username: *dbUser
+    password: *dbPass
+    database: *dbName
+  primary:
+    service:
+      ports:
+        postgresql: *dbPort
+    persistence:
+      size: 10Gi
