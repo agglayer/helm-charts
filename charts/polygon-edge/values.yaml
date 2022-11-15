@@ -420,8 +420,6 @@ extraFeatures:
       chainID: *chainID
       logo: /images/blockscout_logo.svg
       logoFooter: /images/blockscout_logo.svg
-      # -- https://docs.blockscout.com/for-developers/manual-deployment
-      secretKeyBase: "VTIB3uHDNbvrY0+60ZWgUoUBKDn9ppLR8MI4CpRz4/qLyEFs54ktJfaNT6Z221No"
       ectoUseSSL: false
       mixEnv: prod
       disableExchangeRates: true
