@@ -67,7 +67,7 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | extraFeatures.blockscout.config.coinName | string | `"Edge Coin"` | Coin name |
 | extraFeatures.blockscout.config.coinSymbol | string | `"EDGE"` | Coin symbol |
 | extraFeatures.blockscout.config.disableExchangeRates | bool | `true` | Disable exchange rates fetch |
-| extraFeatures.blockscout.config.ectoUseSSL | bool | `false` | Use SSL internally |
+| extraFeatures.blockscout.config.ectoUseSSL | bool | `false` | Use SSL to communicate with database |
 | extraFeatures.blockscout.config.extraEnvs | list | `[]` | Extra environment variables for Blockscout configuration (https://docs.blockscout.com/for-developers/information-and-settings/env-variables) |
 | extraFeatures.blockscout.config.fetchRewardWay | string | `"manual"` | Fetch mine rewards manually |
 | extraFeatures.blockscout.config.indexerDisableBlockRewardFetcher | bool | `true` | Disable block rewards fetcher |
@@ -78,10 +78,11 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | extraFeatures.blockscout.config.logo | string | `"/images/blockscout_logo.svg"` | Blockscout instance logo |
 | extraFeatures.blockscout.config.logoFooter | string | `"/images/blockscout_logo.svg"` | Blockscout instance footer logo |
 | extraFeatures.blockscout.config.mixEnv | string | `"prod"` | Set producion environment |
-| extraFeatures.blockscout.database | object | `{"enabled":true,"external":{"connString":""}}` | Blockscout database backend |
+| extraFeatures.blockscout.database | object | `{"enabled":true,"external":{"connString":""},"skipMigration":false}` | Blockscout database backend |
 | extraFeatures.blockscout.database.enabled | bool | `true` | Enable local postgresql database |
 | extraFeatures.blockscout.database.external | object | `{"connString":""}` | External database connection |
 | extraFeatures.blockscout.database.external.connString | string | `""` | Remote database connection string |
+| extraFeatures.blockscout.database.skipMigration | bool | `false` | Skip database migration step |
 | extraFeatures.blockscout.enabled | bool | `false` | Enable Blockscout (https://docs.blockscout.com/) |
 | extraFeatures.blockscout.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | extraFeatures.blockscout.image.repository | string | `"docker.io/blockscout/blockscout"` | Blockscout container repository |

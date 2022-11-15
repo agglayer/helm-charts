@@ -431,6 +431,8 @@ extraFeatures:
     database:
       # -- Enable local postgresql database
       enabled: true
+      # -- Skip database migration step
+      skipMigration: false
       # -- External database connection
       external: 
         # -- Remote database connection string
@@ -446,7 +448,7 @@ extraFeatures:
       logo: /images/blockscout_logo.svg
       # -- Blockscout instance footer logo
       logoFooter: /images/blockscout_logo.svg
-      # -- Use SSL internally
+      # -- Use SSL to communicate with database
       ectoUseSSL: false
       # -- Set producion environment
       mixEnv: prod

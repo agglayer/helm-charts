@@ -35,11 +35,25 @@ spec:
         command: ['sh', '-c', 
           'until pg_isready -h {{ include "postgresql.primary.fullname" .Subcharts.postgresql }}; 
           do echo waiting for database; sleep 2; done;']
+      {{- if not .Values.extraFeatures.blockscout.database.skipMigration }}
+      - name: migrate-database
+        image: "{{ .Values.extraFeatures.blockscout.image.repository }}:{{ .Values.extraFeatures.blockscout.image.tag }}"
+        command: ['bash', '-c', 
+          'bin/blockscout eval "Elixir.Explorer.ReleaseTasks.create_and_migrate()"']
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "polygon-edge.blockscout.fullname" . }}
+                key: dbUrl
+          - name: ECTO_USE_SSL
+            value: {{ .Values.extraFeatures.blockscout.config.ectoUseSSL | quote }}
+      {{- end }}
       containers:
         - name: {{ .Values.extraFeatures.blockscout.name }}
           image: "{{ .Values.extraFeatures.blockscout.image.repository }}:{{ .Values.extraFeatures.blockscout.image.tag }}"
           imagePullPolicy: {{ .Values.extraFeatures.blockscout.image.pullPolicy }}
-          command: ["bash", "-c", "bin/blockscout eval \"Elixir.Explorer.ReleaseTasks.create_and_migrate()\" && bin/blockscout start"]
+          command: ["bash", "-c", "bin/blockscout start"]
           env:
             - name: COIN
               value: {{ .Values.extraFeatures.blockscout.config.coinSymbol | quote }}
