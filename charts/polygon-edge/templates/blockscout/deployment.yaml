@@ -1,10 +1,4 @@
 {{- if .Values.extraFeatures.blockscout.enabled -}}
-{{- $dbConn := "" -}}
-{{- if not .Values.extraFeatures.blockscout.database.enabled -}}
-{{- $dbConn = .Values.extraFeatures.blockscout.database.external.connString -}}
-{{- else -}}
-{{- $dbConn = printf "postgresql://%s:%s@%s:%d/%s" .Values.extraFeatures.blockscout.database.dbUser .Values.extraFeatures.blockscout.database.dbPass (include "postgresql.primary.fullname" .Subcharts.postgresql) (.Values.extraFeatures.blockscout.database.dbPort | int) .Values.extraFeatures.blockscout.database.dbName -}}
-{{- end -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -66,9 +60,15 @@ spec:
             - name: CHAIN_ID
               value: {{ .Values.extraFeatures.blockscout.config.chainID | quote }}
             - name: SECRET_KEY_BASE
-              value: {{ .Values.extraFeatures.blockscout.config.secretKeyBase | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "polygon-edge.blockscout.fullname" . }}
+                  key: secretKeyBase
             - name: DATABASE_URL
-              value: {{ $dbConn | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "polygon-edge.blockscout.fullname" . }}
+                  key: dbUrl
             - name: ECTO_USE_SSL
               value: {{ .Values.extraFeatures.blockscout.config.ectoUseSSL | quote }}
             - name: MIX_ENV
