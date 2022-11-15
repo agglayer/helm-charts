@@ -11,8 +11,16 @@ maintainers:
   - name: epikichi
     url: https://github.com/epikichi
     email: ji@epik.dev
+  - name: ZeljkoBenovic
+    url: https://github.com/ZeljkoBenovic
+    email: zeljko@zeljkobenovic.com
 keywords:
   - polygon-edge
   - polygon
   - ethereum
   - blockchain
+dependencies:
+  - name: postgresql
+    version: 12.1.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: extraFeatures.blockscout.enabled, extraFeatures.blockscout.database.enabled

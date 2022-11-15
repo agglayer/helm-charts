@@ -126,10 +126,8 @@ spec:
               --consensus \
             {{ .Values.genesis.chainConfig.consensus | quote }} \
             {{- end }}
-            {{- if .Values.genesis.chainConfig.chainID }}
               --chain-id \
-            {{ .Values.genesis.chainConfig.chainID | quote }} \
-            {{- end }}
+            {{ default "100" .Values.global.chain.chainID | quote }} \
             {{- if .Values.genesis.chainConfig.minValidatorCount }} \
               --min-validator-count \
             {{ .Values.genesis.chainConfig.minValidatorCount | quote }} \
@@ -196,7 +194,7 @@ spec:
           - /bin/sh
           - -c
           - |
-            curl --header "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" --header "content-type: application/json-patch+json" --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt https://kubernetes.default.svc/api/v1/namespaces/{{ .Release.Namespace }}/configmaps/polygon-edge-genesis -XPATCH -d "[{\"op\": \"add\", \"path\": \"/data/genesis.json\", \"value\": \"$(cat {{ join "/" (list .Values.config.dataDir "config-tmp" "genesis.json") }} | tr -d '\n\t' | sed 's/"/\\"/g')\"}]"
+            curl --header "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" --header "content-type: application/json-patch+json" --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt https://kubernetes.default.svc/api/v1/namespaces/{{ .Release.Namespace }}/configmaps/{{ template "polygon-edge.genesisServiceAccountName" . }} -XPATCH -d "[{\"op\": \"add\", \"path\": \"/data/genesis.json\", \"value\": \"$(cat {{ join "/" (list .Values.config.dataDir "config-tmp" "genesis.json") }} | tr -d '\n\t' | sed 's/"/\\"/g')\"}]"
         {{- if .Values.genesis.containerSecurityContext }}
         securityContext: {{- toYaml .Values.genesis.containerSecurityContext | nindent 10 }}
         {{- end }}

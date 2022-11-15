@@ -1,0 +1,144 @@
+{{- if .Values.extraFeatures.blockscout.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "polygon-edge.blockscout.fullname" . }}
+  labels:
+    {{- include "polygon-edge.labels" (dict "context" . "component" .Values.extraFeatures.blockscout.name "name" .Values.extraFeatures.blockscout.name) | nindent 4 }}
+    app.kubernetes.io/version: {{ .Values.extraFeatures.blockscout.image.tag | quote }}
+spec:
+  {{- if not .Values.extraFeatures.blockscout.autoscaling.enabled }}
+  replicas: {{ .Values.extraFeatures.blockscout.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "polygon-edge.selectorLabels" (dict "context" . "component" .Values.extraFeatures.blockscout.name "name" .Values.extraFeatures.blockscout.name) | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.extraFeatures.blockscout.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "polygon-edge.labels" (dict "context" . "component" .Values.extraFeatures.blockscout.name "name" .Values.extraFeatures.blockscout.name) | nindent 8 }}
+    spec:
+      {{- with .Values.extraFeatures.blockscout.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.extraFeatures.blockscout.securityContext }}
+      securityContext: {{- toYaml .Values.extraFeatures.blockscout.securityContext | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: check-db-ready
+        image: docker.io/postgres:alpine
+        command: ['sh', '-c', 
+          'until pg_isready -h {{ include "postgresql.primary.fullname" .Subcharts.postgresql }}; 
+          do echo waiting for database; sleep 2; done;']
+      {{- if not .Values.extraFeatures.blockscout.database.skipMigration }}
+      - name: migrate-database
+        image: "{{ .Values.extraFeatures.blockscout.image.repository }}:{{ .Values.extraFeatures.blockscout.image.tag }}"
+        command: ['bash', '-c', 
+          'bin/blockscout eval "Elixir.Explorer.ReleaseTasks.create_and_migrate()"']
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "polygon-edge.blockscout.fullname" . }}
+                key: dbUrl
+          - name: ECTO_USE_SSL
+            value: {{ .Values.extraFeatures.blockscout.config.ectoUseSSL | quote }}
+      {{- end }}
+      containers:
+        - name: {{ .Values.extraFeatures.blockscout.name }}
+          image: "{{ .Values.extraFeatures.blockscout.image.repository }}:{{ .Values.extraFeatures.blockscout.image.tag }}"
+          imagePullPolicy: {{ .Values.extraFeatures.blockscout.image.pullPolicy }}
+          command: ["bash", "-c", "bin/blockscout start"]
+          env:
+            - name: COIN
+              value: {{ .Values.extraFeatures.blockscout.config.coinSymbol | quote }}
+            - name: COIN_NAME
+              value: {{ .Values.extraFeatures.blockscout.config.coinName | quote }}
+            - name: PORT
+              value: {{ .Values.extraFeatures.blockscout.service.port | quote }}
+            - name: LOGO
+              value: {{ .Values.extraFeatures.blockscout.config.logo | quote }}
+            - name: LOGO_FOOTER
+              value: {{ .Values.extraFeatures.blockscout.config.logoFooter | quote }}
+            - name: ETHEREUM_JSONRPC_HTTP_URL
+              value: http://{{ include "polygon-edge.validator.fullname" . }}:{{ .Values.validator.service.jsonRPC.port }}
+            - name: ETHEREUM_JSONRPC_TRACE_URL
+              value: http://{{ include "polygon-edge.validator.fullname" . }}:{{ .Values.validator.service.jsonRPC.port }}
+            - name: ETHEREUM_JSONRPC_WS_URL
+              value: ws://{{ include "polygon-edge.validator.fullname" . }}:{{ .Values.validator.service.jsonRPC.port }}/ws
+            - name: CHAIN_ID
+              value: {{ default "100" .Values.global.chain.chainID | quote }}
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "polygon-edge.blockscout.fullname" . }}
+                  key: secretKeyBase
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "polygon-edge.blockscout.fullname" . }}
+                  key: dbUrl
+            - name: ECTO_USE_SSL
+              value: {{ .Values.extraFeatures.blockscout.config.ectoUseSSL | quote }}
+            - name: MIX_ENV
+              value: {{ .Values.extraFeatures.blockscout.config.mixEnv | quote }}
+            - name: DISABLE_EXCHANGE_RATES
+              value: {{ .Values.extraFeatures.blockscout.config.disableExchangeRates | quote }}
+            - name: FETCH_REWARD_WAY
+              value: {{ .Values.extraFeatures.blockscout.config.fetchRewardWay | quote }}
+            - name: INDEXER_DISABLE_BLOCK_REWARD_FETCHER
+              value: {{ .Values.extraFeatures.blockscout.config.indexerDisableBlockRewardFetcher | quote }}
+            - name: INDEXER_DISABLE_INTERNAL_TRANSACTIONS_FETCHER
+              value: {{ .Values.extraFeatures.blockscout.config.indexerDisableInternalTransactionsFetcher | quote }}
+            - name: INDEXER_DISABLE_CATALOGED_TOKEN_UPDATER_FETCHER
+              value: {{ .Values.extraFeatures.blockscout.config.indexerDisableCatalogedTokenUpdaterFetcher | quote }}
+            - name: INDEXER_EMPTY_BLOCKS_SANITIZER_BATCH_SIZE
+              value: {{ .Values.extraFeatures.blockscout.config.indexerEmptyBlocksSanitizerBatchSize | quote }}
+            - name: INDEXER_DISABLE_PENDING_TRANSACTIONS_FETCHER
+              value: {{ .Values.extraFeatures.blockscout.config.indexerDisablePendingTransactionsFetcher | quote }}
+          {{- with .Values.extraFeatures.blockscout.config.extraEnvs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: {{ .Values.extraFeatures.blockscout.service.namedPort | quote}}
+              containerPort: {{ .Values.extraFeatures.blockscout.service.port | int }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.extraFeatures.blockscout.service.namedPort | quote}}
+            initialDelaySeconds: {{ .Values.extraFeatures.blockscout.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.extraFeatures.blockscout.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.extraFeatures.blockscout.livenessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.extraFeatures.blockscout.livenessProbe.successThreshold }}
+            failureThreshold: {{ .Values.extraFeatures.blockscout.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.extraFeatures.blockscout.service.namedPort | quote}}
+            initialDelaySeconds: {{ .Values.extraFeatures.blockscout.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.extraFeatures.blockscout.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.extraFeatures.blockscout.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.extraFeatures.blockscout.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.extraFeatures.blockscout.readinessProbe.failureThreshold }}
+          {{- with .Values.extraFeatures.blockscout.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.extraFeatures.blockscout.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.extraFeatures.blockscout.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.extraFeatures.blockscout.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end -}}

@@ -1,0 +1,26 @@
+{{- if .Values.extraFeatures.blockscout.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+{{- if .Values.extraFeatures.blockscout.service.annotations }}
+  annotations:
+  {{- range $key, $value := .Values.extraFeatures.blockscout.service.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+  name: {{ template "polygon-edge.blockscout.fullname" . }}
+  labels:
+    {{- include "polygon-edge.labels" (dict "context" . "component" .Values.extraFeatures.blockscout.name "name" .Values.extraFeatures.blockscout.name) | nindent 4 }}
+{{- if .Values.extraFeatures.blockscout.service.labels }}
+{{- toYaml .Values.extraFeatures.blockscout.service.labels | nindent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.extraFeatures.blockscout.service.type }}
+  ports:
+  - name: blockscout-http
+    protocol: TCP
+    port: {{ .Values.extraFeatures.blockscout.service.port | int }}
+    targetPort: {{ .Values.extraFeatures.blockscout.service.namedPort | quote}}
+  selector:
+    {{- include "polygon-edge.selectorLabels" (dict "context" . "component" .Values.extraFeatures.blockscout.name "name" .Values.extraFeatures.blockscout.name) | nindent 4 }}
+{{- end -}}
