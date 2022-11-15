@@ -44,6 +44,25 @@ global:
     create: false
     # -- Default deny all ingress
     defaultDenyIngress: false
+  
+  # -- Chain globals
+  chain: 
+    # -- The Chain ID (default 100)
+    chainID: ""
+
+  # -- Blockscout database globals
+  postgresql:
+    auth:
+      # -- Blockscout database username
+      username: blockscout
+      # -- Blockscout database password
+      password: blockscout
+      # -- Blockscout database name
+      database: blockscout
+    service:
+      ports:
+        # -- Blockscout database port
+        postgresql: 5432
 
 secretsManagerConfig:
   # -- The secrets manager type. one of the following: `local`, `aws-ssm`, `gcp-ssm`, or `hashicorp-vault`
@@ -85,8 +104,6 @@ genesis:
     ibftValidatorType: bls
     # -- The maximum amount of gas used by all transactions
     blockGasLimit: '5242880'
-    # -- The chain ID
-    chainID: &chainID '100'
     # -- Max number of validators for a Proof of Stake 
     maxValidatorCount: '9007199254740990'
     # -- Min number of validators for a Proof of Stake 
@@ -310,19 +327,19 @@ config:
     # -- Enable Datadog 
     enabled: false
 
-# -- Extra features
 extraFeatures:
-  # -- Blockexplorer - Blockscout https://docs.blockscout.com/
   blockscout:
-    # -- Enable Blockscout 
+    # -- Enable Blockscout (https://docs.blockscout.com/)
     enabled: false
     # -- Identifier for blockscout resources
     name: blockscout
     
-    # -- Image
     image:
+      # -- Blockscout container repository
       repository: docker.io/blockscout/blockscout
+      # -- Image pull policy
       pullPolicy: IfNotPresent
+      # -- Image tag
       tag: "4.1.8"
     
     # -- Replica count
@@ -342,35 +359,49 @@ extraFeatures:
     # -- Affinity
     affinity: {}
 
-    # -- Autoscaling
     autoscaling:
+      # -- Enable autoscaling
       enabled: false
+      # -- Maximum number of replicas
       minReplicas: 1
+      # -- Minimum number of replicas
       maxReplicas: 10
+      # -- Target CPU percentage
       targetCPUUtilizationPercentage: 90
+      # -- Target Memory utilization percentage
       targetMemoryUtilizationPercentage: 90
     
-    # -- Service
     service:
+      # -- Service name
       namedPort: http
+      # -- Service port
       port: 4000
+      # -- Service annotations
       annotations: {}
+      # -- Service labels
       labels: {}
+      # -- Service type
       type: ClusterIP
 
-    # -- Ingress   
     ingress:
+      # -- Disable or enable ingress
       enabled: false
       # -- The ingress class name
       ingressClassName: ""
+      # -- Ingress annotations
       annotations: {}
+      # -- Ingress paths
       paths:
       - /
+      # -- Ingress path type
       pathType: Prefix
       # -- Extra ingress paths
       extraPaths: []
+      # -- Ingress hosts
       hosts: []
+      # -- Ingress TLS parameters
       tls: []
+      # -- Ingress lables
       labels: {}
     
     readinessProbe:
@@ -400,14 +431,6 @@ extraFeatures:
     database:
       # -- Enable local postgresql database
       enabled: true
-      # -- Postgres user
-      dbUser: &dbUser blockscout
-      # -- Postgres  password
-      dbPass: &dbPass changeme
-      # -- Postgres port
-      dbPort: &dbPort 5432
-      # -- Postgres database 
-      dbName: &dbName blockscout
       # -- External database connection
       external: 
         # -- Remote database connection string
@@ -415,33 +438,38 @@ extraFeatures:
     
     # -- Blockchain configuration
     config:
+      # -- Coin symbol
       coinSymbol: EDGE
+      # -- Coin name
       coinName: Edge Coin
-      chainID: *chainID
+      # -- Blockscout instance logo
       logo: /images/blockscout_logo.svg
+      # -- Blockscout instance footer logo
       logoFooter: /images/blockscout_logo.svg
+      # -- Use SSL internally
       ectoUseSSL: false
+      # -- Set producion environment
       mixEnv: prod
+      # -- Disable exchange rates fetch
       disableExchangeRates: true
+      # -- Fetch mine rewards manually
       fetchRewardWay: manual
+      # -- Disable block rewards fetcher
       indexerDisableBlockRewardFetcher: true
+      # -- Disable internal transactions fetcher
       indexerDisableInternalTransactionsFetcher: true
+      # -- Disable cataloged token updater fetcher
       indexerDisableCatalogedTokenUpdaterFetcher: true
+      # -- Empty block sanitizer batch size
       indexerEmptyBlocksSanitizerBatchSize: 1000
-      indexerDisablePendingTransactionsFetcher: true
-      # - Extra environment variables for Blockscout configuration
+      # -- Enable pending transactions fetcher
+      indexerDisablePendingTransactionsFetcher: false
+      # -- Extra environment variables for Blockscout configuration (https://docs.blockscout.com/for-developers/information-and-settings/env-variables)
       extraEnvs: []
 
-# -- PostgreSQL subchart as backend for Blockscout
 postgresql:
+# -- Blockscout database name override
   nameOverride: polygon-edge-blockscout-database
-  auth:
-    username: *dbUser
-    password: *dbPass
-    database: *dbName
-  primary:
-    service:
-      ports:
-        postgresql: *dbPort
-    persistence:
-      size: 10Gi
+  persistence:
+    # -- Permanent volume size
+    size: 10Gi

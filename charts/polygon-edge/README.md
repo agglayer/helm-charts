@@ -57,25 +57,45 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | apiVersionOverrides.ingress | string | `""` | Override the ingress API version |
-| extraFeatures | object | `{"blockscout":{"affinity":{},"autoscaling":{"enabled":false,"maxReplicas":10,"minReplicas":1,"targetCPUUtilizationPercentage":90,"targetMemoryUtilizationPercentage":90},"config":{"chainID":"100","coinName":"Edge Coin","coinSymbol":"EDGE","disableExchangeRates":true,"ectoUseSSL":false,"extraEnvs":[],"fetchRewardWay":"manual","indexerDisableBlockRewardFetcher":true,"indexerDisableCatalogedTokenUpdaterFetcher":true,"indexerDisableInternalTransactionsFetcher":true,"indexerDisablePendingTransactionsFetcher":true,"indexerEmptyBlocksSanitizerBatchSize":1000,"logo":"/images/blockscout_logo.svg","logoFooter":"/images/blockscout_logo.svg","mixEnv":"prod"},"database":{"dbName":"blockscout","dbPass":"changeme","dbPort":5432,"dbUser":"blockscout","enabled":true,"external":{"connString":""}},"enabled":false,"image":{"pullPolicy":"IfNotPresent","repository":"docker.io/blockscout/blockscout","tag":"4.1.8"},"imagePullSecrets":[],"ingress":{"annotations":{},"enabled":false,"extraPaths":[],"hosts":[],"ingressClassName":"","labels":{},"pathType":"Prefix","paths":["/"],"tls":[]},"livenessProbe":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":1},"name":"blockscout","nodeSelector":{},"podAnnotations":{},"readinessProbe":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":1},"replicaCount":1,"resources":{},"securityContext":{},"service":{"annotations":{},"labels":{},"namedPort":"http","port":4000,"type":"ClusterIP"},"tolerations":[]}}` | Extra features |
-| extraFeatures.blockscout | object | `{"affinity":{},"autoscaling":{"enabled":false,"maxReplicas":10,"minReplicas":1,"targetCPUUtilizationPercentage":90,"targetMemoryUtilizationPercentage":90},"config":{"chainID":"100","coinName":"Edge Coin","coinSymbol":"EDGE","disableExchangeRates":true,"ectoUseSSL":false,"extraEnvs":[],"fetchRewardWay":"manual","indexerDisableBlockRewardFetcher":true,"indexerDisableCatalogedTokenUpdaterFetcher":true,"indexerDisableInternalTransactionsFetcher":true,"indexerDisablePendingTransactionsFetcher":true,"indexerEmptyBlocksSanitizerBatchSize":1000,"logo":"/images/blockscout_logo.svg","logoFooter":"/images/blockscout_logo.svg","mixEnv":"prod"},"database":{"dbName":"blockscout","dbPass":"changeme","dbPort":5432,"dbUser":"blockscout","enabled":true,"external":{"connString":""}},"enabled":false,"image":{"pullPolicy":"IfNotPresent","repository":"docker.io/blockscout/blockscout","tag":"4.1.8"},"imagePullSecrets":[],"ingress":{"annotations":{},"enabled":false,"extraPaths":[],"hosts":[],"ingressClassName":"","labels":{},"pathType":"Prefix","paths":["/"],"tls":[]},"livenessProbe":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":1},"name":"blockscout","nodeSelector":{},"podAnnotations":{},"readinessProbe":{"failureThreshold":3,"initialDelaySeconds":10,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":1},"replicaCount":1,"resources":{},"securityContext":{},"service":{"annotations":{},"labels":{},"namedPort":"http","port":4000,"type":"ClusterIP"},"tolerations":[]}` | Blockexplorer - Blockscout https://docs.blockscout.com/ |
 | extraFeatures.blockscout.affinity | object | `{}` | Affinity |
-| extraFeatures.blockscout.autoscaling | object | `{"enabled":false,"maxReplicas":10,"minReplicas":1,"targetCPUUtilizationPercentage":90,"targetMemoryUtilizationPercentage":90}` | Autoscaling |
-| extraFeatures.blockscout.config | object | `{"chainID":"100","coinName":"Edge Coin","coinSymbol":"EDGE","disableExchangeRates":true,"ectoUseSSL":false,"extraEnvs":[],"fetchRewardWay":"manual","indexerDisableBlockRewardFetcher":true,"indexerDisableCatalogedTokenUpdaterFetcher":true,"indexerDisableInternalTransactionsFetcher":true,"indexerDisablePendingTransactionsFetcher":true,"indexerEmptyBlocksSanitizerBatchSize":1000,"logo":"/images/blockscout_logo.svg","logoFooter":"/images/blockscout_logo.svg","mixEnv":"prod"}` | Blockchain configuration |
-| extraFeatures.blockscout.database | object | `{"dbName":"blockscout","dbPass":"changeme","dbPort":5432,"dbUser":"blockscout","enabled":true,"external":{"connString":""}}` | Blockscout database backend |
-| extraFeatures.blockscout.database.dbName | string | `"blockscout"` | Postgres database  |
-| extraFeatures.blockscout.database.dbPass | string | `"changeme"` | Postgres  password |
-| extraFeatures.blockscout.database.dbPort | int | `5432` | Postgres port |
-| extraFeatures.blockscout.database.dbUser | string | `"blockscout"` | Postgres user |
+| extraFeatures.blockscout.autoscaling.enabled | bool | `false` | Enable autoscaling |
+| extraFeatures.blockscout.autoscaling.maxReplicas | int | `10` | Minimum number of replicas |
+| extraFeatures.blockscout.autoscaling.minReplicas | int | `1` | Maximum number of replicas |
+| extraFeatures.blockscout.autoscaling.targetCPUUtilizationPercentage | int | `90` | Target CPU percentage |
+| extraFeatures.blockscout.autoscaling.targetMemoryUtilizationPercentage | int | `90` | Target Memory utilization percentage |
+| extraFeatures.blockscout.config | object | `{"coinName":"Edge Coin","coinSymbol":"EDGE","disableExchangeRates":true,"ectoUseSSL":false,"extraEnvs":[],"fetchRewardWay":"manual","indexerDisableBlockRewardFetcher":true,"indexerDisableCatalogedTokenUpdaterFetcher":true,"indexerDisableInternalTransactionsFetcher":true,"indexerDisablePendingTransactionsFetcher":false,"indexerEmptyBlocksSanitizerBatchSize":1000,"logo":"/images/blockscout_logo.svg","logoFooter":"/images/blockscout_logo.svg","mixEnv":"prod"}` | Blockchain configuration |
+| extraFeatures.blockscout.config.coinName | string | `"Edge Coin"` | Coin name |
+| extraFeatures.blockscout.config.coinSymbol | string | `"EDGE"` | Coin symbol |
+| extraFeatures.blockscout.config.disableExchangeRates | bool | `true` | Disable exchange rates fetch |
+| extraFeatures.blockscout.config.ectoUseSSL | bool | `false` | Use SSL internally |
+| extraFeatures.blockscout.config.extraEnvs | list | `[]` | Extra environment variables for Blockscout configuration (https://docs.blockscout.com/for-developers/information-and-settings/env-variables) |
+| extraFeatures.blockscout.config.fetchRewardWay | string | `"manual"` | Fetch mine rewards manually |
+| extraFeatures.blockscout.config.indexerDisableBlockRewardFetcher | bool | `true` | Disable block rewards fetcher |
+| extraFeatures.blockscout.config.indexerDisableCatalogedTokenUpdaterFetcher | bool | `true` | Disable cataloged token updater fetcher |
+| extraFeatures.blockscout.config.indexerDisableInternalTransactionsFetcher | bool | `true` | Disable internal transactions fetcher |
+| extraFeatures.blockscout.config.indexerDisablePendingTransactionsFetcher | bool | `false` | Enable pending transactions fetcher |
+| extraFeatures.blockscout.config.indexerEmptyBlocksSanitizerBatchSize | int | `1000` | Empty block sanitizer batch size |
+| extraFeatures.blockscout.config.logo | string | `"/images/blockscout_logo.svg"` | Blockscout instance logo |
+| extraFeatures.blockscout.config.logoFooter | string | `"/images/blockscout_logo.svg"` | Blockscout instance footer logo |
+| extraFeatures.blockscout.config.mixEnv | string | `"prod"` | Set producion environment |
+| extraFeatures.blockscout.database | object | `{"enabled":true,"external":{"connString":""}}` | Blockscout database backend |
 | extraFeatures.blockscout.database.enabled | bool | `true` | Enable local postgresql database |
 | extraFeatures.blockscout.database.external | object | `{"connString":""}` | External database connection |
 | extraFeatures.blockscout.database.external.connString | string | `""` | Remote database connection string |
-| extraFeatures.blockscout.enabled | bool | `false` | Enable Blockscout  |
-| extraFeatures.blockscout.image | object | `{"pullPolicy":"IfNotPresent","repository":"docker.io/blockscout/blockscout","tag":"4.1.8"}` | Image |
+| extraFeatures.blockscout.enabled | bool | `false` | Enable Blockscout (https://docs.blockscout.com/) |
+| extraFeatures.blockscout.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| extraFeatures.blockscout.image.repository | string | `"docker.io/blockscout/blockscout"` | Blockscout container repository |
+| extraFeatures.blockscout.image.tag | string | `"4.1.8"` | Image tag |
 | extraFeatures.blockscout.imagePullSecrets | list | `[]` | Image pull secrets |
-| extraFeatures.blockscout.ingress | object | `{"annotations":{},"enabled":false,"extraPaths":[],"hosts":[],"ingressClassName":"","labels":{},"pathType":"Prefix","paths":["/"],"tls":[]}` | Ingress    |
+| extraFeatures.blockscout.ingress.annotations | object | `{}` | Ingress annotations |
+| extraFeatures.blockscout.ingress.enabled | bool | `false` | Disable or enable ingress |
 | extraFeatures.blockscout.ingress.extraPaths | list | `[]` | Extra ingress paths |
+| extraFeatures.blockscout.ingress.hosts | list | `[]` | Ingress hosts |
 | extraFeatures.blockscout.ingress.ingressClassName | string | `""` | The ingress class name |
+| extraFeatures.blockscout.ingress.labels | object | `{}` | Ingress lables |
+| extraFeatures.blockscout.ingress.pathType | string | `"Prefix"` | Ingress path type |
+| extraFeatures.blockscout.ingress.paths | list | `["/"]` | Ingress paths |
+| extraFeatures.blockscout.ingress.tls | list | `[]` | Ingress TLS parameters |
 | extraFeatures.blockscout.livenessProbe.failureThreshold | int | `3` | Minimum consecutive failures for the [probe] to be considered failed after having succeeded |
 | extraFeatures.blockscout.livenessProbe.initialDelaySeconds | int | `10` | Number of seconds after the container has started before [probe] is initiated |
 | extraFeatures.blockscout.livenessProbe.periodSeconds | int | `10` | How often (in seconds) to perform the [probe] |
@@ -92,10 +112,16 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | extraFeatures.blockscout.replicaCount | int | `1` | Replica count |
 | extraFeatures.blockscout.resources | object | `{}` | Resources |
 | extraFeatures.blockscout.securityContext | object | `{}` | Security context |
-| extraFeatures.blockscout.service | object | `{"annotations":{},"labels":{},"namedPort":"http","port":4000,"type":"ClusterIP"}` | Service |
+| extraFeatures.blockscout.service.annotations | object | `{}` | Service annotations |
+| extraFeatures.blockscout.service.labels | object | `{}` | Service labels |
+| extraFeatures.blockscout.service.namedPort | string | `"http"` | Service name |
+| extraFeatures.blockscout.service.port | int | `4000` | Service port |
+| extraFeatures.blockscout.service.type | string | `"ClusterIP"` | Service type |
 | extraFeatures.blockscout.tolerations | list | `[]` | Tolerations |
 | fullnameOverride | string | `""` | Override for the full resource. (`"polygon-edge.fullname"`) |
 | global.additionalLabels | object | `{}` | Additional labels for all resources |
+| global.chain | object | `{"chainID":""}` | Chain globals |
+| global.chain.chainID | string | `""` | The Chain ID (default 100) |
 | global.hostAliases | list | `[]` | A list of IP to hostname(s) relation |
 | global.image.imagePullPolicy | string | `"IfNotPresent"` | The `imagePullPolicy` for all Polygon Edge containers. If not provided, uses Chart app version |
 | global.image.repository | string | `"docker.io/0xpolygon/polygon-edge"` | The repository for all Polygon Edge containers |
@@ -105,10 +131,16 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | global.networkPolicy.defaultDenyIngress | bool | `false` | Default deny all ingress |
 | global.podAnnotations | object | `{}` | Annotations for all pods |
 | global.podLabels | object | `{}` | Labels for all pods |
+| global.postgresql | object | `{"auth":{"database":"blockscout","password":"blockscout","username":"blockscout"},"service":{"ports":{"postgresql":5432}}}` | Blockscout database globals |
+| global.postgresql.auth.database | string | `"blockscout"` | Blockscout database name |
+| global.postgresql.auth.password | string | `"blockscout"` | Blockscout database password |
+| global.postgresql.auth.username | string | `"blockscout"` | Blockscout database username |
+| global.postgresql.service.ports.postgresql | int | `5432` | Blockscout database port |
 | global.securityContext | object | `{}` | The `securityContext` for all pods. |
 | kubeVersionOverride | string | `""` | Override the Kubernetes version |
 | nameOverride | string | `"polygon-edge"` | Override for resource names  |
-| postgresql | object | `{"auth":{"database":"blockscout","password":"changeme","username":"blockscout"},"nameOverride":"polygon-edge-blockscout-database","primary":{"persistence":{"size":"10Gi"},"service":{"ports":{"postgresql":5432}}}}` | PostgreSQL subchart as backend for Blockscout |
+| postgresql.nameOverride | string | `"polygon-edge-blockscout-database"` | Blockscout database name override |
+| postgresql.persistence.size | string | `"10Gi"` | Permanent volume size |
 
 ## Polygon Edge Config
 
@@ -136,7 +168,6 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | genesis.chainConfig.blockGasLimit | string | `"5242880"` | The maximum amount of gas used by all transactions |
-| genesis.chainConfig.chainID | string | `"100"` | The chain ID |
 | genesis.chainConfig.consensus | string | `"ibft"` | The consensus protocol |
 | genesis.chainConfig.epochSize | string | `"100000"` | The Epoch size for the chain. |
 | genesis.chainConfig.ibftValidatorType | string | `"bls"` | The type of validators in IBFT  |

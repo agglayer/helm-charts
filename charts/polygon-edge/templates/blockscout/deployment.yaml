@@ -58,7 +58,7 @@ spec:
             - name: ETHEREUM_JSONRPC_WS_URL
               value: ws://{{ include "polygon-edge.validator.fullname" . }}:{{ .Values.validator.service.jsonRPC.port }}/ws
             - name: CHAIN_ID
-              value: {{ .Values.extraFeatures.blockscout.config.chainID | quote }}
+              value: {{ default "100" .Values.global.chain.chainID | quote }}
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:

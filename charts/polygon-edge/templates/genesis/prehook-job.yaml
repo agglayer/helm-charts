@@ -126,10 +126,8 @@ spec:
               --consensus \
             {{ .Values.genesis.chainConfig.consensus | quote }} \
             {{- end }}
-            {{- if .Values.genesis.chainConfig.chainID }}
               --chain-id \
-            {{ .Values.genesis.chainConfig.chainID | quote }} \
-            {{- end }}
+            {{ default "100" .Values.global.chain.chainID | quote }} \
             {{- if .Values.genesis.chainConfig.minValidatorCount }} \
               --min-validator-count \
             {{ .Values.genesis.chainConfig.minValidatorCount | quote }} \
