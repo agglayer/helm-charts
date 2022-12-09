@@ -76,7 +76,7 @@ secretsManagerConfig:
     # -- The AWS region, if backend is `aws`
     region: ""
     # -- The AWS SSM Parameter key, if backend is `aws`
-    ssmParameterName: ""
+    ssmParameterPath: ""
   vault:
     # -- The Vault server URL, if backend is `hashicorp-vault`
     serverUrl: ""
@@ -160,6 +160,8 @@ validator:
     # -- The `accessModes` for the validator persistent volume claims
     accessModes:
       - ReadWriteOnce
+    # -- The Storage Class name for the validator persistent volume claims
+    storageClassName: "" 
     resources:
       requests:
         # -- The requested storage for the validator persistent volume claims 

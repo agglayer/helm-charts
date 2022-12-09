@@ -1,7 +1,7 @@
 apiVersion: v2
 name: polygon-edge
 description: Helm chart to deploy Polygon Edge to a Kubernetes environment. 
-version: 0.1.0
+version: 0.1.1
 appVersion: 0.6.1
 home: https://docs.polygon.technology/docs/edge/overview/
 icon: https://logowik.com/content/uploads/images/t_polygon-edge8086.jpg
