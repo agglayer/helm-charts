@@ -176,7 +176,7 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | genesis.chainConfig.minValidatorCount | string | `"1"` | Min number of validators for a Proof of Stake  |
 | genesis.chainConfig.name | string | `"polygon-edge"` | The chain name in genesis  |
 | genesis.chainConfig.pos | bool | `false` | Use Proof of Stake over Proof of Authority |
-| genesis.chainConfig.premine | string | `""` | The premine address |
+| genesis.chainConfig.premine | object | `{}` | The premine addresses map |
 | genesis.chainJson | string | `""` | A Pre-generated chain JSON. |
 | genesis.envFrom | list | `[]` | The `envFrom` for the genesis job |
 | genesis.extraEnvs | list | `[]` | Extra environment variables for the genesis job |

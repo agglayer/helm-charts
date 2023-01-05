@@ -106,9 +106,9 @@ spec:
           - |
             # This mess of Helm templating loops through each replica and grabs their needed address/nodeID.
             polygon-edge genesis \
-            {{- if .Values.genesis.chainConfig.premine }}
+            {{- range $k, $v :=  .Values.genesis.chainConfig.premine }}
               --premine \
-            {{ .Values.genesis.chainConfig.premine | quote }} \
+              '{{ $k }}:{{ $v }}' \
             {{- end }}
             {{- if .Values.genesis.chainConfig.maxValidatorCount }}
               --max-validator-count \

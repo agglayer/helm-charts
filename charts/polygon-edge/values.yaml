@@ -92,8 +92,8 @@ genesis:
   chainConfig:
     # -- Use Proof of Stake over Proof of Authority
     pos: false
-    # -- The premine address
-    premine: ''
+    # -- The premine addresses map
+    premine: {}
     # -- The chain name in genesis 
     name: polygon-edge
     # -- The Epoch size for the chain.
