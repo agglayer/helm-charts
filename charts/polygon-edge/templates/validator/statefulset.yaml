@@ -93,6 +93,8 @@ spec:
           - {{ .Values.validator.serverConfig.maxEnqueued | quote }}
           - --max-peers
           - {{ .Values.validator.serverConfig.maxPeers | quote }}
+          - --max-slots
+          - {{ .Values.validator.serverConfig.maxSlots | quote }}
           - --price-limit
           - {{ .Values.validator.serverConfig.priceLimit | quote }}
           - --libp2p

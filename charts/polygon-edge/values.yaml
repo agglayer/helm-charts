@@ -311,6 +311,8 @@ validator:
     maxEnqueued: 128
     # -- The client's total max allowed peers
     maxPeers: 40
+    # -- The client's total max allowed peers
+    maxSlots: 4096
     # -- The min gas price limit to enforce for inbound transactions
     priceLimit: 0
     # -- Sets the target block gas limit for the existing chain
