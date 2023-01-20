@@ -245,7 +245,7 @@ helm install -n polygon-edge polygon-edge --set secretsManagerConfig.type=hashic
 | validator.serverConfig.jsonRPCBlockRangeLimit | int | `1000` | The max block range to consider when executing JSON-RPC requests (0 disables) |
 | validator.serverConfig.maxEnqueued | int | `128` | Max number of enqueued transactions per account |
 | validator.serverConfig.maxPeers | int | `40` | The client's total max allowed peers |
-| validator.serverConfig.maxSlots | int | `4096` | The client's total max allowed peers |
+| validator.serverConfig.maxSlots | int | `4096` | Sets maximum slots in the pool |
 | validator.serverConfig.priceLimit | int | `0` | The min gas price limit to enforce for inbound transactions |
 | validator.service.annotations | object | `{}` | The annotations for the Polygon Edge validator service |
 | validator.service.externalIPs | list | `[]` | The service external IPs  |

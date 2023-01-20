@@ -311,7 +311,7 @@ validator:
     maxEnqueued: 128
     # -- The client's total max allowed peers
     maxPeers: 40
-    # -- The client's total max allowed peers
+    # -- Sets maximum slots in the pool
     maxSlots: 4096
     # -- The min gas price limit to enforce for inbound transactions
     priceLimit: 0
