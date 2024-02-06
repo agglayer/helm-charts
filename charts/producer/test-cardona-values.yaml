@@ -1,0 +1,47 @@
+# Default values for cardona-producer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+name: cardona-producer
+commonLabels:
+  team: devstudio 
+  location: europe-west-2
+  host: gcp-openapi-gke-dev
+  env: dev
+  tag-version: v2
+  app: cardona-producer
+
+replicaCount: 1
+
+podAnnotations: 
+  operator.1password.io/inject: "cardona-producer"  
+
+containers:
+  - name: cardona-producer
+    image: europe-west2-docker.pkg.dev/prj-polygonlabs-shared-dev/polygonlabs-docker-dev/bridge-api-services/cardona-producer:03939e87c74cba53defb33a1a102b7a93c278e14
+    imagePullPolicy: IfNotPresent
+    port: 3000
+    command:
+    - npm
+    - start 
+    envFromEnabled: true
+    onePassword:
+      InjectorEnvs:  # 1password items
+        # ENV_NAME: OP_ITEM_PATH
+        HTTP_PROVIDER: op://devstudio-dev/cardona-producer/HTTP_PROVIDER
+        KAFKA_CONNECTION_URL: op://devstudio-dev/cardona-producer/KAFKA_CONNECTION_URL
+        MONGO_URL: op://devstudio-dev/cardona-producer/MONGO_URL
+
+service:
+  type: NodePort
+  port: 3000
+  targetPort: 3000
+
+configMapData: 
+  #HTTP_PROVIDER: 
+  START_BLOCK: "0"
+  #BLOCK_POLLING_TIMEOUT: 
+  PRODUCER_TOPIC: polygon.2442.blocks
+  #LOGGER_ENV
+  SENTRY_ENVIRONMENT: development
+  
