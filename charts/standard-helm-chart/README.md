@@ -128,14 +128,14 @@ configMapData:
     <CONFIG_MAP_DATA>
 ```
 
-## Deploying webflow-api helm chart
+## Deploying helm chart
 
 Before deploying this Helm chart, ensure that you have performed the following steps:
 
 * Confirm your ability to connect to the cluster.
 * Install the Helm binary.
 * Obtain the vault connect credentials: _1password-credentials.json_ and access token.
-* Reserve a global static IP and configure the name in the values file polygon-webflow-apis.yaml. (In the current configuration it is reserved as `webflow-api-ingress-static-ip`)
+* If Ingress is needed, reserve a global static IP and configure the name in the values file.
 
 ## Provisioning
 
