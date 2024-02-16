@@ -12,6 +12,10 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  {{- with .Values.strategy }}
+  strategy:
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
   replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
