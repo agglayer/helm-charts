@@ -1,0 +1,27 @@
+global:
+  name: foo
+  host: gcp
+  location: unspecified
+  env: dev
+  role: permissionless-node
+  team: cdk
+  p_service: cdk
+  tag: v3
+
+postgresql:
+  enabled: true
+  nameOverride:
+  global:
+    postgresql:
+      auth:
+        postgresPassword: dookie
+        username: spideyman
+        password: booger
+        database: state_db
+  primary:
+    initdb:
+      scripts:
+        00_init_db.sql: |
+          CREATE DATABASE pool_db;
+          CREATE DATABASE state_db;
+          CREATE DATABASE event_db;
