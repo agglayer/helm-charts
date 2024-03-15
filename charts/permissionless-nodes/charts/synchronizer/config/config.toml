@@ -112,10 +112,10 @@ DefaultGasPriceWei = 1000000000
 MaxGasPriceWei = 0
 
 [MTClient]
-URI  = "127.0.0.1:50061"
+URI  = "pless001-executor:50061"
 
 [Executor]
-URI = "127.0.0.1:50071"
+URI = "pless001-executor:50071"
 MaxGRPCMessageSize = 100000000
 
 [Metrics]
