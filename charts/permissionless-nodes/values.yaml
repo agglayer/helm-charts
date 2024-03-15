@@ -1,4 +1,5 @@
 global:
+  # tags for identifying/tracking resources
   name: foo
   host: gcp
   location: unspecified
@@ -8,9 +9,18 @@ global:
   p_service: cdk
   tag: v3
 
+synchronizer:
+  image:
+    repository: hermeznetwork/zkevm-node
+    tag: "v0.6.1"
+
+executor:
+  image:
+    repository: hermeznetwork/zkevm-prover
+    tag: "v5.0.7"
+
 postgresql:
   enabled: true
-  nameOverride:
   global:
     postgresql:
       auth:
@@ -25,3 +35,4 @@ postgresql:
           CREATE DATABASE pool_db;
           CREATE DATABASE state_db;
           CREATE DATABASE event_db;
+          CREATE DATABASE executor_db;
