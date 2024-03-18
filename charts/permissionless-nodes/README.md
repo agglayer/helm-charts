@@ -36,4 +36,6 @@ TODO: template config file to use secrets (above)
 
 ## RPC
 
+TODO: same config stuff as on executor, they share the same config file
+
 ## Postgresql (optional)
