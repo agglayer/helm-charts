@@ -3,7 +3,7 @@
   "runExecutorClient": false,
   "runExecutorClientMultithread": false,
 
-  "runHashDBServer": false,
+  "runHashDBServer": true,
   "runHashDBTest": false,
 
   "runAggregatorServer": false,
@@ -40,8 +40,8 @@
   "loadDBToMemCache": true,
   "loadDBToMemCacheInParallel": false,
   "loadDBToMemTimeout": 30000000,
-  "dbMTCacheSize": 16384,
-  "dbProgramCacheSize": 16384,
+  "dbMTCacheSize": 8192,
+  "dbProgramCacheSize": 1024,
 
   "opcodeTracer": false,
   "logRemoteDbReads": false,
@@ -92,7 +92,7 @@
   "dbProgramTableName": "state.program",
   "dbMultiWrite": true,
   "dbConnectionsPool": true,
-  "dbNumberOfPoolConnections": 25,
+  "dbNumberOfPoolConnections": 30,
   "dbMetrics": false,
   "dbClearCache": false,
   "dbGetTree": false,
