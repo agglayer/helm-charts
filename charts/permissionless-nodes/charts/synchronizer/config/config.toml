@@ -14,7 +14,7 @@ Outputs = ["stderr"]
 User = "spideyman"
 Password = "booger"
 Name = "state_db"
-Host = "pless001-postgresql"
+Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
 EnableLog = false
 MaxConns = 20
@@ -58,7 +58,7 @@ L2GasPriceSuggesterFactor = 0.5
 User = "spideyman"
 Password = "booger"
 Name = "pool_db"
-Host = "pless001-postgresql"
+Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
 EnableLog = false
 MaxConns = 200
@@ -112,10 +112,10 @@ DefaultGasPriceWei = 1000000000
 MaxGasPriceWei = 0
 
 [MTClient]
-URI  = "pless001-executor:50061"
+URI  = "{{ .Release.Name }}-executor:50061"
 
 [Executor]
-URI = "pless001-executor:50071"
+URI = "{{ .Release.Name }}-executor:50071"
 MaxGRPCMessageSize = 100000000
 
 [Metrics]
@@ -131,7 +131,7 @@ ProfilingEnabled = true
 User = "spideyman"
 Password = "booger"
 Name = "event_db"
-Host = "pless001-postgresql"
+Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
 EnableLog = false
 MaxConns = 200

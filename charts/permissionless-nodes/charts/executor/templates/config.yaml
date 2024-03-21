@@ -4,4 +4,4 @@ metadata:
   name: executor-config
   namespace: {{ .Release.Namespace }}
 data:
-{{ (.Files.Glob "config/config_executor.json").AsConfig | indent 2 }}
+{{ tpl ((.Files.Glob "config/config_executor.json").AsConfig | indent 2) . }}

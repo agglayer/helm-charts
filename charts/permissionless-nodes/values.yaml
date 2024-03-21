@@ -13,7 +13,14 @@ jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?
   enabled: true
 
+rpc:
+  genesis: validium-bali-04-genesis.json
+  image:
+    repository: hermeznetwork/zkevm-node
+    tag: "v0.6.1"
+
 synchronizer:
+  genesis: validium-bali-04-genesis.json
   image:
     repository: hermeznetwork/zkevm-node
     tag: "v0.6.1"

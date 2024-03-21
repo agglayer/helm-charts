@@ -4,5 +4,6 @@ metadata:
   name: rpc-config
   namespace: {{ .Release.Namespace }}
 data:
-{{ (.Files.Glob "config/config.toml").AsConfig | indent 2 }}
-{{ (.Files.Glob "config/validium-bali-04-genesis.json").AsConfig | indent 2 }}
+{{- $genesis := printf "config/%s" .Values.genesis }}
+{{ tpl ((.Files.Glob "config/config.toml").AsConfig | indent 2) . }}
+{{ tpl ((.Files.Glob $genesis).AsConfig | indent 2) . }}

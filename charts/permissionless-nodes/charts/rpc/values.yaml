@@ -1,6 +1,7 @@
 # Default values for rpc.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+genesis: validium-bali-04-genesis.json
 
 replicaCount: 3
 
@@ -91,21 +92,21 @@ autoscaling:
   targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes:
-  - name: config
-    configMap:
-      name: rpc-config
-      items:
-        - key: "config.toml"
-          path: "config.toml"
-        - key: "validium-bali-04-genesis.json"
-          path: "genesis.json"
-
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts:
-  - name: config
-    mountPath: "/etc/zkevm"
-    readOnly: true
+#volumes:
+#  - name: config
+#    configMap:
+#      name: rpc-config
+#      items:
+#        - key: "config.toml"
+#          path: "config.toml"
+#        - key: "genesis.json"
+#          path: "genesis.json"
+#
+## Additional volumeMounts on the output Deployment definition.
+#volumeMounts:
+#  - name: config
+#    mountPath: "/etc/zkevm"
+#    readOnly: true
 
 nodeSelector: {}
 
