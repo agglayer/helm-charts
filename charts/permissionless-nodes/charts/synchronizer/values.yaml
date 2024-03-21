@@ -42,15 +42,10 @@ service:
   port: 8123
 
 ingress:
-  enabled: true
+  enabled: false
   className: ""
   annotations:
      kubernetes.io/ingress.class: gce
-  hosts:
-    - host: synchronizer.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -83,23 +78,6 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
-
-# Additional volumes on the output Deployment definition.
-#volumes:
-#  - name: config
-#    configMap:
-#      name: synchronizer-config
-#      items:
-#      - key: "config.toml"
-#        path: "config.toml"
-#      - key: "{{ .Values.genesis }}"
-#        path: "genesis.json"
-#
-## Additional volumeMounts on the output Deployment definition.
-#volumeMounts:
-# - name: config
-#   mountPath: "/etc/zkevm"
-#   readOnly: true
 
 nodeSelector: {}
 

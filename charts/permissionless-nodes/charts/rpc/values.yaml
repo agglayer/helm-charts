@@ -53,11 +53,6 @@ ingress:
   className: ""
   annotations:
     kubernetes.io/ingress.class: gce
-  hosts:
-    - host: rpc.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -90,23 +85,6 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
-
-# Additional volumes on the output Deployment definition.
-#volumes:
-#  - name: config
-#    configMap:
-#      name: rpc-config
-#      items:
-#        - key: "config.toml"
-#          path: "config.toml"
-#        - key: "genesis.json"
-#          path: "genesis.json"
-#
-## Additional volumeMounts on the output Deployment definition.
-#volumeMounts:
-#  - name: config
-#    mountPath: "/etc/zkevm"
-#    readOnly: true
 
 nodeSelector: {}
 
