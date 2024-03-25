@@ -9,7 +9,7 @@ This chart deploys resources for a permissionless node used by the Agglayer. The
 
 ## Usage
 
-To deploy a new permissionless node (a.k.a. _pless_), copy the [values file](nodes/bali.yaml) and modify the parameters as needed.
+To deploy a new permissionless node (a.k.a. _pless_), copy the [values file](nodes/pless-rpc-bali-astar-04.yaml) and modify the parameters as needed.
 
 Deploy via helm using `helm install pless-rpc-cardona-idex-06 . --namespace cardona-idex-06 --create-namespace --values nodes/pless-rpc-cardona-idex-06.yaml`
 
