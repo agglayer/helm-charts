@@ -44,12 +44,12 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: NodePort
+  type: LoadBalancer
   rpcPort: 8123
   websocketsPort: 8133
 
 ingress:
-  enabled: true
+  enabled: false
   className: ""
   annotations:
     kubernetes.io/ingress.class: gce
