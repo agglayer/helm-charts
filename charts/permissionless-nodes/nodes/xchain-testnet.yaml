@@ -14,13 +14,13 @@ jumphost:
   enabled: true
 
 rpc:
-  genesis: idex.genesis.json
+  genesis: genesis-jfh-might-be-wrong.json
   image:
     repository: 0xpolygon/cdk-validium-node
     tag: "0.5.13-cdk.6"
 
 synchronizer:
-  genesis: idex.genesis.json
+  genesis: genesis-jfh-might-be-wrong.json
   image:
     repository: 0xpolygon/cdk-validium-node
     tag: "0.5.13-cdk.6"
