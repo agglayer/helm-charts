@@ -16,14 +16,14 @@ jumphost:
 rpc:
   genesis: validium-bali-04-genesis.json
   image:
-    repository: hermeznetwork/zkevm-node
-    tag: v0.6.1
+    repository: 0xpolygon/cdk-validium-node
+    tag: "0.5.13-cdk.6"
 
 synchronizer:
   genesis: validium-bali-04-genesis.json
   image:
-    repository: hermeznetwork/zkevm-node
-    tag: "v0.6.1"
+    repository: 0xpolygon/cdk-validium-node
+    tag: "0.5.13-cdk.6"
 
 executor:
   image:

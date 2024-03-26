@@ -1,6 +1,6 @@
 global:
   # tags for identifying/tracking resources
-  name: pless-rpc-cardona-idex-06
+  name: pless-rpc-cardona-idex-05
   host: gcp
   location: europe-west2
   env: cardona
@@ -14,13 +14,13 @@ jumphost:
   enabled: true
 
 rpc:
-  genesis: genesis-jfh-might-be-wrong.json
+  genesis: idex.genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
     tag: "0.5.13-cdk.6"
 
 synchronizer:
-  genesis: genesis-jfh-might-be-wrong.json
+  genesis: idex.genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
     tag: "0.5.13-cdk.6"
