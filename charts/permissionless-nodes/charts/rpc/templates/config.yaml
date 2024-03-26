@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rpc-config
+  namespace: {{ .Release.Namespace }}
+data:
+{{- $genesis := printf "config/%s" .Values.genesis }}
+{{ tpl ((.Files.Glob "config/config.toml").AsConfig | indent 2) . }}
+{{ tpl ((.Files.Glob $genesis).AsConfig | indent 2) . }}
