@@ -1,3 +1,4 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
 {
   "runExecutorServer": true,
   "runExecutorClient": false,
@@ -86,7 +87,7 @@
   "publicsOutput": "public.json",
   "proofFile": "proof.json",
 
-  "databaseURL": "postgresql://spideyman:booger@{{ .Release.Name }}-postgresql:5432/executor_db",
+  "databaseURL": "postgresql://pless:{{- index $opSecrets.data "dbPlessPassword" | b64dec }}@{{ .Release.Name }}-postgresql:5432/executor_db",
   "databaseURL_disabled": "postgresql://statedb:statedb@127.0.0.1:5432/testdb",
   "dbNodesTableName": "state.nodes",
   "dbProgramTableName": "state.program",
