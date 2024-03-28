@@ -49,48 +49,12 @@ TODO: template dbProgramCacheSize in config_executor.json
 
 ## Synchronizer
 
-TODO: add secrets for db connection
-TODO: add secret for RPC url
-TODO: set executor URL from executor service
-TODO: what is MTClient URI in config?
-TODO: template config file to use secrets (above)
 
 ## RPC
 
-TODO: same config stuff as on executor, they share the same config file
 
-## Postgresql (optional)
+## Postgresql 
 
-TODO: persistent volume mounts
+Postgres is installed/configured using the [Bitnami Postgres Helm chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql). 💜
 
-## Docker config from [website](https://docs.polygon.technology/zkEVM/get-started/deploy-zkevm/configure-prover/?h=ports#configure-services):
-
-```yaml
-zkevm-permissionless-node:
-    container_name: zkevm-permissionless-node
-    image: hermeznetwork/zkevm-node:v0.2.1
-    ports:
-      - 8125:8125
-    environment:
-      - ZKEVM_NODE_ISTRUSTEDSEQUENCER=false
-      - ZKEVM_NODE_STATEDB_USER=test_user
-      - ZKEVM_NODE_STATEDB_PASSWORD=test_password
-      - ZKEVM_NODE_STATEDB_NAME=state_db
-      - ZKEVM_NODE_STATEDB_HOST=zkevm-permissionless-db
-      - ZKEVM_NODE_POOL_DB_USER=test_user
-      - ZKEVM_NODE_POOL_DB_PASSWORD=test_password
-      - ZKEVM_NODE_POOL_DB_NAME=pool_db
-      - ZKEVM_NODE_POOL_DB_HOST=zkevm-permissionless-db
-      - ZKEVM_NODE_RPC_PORT=8125
-      - ZKEVM_NODE_RPC_SEQUENCERNODEURI=http://zkevm-json-rpc:8123
-      - ZKEVM_NODE_MTCLIENT_URI=zkevm-permissionless-prover:50061
-      - ZKEVM_NODE_EXECUTOR_URI=zkevm-permissionless-prover:50071
-    volumes:
-      - ./config/environments/testnet/public.node.config.toml:/app/config.toml
-      - ./config/environments/testnet/public.genesis.config.json:/app/genesis.json
-    command:
-      - "/bin/sh"
-      - "-c"
-      - '/app/zkevm-node run --network custom --custom-network-file /app/genesis.json --cfg /app/config.toml --components "rpc,synchronizer"'
-
-```
+Config values are stored in the [main yaml file](./values.yaml). Database passwords are delivered to the pods from 1Password via the OP Connector service. See #prerequites above for implmentation details.
