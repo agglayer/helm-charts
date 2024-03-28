@@ -8,6 +8,9 @@ global:
   team: cdk
   p_service: cdk
   tag: v3
+  # 1Password vault config
+  vault: cdk-dev
+  item: bali-pless-rpc
 
 jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?
@@ -35,10 +38,12 @@ postgresql:
   global:
     postgresql:
       auth:
-        postgresPassword: dookie
-        username: spideyman
-        password: booger
+        username: "pless"
         database: state_db
+        existingSecret: "op-secrets"
+        secretKeys:
+          adminPasswordKey: "dbAdminPassword"
+          userPasswordKey: "dbPlessPassword"
   primary:
     extendedConfiguration: |
       max_connections = 500

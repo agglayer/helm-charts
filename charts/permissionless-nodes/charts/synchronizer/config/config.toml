@@ -1,3 +1,6 @@
+# Lookup db password
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+
 # If we set this to be false, we'll assume there IS a trusted sequencer that we can use some where to determine the state
 IsTrustedSequencer = false
 
@@ -11,8 +14,8 @@ Outputs = ["stderr"]
 
 [State]
 [State.DB]
-User = "spideyman"
-Password = "booger"
+User = "pless"
+Password = "{{- index $opSecrets.data "dbPlessPassword" | b64dec }}"
 Name = "state_db"
 Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
@@ -55,8 +58,8 @@ EthTransferGasPrice = 0
 EthTransferL1GasPriceFactor = 0
 L2GasPriceSuggesterFactor = 0.5
 [Pool.DB]
-User = "spideyman"
-Password = "booger"
+User = "pless"
+Password = "{{- index $opSecrets.data "dbPlessPassword" | b64dec }}"
 Name = "pool_db"
 Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
@@ -128,8 +131,8 @@ ProfilingEnabled = true
 
 [EventLog]
 [EventLog.DB]
-User = "spideyman"
-Password = "booger"
+User = "pless"
+Password = "{{- index $opSecrets.data "dbPlessPassword" | b64dec }}"
 Name = "event_db"
 Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
