@@ -8,6 +8,9 @@ global:
   team: idex
   p_service: agglayer
   tag: v3
+  # 1Password vault config
+  vault: cdk-test
+  item: xchain-testnet
 
 jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?
@@ -29,44 +32,3 @@ executor:
   image:
     repository: hermeznetwork/zkevm-prover
     tag: "v4.0.19"
-
-postgresql:
-  enabled: true
-  global:
-    postgresql:
-      auth:
-        postgresPassword: dookie
-        username: spideyman
-        password: booger
-        database: state_db
-  primary:
-    extendedConfiguration: |
-      max_connections = 500
-    initdb:
-      scripts:
-        00_init_event_db.sql: |
-          CREATE DATABASE event_db;
-          \connect event_db
-          CREATE TYPE level_t AS ENUM ('emerg', 'alert', 'crit', 'err', 'warning', 'notice', 'info', 'debug');
-          CREATE TABLE public.event (
-             id BIGSERIAL PRIMARY KEY,
-             received_at timestamp WITH TIME ZONE default CURRENT_TIMESTAMP,
-             ip_address inet,
-             source varchar(32) not null,
-             component varchar(32),
-             level level_t not null,
-             event_id varchar(32) not null,
-             description text,
-             data bytea,
-             json jsonb
-          );
-        10_init_state_db.sql: |
-          CREATE DATABASE state_db;
-        20_init_pool_db.sql: |
-          CREATE DATABASE pool_db;
-        30_init_executor_db.sql: |
-          CREATE DATABASE executor_db;
-          \connect executor_db
-          CREATE SCHEMA state;
-          CREATE TABLE state.nodes (hash bytea PRIMARY KEY, data bytea NOT NULL);
-          CREATE TABLE state.program (hash bytea PRIMARY KEY, data bytea NOT NULL);
