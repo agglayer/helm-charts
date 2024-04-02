@@ -3,6 +3,8 @@
 # Declare variables to be passed into your templates.
 genesis: validium-bali-04-genesis.json
 
+replicaCount: 1
+
 image:
   repository: hermeznetwork/zkevm-node
   pullPolicy: IfNotPresent

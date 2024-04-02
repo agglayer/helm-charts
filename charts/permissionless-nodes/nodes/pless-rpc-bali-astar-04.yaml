@@ -21,14 +21,17 @@ rpc:
   image:
     repository: 0xpolygon/cdk-validium-node
     tag: "0.5.13-cdk.6"
+  replicaCount: 3
 
 synchronizer:
   genesis: validium-bali-04-genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
     tag: "0.5.13-cdk.6"
+  replicaCount: 1
 
 executor:
   image:
     repository: hermeznetwork/zkevm-prover
     tag: "v5.0.7"
+  replicaCount: 3
