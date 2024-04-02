@@ -21,17 +21,20 @@ rpc:
   image:
     repository: hermeznetwork/zkevm-node
     tag: "v0.6.1"
+  replicaCount: 3
 
 synchronizer:
   genesis: validium-bali-04-genesis.json
   image:
     repository: hermeznetwork/zkevm-node
     tag: "v0.6.1"
+  replicaCount: 1
 
 executor:
   image:
     repository: hermeznetwork/zkevm-prover
     tag: "v5.0.7"
+  replicaCount: 3
 
 postgresql:
   enabled: true
