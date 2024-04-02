@@ -67,7 +67,7 @@ EnableLog = false
 MaxConns = 200
 
 [Etherman]
-URL = "https://alien-morning-model.ethereum-sepolia.quiknode.pro/54d4664db5f8d150690b1412ede664a90b163dfe/"
+URL = "{{- index $opSecrets.data "rpcUrl" | b64dec }}"
 ForkIDChunkSize = 20000
 MultiGasProvider = false
 [Etherscan]

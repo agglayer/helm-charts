@@ -1,0 +1,34 @@
+global:
+  # tags for identifying/tracking resources
+  name: pless-rpc-mainnet-xlayer-03
+  host: gcp
+  location: europe-west2
+  env: mainnet
+  role: permissionless-node
+  team: okx
+  p_service: agglayer
+  tag: v3
+  # 1Password vault config
+  vault: cdk-prod
+  item: xlayer-mainnet
+
+jumphost:
+  # We only enable this in non-production environments, right? RIGHT?!?!?
+  enabled: true
+
+rpc:
+  genesis: xlayer-mainnet.genesis.json
+  image:
+    repository: 0xpolygon/cdk-validium-node
+    tag: "0.6.4-cdk.2"
+
+synchronizer:
+  genesis: xlayer-mainnet.genesis.json
+  image:
+    repository: 0xpolygon/cdk-validium-node
+    tag: "0.6.4-cdk.2"
+
+executor:
+  image:
+    repository: hermeznetwork/zkevm-prover
+    tag: "v6.0.0"

@@ -13,13 +13,13 @@ This chart deploys resources for a permissionless node used by the Agglayer. The
 
 Not ideal, but here we are: you have to create the 1Password secret _first_. If you don't, template rendering will fail on install because the secrets don't exist. To create them, copy the [1password yaml](1password-vaults/bali-pless-rpc.yaml) file and modify with your item path and install in the k8s cluster with `kubectl apply -f secrets --namespace {{your_pless_namespace}}`
 
-Required values in your 1Password item are `dbAdminPassword` and `dbPlessPassword`.
+Required values in your 1Password item are `rpcUrl`, `dbAdminPassword` and `dbPlessPassword`.
 
 To deploy a new permissionless node (a.k.a. _pless_), copy the [values file](nodes/pless-rpc-bali-astar-04.yaml) and modify the parameters as needed.
 
-Deploy via helm using `helm install pless-rpc-cardona-idex-06 . --namespace cardona-idex-06 --create-namespace --values nodes/pless-rpc-cardona-idex-06.yaml`
+Deploy via helm using `helm install pless-rpc-cardona-idex-06 . --namespace cardona-idex-06 --create-namespace -f nodes/pless-rpc-cardona-idex-06.yaml`
 
-### Naming convention
+### Naming convention 
 
 The values file should reflect the pless node being operated. Use the following format: `pless-rpc-cardona-idex-06` where:
 
