@@ -56,9 +56,6 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
-            - name: metrics
-              containerPort: 9091
-              protocol: TCP
 {{/*              disabling for now --wb */}}
 {{/*          livenessProbe:*/}}
 {{/*            {{- toYaml .Values.livenessProbe | nindent 12 }}*/}}
