@@ -89,15 +89,13 @@
       "address": "0xff6250d0E86A2465B0C1bF8e36409503d6a26963"
     }
   ],
+  "rollupCreationBlockNumber": 5330273,
+  "rollupManagerCreationBlockNumber": 5158574,
   "L1Config": {
     "chainId": 11155111,
     "polygonZkEVMGlobalExitRootAddress": "0xAd1490c248c5d3CbAE399Fd529b79B42984277DF",
     "polygonRollupManagerAddress": "0x32d33D5137a7cFFb54c5Bf8371172bcEc5f310ff",
     "polTokenAddress": "0x6a7c3F4B0651d6DA389AD1d11D962ea458cDCA70",
-    "polygonZkEVMAddress": "0xf7Af1811310201B4c96906625348B8Db457C1902"
-  },
-  "genesisBlockNumber": 5335306,
-  "rollupCreationBlockNumber": 5335306,
-  "rollupManagerCreationBlockNumber": 5158574,
-  "firstBatchData": null
+    "polygonZkEVMAddress": "0x47193C28404c762E7E213A8099A8B3d72885cDdC"
+  }
 }
