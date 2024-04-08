@@ -1,16 +1,16 @@
 global:
   # tags for identifying/tracking resources
-  name: api3-oev-network
+  name: api3-cardona
   host: gcp
   location: europe-west2
   env: cardona
   role: permissionless-node
-  team: api3
+  team: cdk
   p_service: agglayer
   tag: v3
   # 1Password vault config
   vault: cdk-test
-  item: api3-oev-network
+  item: api3-cardona
 
 jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?
