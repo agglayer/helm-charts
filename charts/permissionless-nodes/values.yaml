@@ -22,6 +22,13 @@ rpc:
     repository: hermeznetwork/zkevm-node
     tag: "v0.6.1"
   replicaCount: 3
+  resources:
+    limits:
+      cpu: 4
+      memory: 16Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
 
 synchronizer:
   genesis: validium-bali-04-genesis.json
@@ -29,12 +36,26 @@ synchronizer:
     repository: hermeznetwork/zkevm-node
     tag: "v0.6.1"
   replicaCount: 1
+  resources:
+    limits:
+      cpu: 4
+      memory: 16Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
 
 executor:
   image:
     repository: hermeznetwork/zkevm-prover
     tag: "v5.0.7"
   replicaCount: 3
+  resources:
+    limits:
+      cpu: 8
+      memory: 64Gi
+    requests:
+      cpu: 2
+      memory: 16Gi
 
 postgresql:
   enabled: true
@@ -50,6 +71,12 @@ postgresql:
   primary:
     extendedConfiguration: |
       max_connections = 500
+    resources:
+      requests:
+        cpu: 4
+        memory: 16Gi
+    persistence:
+      size: 150Gi
     initdb:
       scripts:
         00_init_event_db.sql: |
