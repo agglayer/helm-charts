@@ -23,10 +23,9 @@ spec:
           [
             {
               "openmetrics_endpoint": "http://%%host%%:9091/metrics",
-              "namespace": "{{ .Release.Namespace }}",
               "metrics": [
-                "etherman_*",
-                "state_executor_*",
+                "etherman*",
+                "state_executor*",
                 "synchronizer*"
               ]
             }
