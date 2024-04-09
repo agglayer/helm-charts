@@ -1,5 +1,18 @@
-# Lookup db password
+{{- $dbPassword := "password" }}
+{{- $rpcUrl := "" }}
+{{- $trustedSequencer := "" }}
 {{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+{{- if $opSecrets.data }}
+    {{- if (index $opSecrets.data "dbPlessPassword") }}
+        {{- $dbPassword = index $opSecrets.data "dbPlessPassword" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "rpcUrl") }}
+        {{- $rpcUrl = index $opSecrets.data "rpcUrl" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "trustedSequencer") }}
+        {{- $trustedSequencer = index $opSecrets.data "trustedSequencer" | b64dec }}
+    {{- end }}
+{{- end }}
 
 # If we set this to be false, we'll assume there IS a trusted sequencer that we can use some where to determine the state
 IsTrustedSequencer = false
@@ -15,7 +28,7 @@ Outputs = ["stderr"]
 [State]
 [State.DB]
 User = "pless"
-Password = "{{- index $opSecrets.data "dbPlessPassword" | b64dec }}"
+Password = {{ $dbPassword | quote }}
 Name = "state_db"
 Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
@@ -59,7 +72,7 @@ EthTransferL1GasPriceFactor = 0
 L2GasPriceSuggesterFactor = 0.5
 [Pool.DB]
 User = "pless"
-Password = "{{- index $opSecrets.data "dbPlessPassword" | b64dec }}"
+Password = {{ $dbPassword | quote }}
 Name = "pool_db"
 Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
@@ -67,7 +80,7 @@ EnableLog = false
 MaxConns = 200
 
 [Etherman]
-URL = "{{- index $opSecrets.data "rpcUrl" | b64dec }}"
+URL = {{ $rpcUrl | quote }}
 ForkIDChunkSize = 20000
 MultiGasProvider = false
 [Etherscan]
@@ -88,7 +101,7 @@ Port = 8133
 [Synchronizer]
 SyncInterval = "1s"
 SyncChunkSize = 100
-TrustedSequencerURL = ""
+TrustedSequencerURL = {{ $trustedSequencer | quote }}
 L1SynchronizationMode = "parallel"
 [Synchronizer.L1ParallelSynchronization]
 MaxClients = 10
@@ -132,7 +145,7 @@ ProfilingEnabled = true
 [EventLog]
 [EventLog.DB]
 User = "pless"
-Password = "{{- index $opSecrets.data "dbPlessPassword" | b64dec }}"
+Password = {{ $dbPassword | quote }}
 Name = "event_db"
 Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
