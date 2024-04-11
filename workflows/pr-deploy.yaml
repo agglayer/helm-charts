@@ -1,4 +1,4 @@
-name: Do something
+name: Do something bump-1
 on: push
 
 jobs:
