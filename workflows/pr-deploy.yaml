@@ -1,0 +1,28 @@
+name: Do something
+on: push
+
+jobs:
+  job_id:
+    permissions:
+      contents: 'write'
+      id-token: 'write'
+
+    steps:
+    - id: 'checkout'
+      uses: 'actions/checkout@v4'
+
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        token_format: 'access_token'
+        workload_identity_provider: 'projects/595403903631/locations/europe-west2/workloadIdentityPools/polygonlabs-shared-dev/providers/oidc-shared-dev'
+        service_account: 'shared-dev-oidc-sa@prj-polygonlabs-shared-dev.iam.gserviceaccount.com'
+
+    - id: 'package'
+      run: |-
+        helm package charts/permissionless-nodes
+      shell: bash
+
+    - id: 'push'
+      run: |-
+        helm push permissionless-nodes-0.2.0.tgz oci:europe-west2-docker.pkg.dev/prj-polygonlabs-shared-dev/polygonlabs-docker-dev
