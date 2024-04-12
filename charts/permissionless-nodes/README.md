@@ -5,7 +5,9 @@ This chart deploys resources for a permissionless node used by the Agglayer. The
 - 1 Synchronizer
 - 3 load-balanced executors
 - 3 load-balanced RPC nodes
-- 1 postgres database server (optional)
+- 1 postgres database server
+
+This will expose a load-balanced, internal IP address. It is used by the agglayer to verify proofs for each rollup. To add a new permissionless node to the agglayer, add the IP address created by this helm chart to the apprpriate agglayer item in the 1Password vault ( `cdk-dev` || `cdk-test` || `cdk-prod`)
 
 ## Usage
 
@@ -17,18 +19,26 @@ Required values in your 1Password item are `rpcUrl`, `dbAdminPassword` and `dbPl
 
 To deploy a new permissionless node (a.k.a. _pless_), copy the [values file](nodes/pless-rpc-bali-astar-04.yaml) and modify the parameters as needed.
 
-Deploy via helm using `helm install pless-rpc-cardona-idex-06 . --namespace cardona-idex-06 --create-namespace -f nodes/pless-rpc-cardona-idex-06.yaml`
+Deploy via helm using `helm install {name} . --namespace {namespace} -f nodes/{values file}`
+
+For example, to create a helm installation named `pless-01` for the Cardona rollup ID 6:
+
+```shell
+helm install pless-01 ./charts/permissionless-nodes --namespace cardona-06 -f nodes/cardona-06.yaml
+```
 
 ### Naming convention 
 
-The values file should reflect the pless node being operated. Use the following format: `pless-rpc-cardona-idex-06` where:
+The values file should reflect the pless node being operated. Use the following format: `cardona-06` where:
 
-- `pless-rpc` identifies the type of node (permissionless rpc)
 - `cardona` the network, one of `bali`, `cardona`, or `mainnet`
-- `idex` is the owner
 - `06` is the rollup id
 
 ## GKE
+
+### Namespaces
+
+Each permissionless node is installed in its own namespace. This allows for tracking utilization, costs, and restricting access (coming soon...). 
 
 ### Manual Changes:
 
@@ -37,21 +47,26 @@ The values file should reflect the pless node being operated. Use the following 
 
 ## Global
 
-TODO: datadog sidecars w/ prometheus scraping
+Permissionless nodes are deployed to the appropriate GKE cluster per environment:
+
+- `bali`: `dev-gke-shared`
+- `cardona`: `test-gke-shared`
+- `mainnet`: `prod-gke-shared`
 
 ## Executor
 
-TODO: add secrets for db connection
-TODO: enable runHashDBServer in config_executor.json?
-TODO: template dbNumberOfPoolConnections in config_executor.json
-TODO: template dbMTCacheSize in config_executor.json
-TODO: template dbProgramCacheSize in config_executor.json
+The executor uses the zkevm-prover image. It is deployed as an internal, load-balanced service.
+
+TODO: monitoring/alerting
 
 ## Synchronizer
+
+The synchronizer uses the cdk-validium-node (Validium rollups) or zkevm-node (zk rollups) docker image. It is a singleton, so only 1 synchronizer can be running per permissionless node.
 
 
 ## RPC
 
+The rpc runs as a load-balanced service using the same docker image as the synchronizer. It is exposed as an http endpoint within the VPC. This endpoint is used by the agglayer for validating proofs for the given network/rollup.
 
 ## Postgresql 
 
