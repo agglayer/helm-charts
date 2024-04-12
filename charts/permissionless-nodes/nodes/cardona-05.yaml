@@ -1,30 +1,31 @@
 global:
   # tags for identifying/tracking resources
-  name: api3-cardona
+  name: cardona-05
   host: gcp
   location: europe-west2
   env: cardona
   role: permissionless-node
-  team: cdk
+  team: idex
   p_service: agglayer
+  partner: idex
   tag: v3
   # 1Password vault config
   vault: cdk-test
-  item: api3-cardona
+  item: cardona-05
 
 jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?
   enabled: true
 
 rpc:
-  genesis: api3.genesis.json
+  genesis: cardona-05.genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
     tag: "0.5.13-cdk.6"
   replicaCount: 3
 
 synchronizer:
-  genesis: api3.genesis.json
+  genesis: cardona-05.genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
     tag: "0.5.13-cdk.6"

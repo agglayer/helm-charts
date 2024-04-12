@@ -1,37 +1,38 @@
 global:
   # tags for identifying/tracking resources
-  name: pless-rpc-cardona-idex-05
+  name: cardona-08
   host: gcp
   location: europe-west2
   env: cardona
   role: permissionless-node
-  team: idex
+  team: okx
   p_service: agglayer
+  partner: okx
   tag: v3
   # 1Password vault config
   vault: cdk-test
-  item: xchain-testnet
+  item: cardona-08
 
 jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?
   enabled: true
 
 rpc:
-  genesis: xchain-testnet.genesis.json
+  genesis: cardona-08.genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
-    tag: "0.5.13-cdk.6"
+    tag: "0.6.4-cdk.2"
   replicaCount: 3
 
 synchronizer:
-  genesis: xchain-testnet.genesis.json
+  genesis: cardona-08.genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
-    tag: "0.5.13-cdk.6"
+    tag: "0.6.4-cdk.2"
   replicaCount: 1
 
 executor:
   image:
     repository: hermeznetwork/zkevm-prover
-    tag: "v4.0.19"
+    tag: "v6.0.0"
   replicaCount: 3

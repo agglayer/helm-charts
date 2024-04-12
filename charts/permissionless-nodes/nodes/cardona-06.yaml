@@ -1,37 +1,38 @@
 global:
   # tags for identifying/tracking resources
-  name: pless-rpc-mainnet-xlayer-03
+  name: cardona-06
   host: gcp
   location: europe-west2
-  env: mainnet
+  env: cardona
   role: permissionless-node
-  team: okx
+  team: cdk
   p_service: agglayer
+  partner: api3
   tag: v3
   # 1Password vault config
-  vault: cdk-prod
-  item: xlayer-mainnet
+  vault: cdk-test
+  item: cardona-06
 
 jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?
   enabled: true
 
 rpc:
-  genesis: xlayer-mainnet.genesis.json
+  genesis: cardona-06.genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
-    tag: "0.6.4-cdk.2"
+    tag: "0.5.13-cdk.6"
   replicaCount: 3
 
 synchronizer:
-  genesis: xlayer-mainnet.genesis.json
+  genesis: cardona-06.genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
-    tag: "0.6.4-cdk.2"
+    tag: "0.5.13-cdk.6"
   replicaCount: 1
 
 executor:
   image:
     repository: hermeznetwork/zkevm-prover
-    tag: "v6.0.0"
+    tag: "v4.0.19"
   replicaCount: 3

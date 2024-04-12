@@ -6,4 +6,4 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install
 spec:
-  itemPath: "vaults/cdk-test/items/xchain-testnet"
+  itemPath: "vaults/cdk-prod/items/mainnet-02"
