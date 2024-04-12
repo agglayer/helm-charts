@@ -1,37 +1,38 @@
 global:
   # tags for identifying/tracking resources
-  name: pless-rpc-mainnet-astar-02
+  name: mainnet-03
   host: gcp
   location: europe-west2
   env: mainnet
   role: permissionless-node
-  team: cdk
+  team: okx
   p_service: agglayer
+  partner: okx
   tag: v3
   # 1Password vault config
   vault: cdk-prod
-  item: astar-mainnet
+  item: mainnet-03
 
 jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?
   enabled: true
 
 rpc:
-  genesis: astar-mainnet.genesis.json
+  genesis: mainnet-03.genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
-    tag: "0.5.13-cdk.3"
+    tag: "0.6.4-cdk.2"
   replicaCount: 3
 
 synchronizer:
-  genesis: astar-mainnet.genesis.json
+  genesis: mainnet-03.genesis.json
   image:
     repository: 0xpolygon/cdk-validium-node
-    tag: "0.5.13-cdk.3"
+    tag: "0.6.4-cdk.2"
   replicaCount: 1
 
 executor:
   image:
     repository: hermeznetwork/zkevm-prover
-    tag: "v4.0.19"
+    tag: "v6.0.0"
   replicaCount: 3

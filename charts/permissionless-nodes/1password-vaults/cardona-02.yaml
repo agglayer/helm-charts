@@ -6,4 +6,4 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install
 spec:
-  itemPath: "vaults/cdk-test/items/xlayer-cardona"
+  itemPath: "vaults/cdk-test/items/cardona-02"

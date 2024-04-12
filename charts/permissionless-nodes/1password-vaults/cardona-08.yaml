@@ -6,4 +6,4 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install
 spec:
-  itemPath: "vaults/cdk-dev/items/bali-pless-rpc"
+  itemPath: "vaults/cdk-test/items/cardona-08"
