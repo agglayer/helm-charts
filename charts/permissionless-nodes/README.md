@@ -17,7 +17,7 @@ Not ideal, but here we are: you have to create the 1Password secret _first_. If 
 
 Required values in your 1Password item are `rpcUrl`, `dbAdminPassword` and `dbPlessPassword`.
 
-To deploy a new permissionless node (a.k.a. _pless_), copy the [values file](nodes/pless-rpc-bali-astar-04.yaml) and modify the parameters as needed.
+To deploy a new permissionless node (a.k.a. _pless_), copy the [values file](nodes/wbutton-01.yaml) and modify the parameters as needed.
 
 Deploy via helm using `helm install {name} . --namespace {namespace} -f nodes/{values file}`
 
