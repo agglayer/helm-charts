@@ -78,7 +78,7 @@ spec:
             items:
               - key: "config.toml"
                 path: "config.toml"
-              - key: {{ .Values.genesis }}
+              - key: genesis
                 path: "genesis.json"
       {{- with .Values.nodeSelector }}
       nodeSelector:
