@@ -27,6 +27,23 @@ For example, to create a helm installation named `pless-01` for the Cardona roll
 helm install pless-01 ./charts/permissionless-nodes --namespace cardona-06 -f nodes/cardona-06.yaml
 ```
 
+### Values file
+
+You must provide a valid values yaml file for deployment. These should be kept in the [rollups repo](https://github.com/0xPolygon/rollups) as a centralized, authoritative source for deployed rollups. See [wbutton-01.yaml](./charts/nodes/wbutton-01.yaml) as a reference file. The file has the following sections:
+
+`global`: contains tags (a.k.a. labels) for identifying resources in a running kubernetes cluster.
+`global.vault`: (mandatory) the name of the 1Password vault where sensitive data for your chain is stored.
+`global.item`: (mandatory) the name of the 1Password item in your vault with the required data. See the 1Password::cdk-dev::wbutton-01 item for reference.
+`global.genesis`: (mandatory) the genesis file for your chain
+
+`jumphost.enabled`: (optional) launches an Ubuntu pod suitable for gaining shell access to your deployment
+
+`rpc || synchronizer || executor`:
+    `image`:
+        `repository`: the docker repository containing the image for your permissionless node
+        `tag`: the image tag to deploy, will be dependent on your chain version
+    `replicaCount`: (sort of optional) Not really optional, but exposed here as a means of pausing your permissionless node by setting all values to `0`
+
 ### Naming convention 
 
 The values file should reflect the pless node being operated. Use the following format: `cardona-06` where:
