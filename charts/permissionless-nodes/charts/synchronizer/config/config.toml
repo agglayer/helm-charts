@@ -1,6 +1,7 @@
 {{- $dbPassword := "password" }}
 {{- $rpcUrl := "" }}
 {{- $trustedSequencer := "" }}
+{{- $forkIdChunkSize := 20000 }}
 {{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
 {{- if $opSecrets.data }}
     {{- if (index $opSecrets.data "dbPlessPassword") }}
@@ -11,6 +12,9 @@
     {{- end }}
     {{- if (index $opSecrets.data "trustedSequencer") }}
         {{- $trustedSequencer = index $opSecrets.data "trustedSequencer" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "forkIdChunkSize") }}
+        {{- $forkIdChunkSize = index $opSecrets.data "forkIdChunkSize" | b64dec }}
     {{- end }}
 {{- end }}
 
@@ -81,7 +85,7 @@ MaxConns = 200
 
 [Etherman]
 URL = {{ $rpcUrl | quote }}
-ForkIDChunkSize = 20000
+ForkIDChunkSize = {{ $forkIdChunkSize }}
 MultiGasProvider = false
 [Etherscan]
 ApiKey = ""
