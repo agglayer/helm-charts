@@ -40,6 +40,14 @@ helm.sh/chart: {{ include "jumphost.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+name: {{ .Values.global.name }}
+host: {{ .Values.global.host }}
+location: {{ .Values.global.location }}
+env: {{ .Values.global.env }}
+role: {{ .Values.global.role }}
+team: {{ .Values.global.team }}
+p_service: {{ .Values.global.p_service }}
+tag: {{ .Values.global.tag }}
 {{- end }}
 
 {{/*
