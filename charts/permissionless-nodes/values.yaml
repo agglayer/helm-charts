@@ -68,6 +68,8 @@ postgresql:
         secretKeys:
           adminPasswordKey: "dbAdminPassword"
           userPasswordKey: "dbPlessPassword"
+  metrics:
+    enabled: true
   primary:
     extendedConfiguration: |
       max_connections = 500
