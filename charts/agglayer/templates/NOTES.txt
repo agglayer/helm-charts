@@ -1,0 +1,7 @@
+export INGRESS=$(kubectl get ingress --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].metadata.name}")
+export IP_ADDRESS=$(kubectl get ingress $INGRESS --namespace {{ .Release.Namespace }} -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
+1. Almost there, homey. Make sure you add a DNS A record for {{ .Values.service.domain }} pointing to your IP address $IP_ADDRESS.
+It may take a few minutes for the IP address to be available.
+
+If you get tired of waiting, you can always check for it later with kubectl get ingress $INGRESS --namespace {{ .Release.Namespace }} -o jsonpath="{.status.loadBalancer.ingress[0].ip}"
+but remember, your ManagedCertificate will not be provisioned by GCP until you create the DNS A record in Cloudflare.

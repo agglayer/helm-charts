@@ -1,0 +1,112 @@
+{{- $dbUser := "" }}
+{{- $rpcHost := "" }}
+{{- $rpcPort := "" }}
+{{- $dbName := "agglayer" }}
+{{- $dbHost := "localhost" }}
+{{- $dbPassword := "" }}
+{{- $l1ChainID := 11155111 }}
+{{- $l1NodeURL := "" }}
+{{- $l1RollupManagerContract := "" }}
+{{- $datadogApiKey := "" }}
+{{- $kmsKeyName := "" }}
+{{- $fullNodeRPCs := "" }}
+{{- $proofSigners := "" }}
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+{{- if $opSecrets.data }}
+    {{- if (index $opSecrets.data "DATA_NODE_DB_USER") }}
+        {{- $dbUser = index $opSecrets.data "DATA_NODE_DB_USER" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_RPC_HOST") }}
+        {{- $rpcHost = index $opSecrets.data "DATA_NODE_RPC_HOST" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_RPC_PORT") }}
+        {{- $rpcPort = index $opSecrets.data "DATA_NODE_RPC_PORT" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_DB_NAME") }}
+        {{- $dbName = index $opSecrets.data "DATA_NODE_DB_NAME" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_DB_HOST") }}
+        {{- $dbHost = index $opSecrets.data "DATA_NODE_DB_HOST" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_DB_PASSWORD") }}
+        {{- $dbPassword = index $opSecrets.data "DATA_NODE_DB_PASSWORD" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_L1_CHAINID") }}
+        {{- $l1ChainID = index $opSecrets.data "DATA_NODE_L1_CHAINID" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_L1_NODEURL") }}
+        {{- $l1NodeURL = index $opSecrets.data "DATA_NODE_L1_NODEURL" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_L1_ROLLUPMANAGERCONTRACT") }}
+        {{- $l1RollupManagerContract = index $opSecrets.data "DATA_NODE_L1_ROLLUPMANAGERCONTRACT" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "datadog_api_key") }}
+        {{- $datadogApiKey = index $opSecrets.data "datadog_api_key" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_KMSKEYNAME") }}
+        {{- $kmsKeyName = index $opSecrets.data "DATA_NODE_KMSKEYNAME" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_FULLNODERPCS") }}
+        {{- $fullNodeRPCs = index $opSecrets.data "DATA_NODE_FULLNODERPCS" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_PROOFSIGNERS") }}
+        {{- $proofSigners = index $opSecrets.data "DATA_NODE_PROOFSIGNERS" | b64dec }}
+    {{- end }}
+{{- end }}
+
+[FullNodeRPCs]
+{{- range split "\n" $fullNodeRPCs }}
+    {{- if ne . "" }}
+        {{- $rpc := split "," . }}
+            {{ $rpc._0 }}={{ $rpc._1 | quote }}
+    {{- end }}
+{{- end }}
+
+
+[ProofSigners]
+{{- range split "\n" $proofSigners }}
+    {{- if ne . "" }}
+        {{- $signer := split "," . }}
+            {{ $signer._0 }}={{ $signer._1 | quote }}
+    {{- end }}
+{{- end }}
+
+
+[RPC]
+Host = "0.0.0.0"
+Port = 4444
+ReadTimeout = "60s"
+WriteTimeout = "60s"
+MaxRequestsPerIPAndSecond = 5000
+
+[Log]
+Environment = "production" # "production" or "development"
+Level = "info"
+Outputs = ["stderr"]
+
+[DB]
+User = {{ $dbUser | quote }}
+Password = {{ $dbPassword | quote }}
+Name = {{ $dbName | quote }}
+Host = {{ $dbHost | quote }}
+Port = "5432"
+EnableLog = false
+MaxConns = 200
+
+[EthTxManager]
+FrequencyToMonitorTxs = "1s"
+WaitTxToBeMined = "2m"
+ForcedGas = 0
+GasPriceMarginFactor = 1.2
+MaxGasPriceLimit = 0
+KMSKeyName = {{ $kmsKeyName | quote }}
+KMSConnectionTimeout = "30s"
+GasOffset = 100000
+
+[L1]
+ChainID = {{ $l1ChainID | quote }}
+NodeURL = {{ $l1NodeURL | quote }}
+RollupManagerContract = {{ $l1RollupManagerContract | quote }}
+
+[Telemetry]
+PrometheusAddr = "0.0.0.0:2223"

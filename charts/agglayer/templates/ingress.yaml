@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "agglayer.name" . }}-ingress
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    networking.gke.io/managed-certificates: managed-cert
+    ingressClassName: "gce"
+spec:
+  defaultBackend:
+    service:
+      name: {{ include "agglayer.fullname" . }}
+      port:
+        number: {{ .Values.service.port }}
