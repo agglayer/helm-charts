@@ -1,0 +1,71 @@
+# Default values for agglayer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+env: "dev"
+region: "europe-west2"
+
+image:
+  repository: 0xpolygon/agglayer
+  pullPolicy: IfNotPresent
+  tag: 0.1.4
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations:
+    # GCP IAM Service Account to impersonate (provides
+    iam.gke.io/gcp-service-account: agglayer-gke-dev@prj-polygonlabs-shared-dev.iam.gserviceaccount.com
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: NodePort
+  port: 4444
+  domain: agglayer-wbutton.polygon.technology
+
+
+resources:
+  limits:
+    cpu: 4
+    memory: 16Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 4444
+readinessProbe:
+  httpGet:
+    path: /
+    port: 4444
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
