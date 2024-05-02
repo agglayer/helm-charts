@@ -233,7 +233,17 @@ datadog:
   #   <KUBERNETES_NODE_LABEL>: <DATADOG_TAG_KEY>
 
   # datadog.podLabelsAsTags -- Provide a mapping of Kubernetes Labels to Datadog Tags
-  podLabelsAsTags: {}
+  podLabelsAsTags:
+    app.kubernetes.io/managed-by: manager
+    name: name
+    host: host
+    location: location
+    env: env
+    role: role
+    team: team
+    p_service: p_service
+    partner: partner
+    tag: tag
   #   app: kube_app
   #   release: helm_release
   #   <KUBERNETES_LABEL>: <DATADOG_TAG_KEY>

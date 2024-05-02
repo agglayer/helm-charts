@@ -47,6 +47,7 @@ env: {{ .Values.global.env }}
 role: {{ .Values.global.role }}
 team: {{ .Values.global.team }}
 p_service: {{ .Values.global.p_service }}
+partner: {{ .Values.global.partner }}
 tag: {{ .Values.global.tag }}
 {{- end }}
 
