@@ -104,7 +104,7 @@ KMSConnectionTimeout = "30s"
 GasOffset = 100000
 
 [L1]
-ChainID = {{ $l1ChainID | quote }}
+ChainID = {{ $l1ChainID | atoi }}
 NodeURL = {{ $l1NodeURL | quote }}
 RollupManagerContract = {{ $l1RollupManagerContract | quote }}
 
