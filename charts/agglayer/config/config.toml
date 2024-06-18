@@ -9,6 +9,11 @@
 {{- $l1RollupManagerContract := "" }}
 {{- $datadogApiKey := "" }}
 {{- $kmsKeyName := "" }}
+{{- $projectId := "" }}
+{{- $location := "" }}
+{{- $keyring := "" }}
+{{- $keyName := "" }}
+{{- $keyVersion := "" }}
 {{- $fullNodeRPCs := "" }}
 {{- $proofSigners := "" }}
 {{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
@@ -45,6 +50,21 @@
     {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_KMSKEYNAME") }}
         {{- $kmsKeyName = index $opSecrets.data "DATA_NODE_KMSKEYNAME" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_PROJECTID") }}
+        {{- $projectId = index $opSecrets.data "DATA_NODE_PROJECTID" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_LOCATION") }}
+        {{- $location = index $opSecrets.data "DATA_NODE_LOCATION" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_KEYRING") }}
+        {{- $keyring = index $opSecrets.data "DATA_NODE_KEYRING" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_KEYNAME") }}
+        {{- $keyName = index $opSecrets.data "DATA_NODE_KEYNAME" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_KEYVERSION") }}
+        {{- $keyVersion = index $opSecrets.data "DATA_NODE_KEYVERSION" | b64dec }}
     {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_FULLNODERPCS") }}
         {{- $fullNodeRPCs = index $opSecrets.data "DATA_NODE_FULLNODERPCS" | b64dec }}
@@ -99,12 +119,21 @@ WaitTxToBeMined = "2m"
 ForcedGas = 0
 GasPriceMarginFactor = 1.2
 MaxGasPriceLimit = 0
+{{- if $kmsKeyName }}
 KMSKeyName = {{ $kmsKeyName | quote }}
+{{- end }}
+{{- if $projectId }}
+ProjectId = {{ $projectId | quote }}
+Location = {{ $location | quote }}
+Keyring = {{ $keyring | quote }}
+KeyName = {{ $keyName | quote }}
+KeyVersion = {{ $keyVersion | atoi }}
+{{- end }}
 KMSConnectionTimeout = "30s"
 GasOffset = 100000
 
 [L1]
-ChainID = {{ $l1ChainID | quote }}
+ChainID = {{ $l1ChainID | atoi }}
 NodeURL = {{ $l1NodeURL | quote }}
 RollupManagerContract = {{ $l1RollupManagerContract | quote }}
 
