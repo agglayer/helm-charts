@@ -81,7 +81,7 @@ postgresql:
         cpu: 4
         memory: 16Gi
     persistence:
-      size: 150Gi
+      size: 500Gi
     initdb:
       scripts:
         00_init_event_db.sql: |
