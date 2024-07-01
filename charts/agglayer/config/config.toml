@@ -103,6 +103,7 @@ MaxRequestsPerIPAndSecond = 5000
 Environment = "production" # "production" or "development"
 Level = "info"
 Outputs = ["stderr"]
+Format = "json"
 
 [DB]
 User = {{ $dbUser | quote }}
