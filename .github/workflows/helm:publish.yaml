@@ -33,6 +33,10 @@ jobs:
         workload_identity_provider: ${{ env.OIDC_PROVIDER }}
         service_account: ${{ env.OIDC_SERVICE_ACCOUNT }}
 
+    - name: Configure Artifact Registry authentication
+      run: |
+        echo '{"credHelpers": {"europe-west2-docker.pkg.dev": "gcloud"}}' > ~/.docker/config.json
+
     - name: Get list of modified charts
       id: get-modified-charts
       run: |
