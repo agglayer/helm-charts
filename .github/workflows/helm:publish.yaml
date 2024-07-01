@@ -5,6 +5,15 @@ on:
     branches:
       - main
 
+env:
+  # TMP: Test once on main branch with dev artifact registry
+  # ARTIFACT_REGISTRY: oci:europe-west2-docker.pkg.dev/prj-polygonlabs-shared-prod/polygonlabs-docker-prod
+  # OIDC_PROVIDER: projects/23849419004/locations/global/workloadIdentityPools/polygonlabs-shared-prod/providers/oidc-shared-prod
+  # OIDC_SERVICE_ACCOUNT: shared-prod-oidc-sa@prj-polygonlabs-shared-prod.iam.gserviceaccount.com
+  ARTIFACT_REGISTRY: oci:europe-west2-docker.pkg.dev/prj-polygonlabs-shared-dev/polygonlabs-docker-dev
+  OIDC_PROVIDER: projects/595403903631/locations/global/workloadIdentityPools/polygonlabs-shared-dev/providers/oidc-shared-dev
+  OIDC_SERVICE_ACCOUNT: shared-dev-oidc-sa@prj-polygonlabs-shared-dev.iam.gserviceaccount.com
+
 permissions:
   contents: write
   id-token: write
@@ -19,21 +28,26 @@ jobs:
       uses: google-github-actions/auth@v2
       with:
         token_format: access_token
-        workload_identity_provider: projects/23849419004/locations/global/workloadIdentityPools/polygonlabs-shared-prod/providers/oidc-shared-prod
-        service_account: shared-prod-oidc-sa@prj-polygonlabs-shared-prod.iam.gserviceaccount.com
+        workload_identity_provider: ${{ env.OIDC_PROVIDER }}
+        service_account: ${{ env.OIDC_SERVICE_ACCOUNT }}
 
-    - name: Install helm dependencies
+    - name: Get list of modified charts
+      id: get-modified-charts
       run: |
-        helm dependency update charts/permissionless-nodes
-
-    - name: Package helm chart
-      run: |
-        helm package charts/permissionless-nodes
-
-    - name: Get helm chart version
-      run: |
-        echo "CHART_VERSION=$(grep '^version:' charts/permissionless-nodes/Chart.yaml | awk '{print $2}')" >> $GITHUB_ENV
-
+        CHARTS=$(git diff --name-only HEAD^ HEAD \
+          | grep 'charts/.*/Chart.yaml' \
+          | xargs -I{} sh -c \
+            'if git diff HEAD^ HEAD {} | grep -q "version:"; then basename $(dirname {}); fi')
+        echo "::set-output name=charts::$CHARTS"
+    
     - name: Push helm chart
+      if: steps.get-modified-charts.outputs.charts
+      env:
+        CHARTS: ${{ steps.get-modified-charts.outputs.charts }}
       run: |
-        helm push permissionless-nodes-$CHART_VERSION.tgz oci:europe-west2-docker.pkg.dev/prj-polygonlabs-shared-prod/polygonlabs-docker-prod
+        for chart in $CHARTS; do
+          echo "Processing chart $chart"
+          helm dependency update charts/$chart
+          helm package charts/$chart
+          helm push $chart*.tgz ${{ env.ARTIFACT_REGISTRY }}
+        done
