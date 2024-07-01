@@ -5,27 +5,35 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   publish-chart:
-    permissions:
-      contents: 'write'
-      id-token: 'write'
     runs-on: ubuntu-latest
-
     steps:
-    - uses: 'actions/checkout@v4'
+    - uses: actions/checkout@v4
 
     - name: Authenticate with GCP via OIDC
-      uses: 'google-github-actions/auth@v2'
+      uses: google-github-actions/auth@v2
       with:
-        token_format: 'access_token'
-        workload_identity_provider: 'projects/595403903631/locations/global/workloadIdentityPools/polygonlabs-shared-dev/providers/oidc-shared-dev'
-        service_account: 'shared-dev-oidc-sa@prj-polygonlabs-shared-dev.iam.gserviceaccount.com'
+        token_format: access_token
+        workload_identity_provider: projects/23849419004/locations/global/workloadIdentityPools/polygonlabs-shared-prod/providers/oidc-shared-prod
+        service_account: shared-prod-oidc-sa@prj-polygonlabs-shared-prod.iam.gserviceaccount.com
 
-    - name: Run helm package
+    - name: Install helm dependencies
+      run: |
+        helm dependency update charts/permissionless-nodes
+
+    - name: Package helm chart
       run: |
         helm package charts/permissionless-nodes
 
-    - name: Run help push
+    - name: Get helm chart version
       run: |
-        helm push permissionless-nodes-0.2.0.tgz oci:europe-west2-docker.pkg.dev/prj-polygonlabs-shared-dev/polygonlabs-docker-dev
+        echo "CHART_VERSION=$(grep '^version:' charts/permissionless-nodes/Chart.yaml | awk '{print $2}')" >> $GITHUB_ENV
+
+    - name: Push helm chart
+      run: |
+        helm push permissionless-nodes-$CHART_VERSION.tgz oci:europe-west2-docker.pkg.dev/prj-polygonlabs-shared-prod/polygonlabs-docker-prod
