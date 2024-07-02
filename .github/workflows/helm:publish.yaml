@@ -6,13 +6,9 @@ on:
       - main
 
 env:
-  # TMP: Test once on main branch with dev artifact registry
-  # ARTIFACT_REGISTRY: oci:europe-west2-docker.pkg.dev/prj-polygonlabs-shared-prod/polygonlabs-docker-prod
-  # OIDC_PROVIDER: projects/23849419004/locations/global/workloadIdentityPools/polygonlabs-shared-prod/providers/oidc-shared-prod
-  # OIDC_SERVICE_ACCOUNT: shared-prod-oidc-sa@prj-polygonlabs-shared-prod.iam.gserviceaccount.com
-  ARTIFACT_REGISTRY: oci:europe-west2-docker.pkg.dev/prj-polygonlabs-shared-dev/polygonlabs-docker-dev
-  OIDC_PROVIDER: projects/595403903631/locations/global/workloadIdentityPools/polygonlabs-shared-dev/providers/oidc-shared-dev
-  OIDC_SERVICE_ACCOUNT: shared-dev-oidc-sa@prj-polygonlabs-shared-dev.iam.gserviceaccount.com
+  ARTIFACT_REGISTRY: oci://europe-west2-docker.pkg.dev/prj-polygonlabs-shared-prod/polygonlabs-docker-prod
+  OIDC_PROVIDER: projects/23849419004/locations/global/workloadIdentityPools/polygonlabs-shared-prod/providers/oidc-shared-prod
+  OIDC_SERVICE_ACCOUNT: shared-prod-oidc-sa@prj-polygonlabs-shared-prod.iam.gserviceaccount.com
 
 permissions:
   contents: write
@@ -44,7 +40,8 @@ jobs:
           | grep 'charts/.*/Chart.yaml' \
           | xargs -I{} sh -c \
             'if git diff HEAD^ HEAD {} | grep -q "version:"; then basename $(dirname {}); fi')
-        echo "::set-output name=charts::$CHARTS"
+        echo "Modified charts: $CHARTS"
+        echo "charts=$CHARTS" >> $GITHUB_OUTPUT
     
     - name: Push helm chart
       if: steps.get-modified-charts.outputs.charts
