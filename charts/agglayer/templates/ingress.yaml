@@ -10,7 +10,18 @@ metadata:
   annotations:
     networking.gke.io/managed-certificates: managed-cert
     ingressClassName: "gce"
+    ingress.kubernetes.io/healthcheck-path: "/metrics"
 spec:
+  rules:
+    - http:
+        paths:
+          - path: /metrics
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "agglayer.fullname" . }}
+                port:
+                  number: 2223
   defaultBackend:
     service:
       name: {{ include "agglayer.fullname" . }}
