@@ -5,12 +5,51 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "agglayer.labels" . | nindent 4 }}
+  annotations:
+    cloud.google.com/backend-config: '{ "ports": {
+      "app-port": "app-backendconfig",
+      "metrics-port": "metrics-backendconfig"
+    }}'
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - name: app-port
       protocol: TCP
-      name: http
+      port: 4444
+      targetPort: 4444
+    - name: metrics-port
+      protocol: TCP
+      port: 2223
+      targetPort: 2223
   selector:
     {{- include "agglayer.selectorLabels" . | nindent 4 }}
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: app-backendconfig
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 5
+    type: HTTP
+    requestPath: /health
+    port: 4444
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: metrics-backendconfig
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 5
+    type: HTTP
+    requestPath: /metrics
+    port: 2223

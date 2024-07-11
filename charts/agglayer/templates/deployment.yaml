@@ -63,12 +63,8 @@ spec:
             - "--cfg"
             - "/etc/agglayer/config.toml"
           ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
-            - name: metrics
-              containerPort: 2223
-              protocol: TCP
+            - containerPort: {{ .Values.service.port }}
+            - containerPort: 2223
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
