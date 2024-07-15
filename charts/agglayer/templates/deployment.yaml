@@ -30,29 +30,6 @@ spec:
               ]
             }
           }
-        ad.datadoghq.com/{{ .Chart.Name }}.check_names: |
-          ["openmetrics"]
-        ad.datadoghq.com/{{ .Chart.Name }}.init_configs: |
-          [{}]
-        ad.datadoghq.com/{{ .Chart.Name }}.instances: |
-          [
-            {
-              "openmetrics_endpoint": "http://%%host%%:2223/metrics",
-              "metrics": [
-                "check_tx*",
-                "get_tx*",
-                "execute*",
-                "go_*",
-                "otel_*",
-                "process_*",
-                "rpc_client_*",
-                "send_tx*",
-                "settle*",
-                "target_info",
-                "verify*",
-              ]
-            }
-          ]
       labels:
         {{- include "agglayer.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
