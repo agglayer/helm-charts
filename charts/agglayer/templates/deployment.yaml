@@ -15,6 +15,21 @@ spec:
   template:
     metadata:
       annotations:
+        ad.datadoghq.com/{{ .Chart.Name }}.checks: |
+          {
+            "openmetrics": {
+              "init_config": {},
+              "instances": [
+                {
+                  "openmetrics_endpoint": "http://%%host%%:2223/metrics",
+                  "namespace": "default",
+                  "metrics": [
+                    ".*"
+                  ]
+                }
+              ]
+            }
+          }
         ad.datadoghq.com/{{ .Chart.Name }}.check_names: |
           ["openmetrics"]
         ad.datadoghq.com/{{ .Chart.Name }}.init_configs: |
@@ -33,6 +48,7 @@ spec:
                 "rpc_client_*",
                 "send_tx*",
                 "settle*",
+                "target_info",
                 "verify*",
               ]
             }
