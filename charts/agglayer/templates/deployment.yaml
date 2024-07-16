@@ -15,28 +15,26 @@ spec:
   template:
     metadata:
       annotations:
-        ad.datadoghq.com/{{ .Chart.Name }}.check_names: |
-          ["openmetrics"]
-        ad.datadoghq.com/{{ .Chart.Name }}.init_configs: |
-          [{}]
-        ad.datadoghq.com/{{ .Chart.Name }}.instances: |
-          [
-            {
-              "openmetrics_endpoint": "http://%%host%%:2223/metrics",
-              "metrics": [
-                "check_tx*",
-                "get_tx*",
-                "execute*",
-                "go_*",
-                "otel_*",
-                "process_*",
-                "rpc_client_*",
-                "send_tx*",
-                "settle*",
-                "verify*",
+        ad.datadoghq.com/{{ .Chart.Name }}.checks: |
+          {
+            "openmetrics": {
+              "init_config": {},
+              "instances": [
+                {
+                  "openmetrics_endpoint": "http://%%host%%:2223/metrics",
+                  "metrics": [
+                    {"execute": "agglayer.execute"},
+                    {"check_tx": "agglayer.check_tx"},
+                    {"send_tx": "agglayer.send_tx"},
+                    {"settle": "agglayer.settle"},
+                    {"target_info": "agglayer.target_info"},
+                    {"verify_signature": "agglayer.verify_signature"},
+                    {"verify_zkp": "agglayer.verify_zkp"}
+                  ]
+                }
               ]
             }
-          ]
+          }
       labels:
         {{- include "agglayer.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
