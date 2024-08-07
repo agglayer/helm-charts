@@ -18,39 +18,40 @@ jobs:
   publish-chart:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Authenticate with GCP via OIDC
-      uses: google-github-actions/auth@v2
-      with:
-        token_format: access_token
-        workload_identity_provider: ${{ env.OIDC_PROVIDER }}
-        service_account: ${{ env.OIDC_SERVICE_ACCOUNT }}
+      - name: Authenticate with GCP via OIDC
+        uses: google-github-actions/auth@v2
+        with:
+          token_format: access_token
+          workload_identity_provider: ${{ env.OIDC_PROVIDER }}
+          service_account: ${{ env.OIDC_SERVICE_ACCOUNT }}
 
-    - name: Configure Artifact Registry authentication
-      run: |
-        echo '{"credHelpers": {"europe-west2-docker.pkg.dev": "gcloud"}}' > ~/.docker/config.json
+      - name: Configure Artifact Registry authentication
+        run: |
+          echo '{"credHelpers": {"europe-west2-docker.pkg.dev": "gcloud"}}' > ~/.docker/config.json
 
-    - name: Get list of modified charts
-      id: get-modified-charts
-      run: |
-        CHARTS=$(git diff --name-only HEAD^ HEAD \
-          | grep 'charts/.*/Chart.yaml' \
-          | xargs -I{} sh -c \
-            'if git diff HEAD^ HEAD {} | grep -q "version:"; then basename $(dirname {}); fi')
-        echo "Modified charts: $CHARTS"
-        echo "charts=$CHARTS" >> $GITHUB_OUTPUT
-    
-    - name: Push helm chart
-      if: steps.get-modified-charts.outputs.charts
-      env:
-        CHARTS: ${{ steps.get-modified-charts.outputs.charts }}
-      run: |
-        for chart in $CHARTS; do
-          echo "Processing chart $chart"
-          helm dependency update charts/$chart
-          helm package charts/$chart
-          helm push $chart*.tgz ${{ env.ARTIFACT_REGISTRY }}
-        done
+      - name: Get list of modified charts
+        id: get-modified-charts
+        run: |
+          CHARTS=$(git diff --name-only HEAD^ HEAD \
+            | grep 'charts/.*/Chart.yaml' \
+              | xargs -I{} sh -c \
+                'if git diff HEAD^ HEAD {} | grep -q "version:"; then basename $(dirname {}); fi' \
+              | tr '\n' ' ')
+          echo "Modified charts: $CHARTS"
+          echo "charts=$CHARTS" >> $GITHUB_OUTPUT
+
+      - name: Push helm chart
+        if: steps.get-modified-charts.outputs.charts
+        env:
+          CHARTS: ${{ steps.get-modified-charts.outputs.charts }}
+        run: |
+          for chart in $CHARTS; do
+            echo "Processing chart $chart"
+            helm dependency update charts/$chart
+            helm package charts/$chart
+            helm push $chart*.tgz ${{ env.ARTIFACT_REGISTRY }}
+          done
