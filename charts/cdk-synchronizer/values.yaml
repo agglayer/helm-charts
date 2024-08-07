@@ -1,0 +1,95 @@
+# Default values for synchronizer.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+name: foo
+host: gcp
+location: unspecified
+env: dev
+role: permissionless-node
+team: cdk
+p_service: cdk
+partner: polygon
+tag: v3
+# 1Password vault config
+vault: cdk-dev
+item: bali-pless-rpc
+
+replicaCount: 1
+
+image:
+  repository: hermeznetwork/zkevm-node
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+command: ["/app/zkevm-node", "run"]
+args: ["--network", "custom", "--custom-network-file", "/etc/zkevm/genesis.json", "--cfg", "/etc/zkevm/config.toml", "--components", "synchronizer"]
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+#   runAsNonRoot: true
+#   runAsUser: zkevm-user
+
+service:
+  type: NodePort
+  port: 8123
+
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+     kubernetes.io/ingress.class: gce
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+   limits:
+     cpu: 4
+     memory: 16Gi
+   requests:
+     cpu: 500m
+     memory: 1Gi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
