@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.name }}
+  annotations:
+    cert-manager.io/issuer: gcp-cas-issuer
+    cert-manager.io/issuer-kind: GoogleCASClusterIssuer
+    cert-manager.io/issuer-group: cas-issuer.jetstack.io
+    kubernetes.io/ingress.class: "gce-internal"
+    kubernetes.io/ingress.allow-http: "false"
+    external-dns.alpha.kubernetes.io/hostname: {{ .Values.hostname }}
+spec:
+  tls:
+    - hosts:
+        - {{ .Values.hostname }}
+      secretName: "{{ .Values.hostname }}-secret-tls"
+  rules:
+    - host: {{ .Values.hostname }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.name }}
+                port:
+                  name: http
