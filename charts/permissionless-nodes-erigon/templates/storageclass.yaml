@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ include "rpc-erigon.fullname" . }}-pd-storageclass
+  labels:
+  {{- include "rpc-erigon.labels" . | nindent 4 }}
+  {{- toYaml .Values.labels | nindent 4 }}
+allowVolumeExpansion: true
+allowedTopologies:
+parameters:
+  type: pd-ssd
+provisioner: pd.csi.storage.gke.io

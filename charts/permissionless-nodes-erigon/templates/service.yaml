@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rpc-erigon.fullname" . }}-service
+  labels:
+  {{- include "rpc-erigon.labels" . | nindent 4 }}
+  {{- toYaml .Values.labels | nindent 4 }}
+  annotations:
+  {{- toYaml .Values.erigonRPCService.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.erigonRPCService.type }}
+  selector:
+  {{- include "rpc-erigon.selectorLabels" . | nindent 4 }}
+  {{- toYaml .Values.labels | nindent 4 }}
+  ports:
+    {{- .Values.erigonRPCService.ports | toYaml | nindent 2 -}}

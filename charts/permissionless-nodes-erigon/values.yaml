@@ -1,0 +1,92 @@
+domain: ${domain}
+${yamlencode({alias: rpcAliases})}
+externalIpAddressName: zkevm-${env}-rpc-erigon
+ingressServicePort: ${erigonRPCPort}
+ingressClass: ${ingressClass}
+labels:
+  project: "${project}"
+  env: "${env}"
+erigonRPCDeployment:
+  replicaCount: ${replicas}
+  annotations:
+    ad.datadoghq.com/tags: '{"cloud": "gcp", "project": "zkevm", "env": "${env}"}'
+    ad.datadoghq.com/rpc-erigon.logs: '[{"source": "rpc-erigon","service": "zkevm-${env}"}]'
+  erigonRPC:
+    args: 'cdk-erigon --config=/app/secret/erigon.yaml'
+    image:
+      repository: ${erigonRPCDockerImage}
+      tag: ${erigonRPCDockerImageTag}
+    resources:
+      limits:
+        cpu: ${limitsCPU}
+        memory: ${limitsMemory}
+        storage: ${limitsStorage}
+      requests:
+        cpu: ${requestedCPU}
+        memory: ${requestedMemory}
+        storage: ${requestedStorage}
+    ports:
+      - containerPort: ${erigonRPCPort}
+    configMapRefName: rpc-erigon-config
+    volumeMounts:
+      - mountPath: /app/secret
+        readOnly: true
+        name: erigonrpc-secret-vol
+      - mountPath: /datadir
+        readOnly: false
+        name: erigon-datadir-vol
+    security:
+      user: 1000
+      group: 1000
+  volumeClaims:
+    name: erigon-datadir-vol
+    pvcVol:
+      requests:
+        storage: ${erigonDatadirMountStorageSize}
+  volumes:
+    - name: erigonrpc-secret-vol
+      secret:
+        items:
+          - key: erigon.yaml
+            path: erigon.yaml
+        secretName: erigonrpc-secret
+
+  tolerations:
+%{ for key, val in tolerations }
+    - key: "${key}"
+      operator: "Equal"
+      value: "${val}"
+      effect: "NoSchedule"
+%{ endfor }
+  serviceAccount:
+    name: ${serviceAccountName}
+    annotations:
+      iam.gke.io/gcp-service-account: ${iamServiceAccount}
+
+erigonRPCService:
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+    cloud.google.com/backend-config: '{"ports": {"${erigonRPCPort}":"rpc-erigon-backendconfig"}}'
+  type: ClusterIP
+  ports:
+    - name: rpc
+      protocol: TCP
+      port: ${erigonRPCPort}
+      targetPort: ${erigonRPCPort}
+
+erigonRPCConfigMaps:
+  FOO: BAR
+
+ds:
+  enable: ${enableDS}
+  ip: ${externalLoadBalancerIP}
+  port: ${externalDSPort}
+  annotations:
+    cloud.google.com/neg: '{"exposed_ports": {"${externalDSPort}":{"name": "${project}-${env}-ds"}}}'
+
+autoscaling:
+  enabled: true
+  minReplicas: ${autoscalingMinReplicas}
+  maxReplicas: ${autoscalingMaxReplicas}
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 60

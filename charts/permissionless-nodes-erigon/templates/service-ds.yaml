@@ -1,0 +1,22 @@
+{{ if .Values.ds.enable }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "rpc-erigon.fullname" . }}-ds-service
+  labels:
+  {{- include "rpc-erigon.labels" . | nindent 4 }}
+  {{- toYaml .Values.labels | nindent 4 }}
+  annotations:
+  {{- toYaml .Values.ds.annotations | nindent 4 }}
+spec:
+  type: "LoadBalancer"
+  loadBalancerIP: {{ .Values.ds.ip }}
+  selector:
+  {{- include "rpc-erigon.selectorLabels" . | nindent 4 }}
+  {{- toYaml .Values.labels | nindent 4 }}
+  ports:
+  - name: erigon-ds
+    port: {{ .Values.ds.port }}
+    protocol: TCP
+    targetPort: 6900
+{{ end }}

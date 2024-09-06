@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "rpc-erigon.fullname" . }}-config
+  labels:
+  {{- include "rpc-erigon.labels" . | nindent 4 }}
+  {{- toYaml .Values.labels | nindent 4 }}
+data:
+  {{- toYaml .Values.erigonRPCConfigMaps | nindent 2 }}

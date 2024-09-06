@@ -1,0 +1,18 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ include "rpc-erigon.fullname" . }}-backendconfig
+  labels:
+  {{- include "rpc-erigon.labels" . | nindent 4 }}
+  {{- toYaml .Values.labels | nindent 4 }}
+spec:
+  sessionAffinity:
+    affinityType: "CLIENT_IP"  
+  healthCheck:
+    type: HTTP
+    port: 8545
+    requestPath: /
+    checkIntervalSec: 5
+    timeoutSec: 1
+    healthyThreshold: 1
+    unhealthyThreshold: 1

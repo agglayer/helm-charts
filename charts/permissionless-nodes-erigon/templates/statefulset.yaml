@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "rpc-erigon.fullname" . }}-statefulset
+  labels:
+  {{- include "rpc-erigon.labels" . | nindent 4 }}
+  {{- toYaml .Values.labels | nindent 4 }}
+spec:
+  replicas: {{ .Values.erigonRPCDeployment.replicaCount }}
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+    {{- include "rpc-erigon.selectorLabels" . | nindent 6 }}
+    {{- toYaml .Values.labels | nindent 6 }}
+  serviceName: {{ include "rpc-erigon.fullname" . }}-service
+  template:
+    metadata:
+      labels:
+      {{- include "rpc-erigon.labels" . | nindent 8 }}
+      {{- toYaml .Values.labels | nindent 8 }}
+      annotations:
+        {{- toYaml .Values.erigonRPCDeployment.annotations | nindent 8  }}
+    spec:
+      serviceAccountName: {{ .Values.erigonRPCDeployment.serviceAccount.name }}
+      securityContext:
+        runAsUser: {{ .Values.erigonRPCDeployment.erigonRPC.security.user }}
+        runAsGroup: {{ .Values.erigonRPCDeployment.erigonRPC.security.group }}
+        fsGroup: {{ .Values.erigonRPCDeployment.erigonRPC.security.group }}
+        runAsNonRoot: true
+      containers:
+      - name: {{ include "rpc-erigon.fullname" . }}
+        resources:
+          limits:
+            cpu: {{ .Values.erigonRPCDeployment.erigonRPC.resources.limits.cpu }}
+            memory: {{ .Values.erigonRPCDeployment.erigonRPC.resources.limits.memory }}
+            ephemeral-storage: {{ .Values.erigonRPCDeployment.erigonRPC.resources.limits.storage }}
+          requests:
+            cpu: {{ .Values.erigonRPCDeployment.erigonRPC.resources.requests.cpu }}
+            memory: {{ .Values.erigonRPCDeployment.erigonRPC.resources.requests.memory }}
+            ephemeral-storage: {{ .Values.erigonRPCDeployment.erigonRPC.resources.requests.storage }}
+        ports:
+          {{- .Values.erigonRPCDeployment.erigonRPC.ports | toYaml | nindent 10 }}
+        volumeMounts:
+        {{- toYaml .Values.erigonRPCDeployment.erigonRPC.volumeMounts | default "" | nindent 10 }}
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.erigonRPCDeployment.erigonRPC.configMapRefName }}
+        command:
+        - /bin/sh
+        - -c
+        - {{ .Values.erigonRPCDeployment.erigonRPC.args }}
+        image: {{ .Values.erigonRPCDeployment.erigonRPC.image.repository }}:{{ .Values.erigonRPCDeployment.erigonRPC.image.tag | default .Chart.AppVersion }}
+        imagePullPolicy: Always
+        readinessProbe:
+          initialDelaySeconds: 10
+          periodSeconds: 3
+          timeoutSeconds: 1
+          successThreshold: 1
+          failureThreshold: 1
+          httpGet:
+            host:
+            scheme: HTTP
+            port: 8545
+            path: /health
+            httpHeaders:
+              - name: X-ERIGON-HEALTHCHECK
+                value: synced
+              - name: X-ERIGON-HEALTHCHECK
+                value: max_seconds_behind300
+      tolerations:
+      {{- toYaml .Values.erigonRPCDeployment.tolerations | default "" | nindent 8 }}
+      volumes:
+      {{- toYaml .Values.erigonRPCDeployment.volumes | default "" | nindent 8 }}
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.erigonRPCDeployment.volumeClaims.name }}
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources: {{ .Values.erigonRPCDeployment.volumeClaims.pvcVol | toYaml | nindent
+        8 }}
+      storageClassName: {{ include "rpc-erigon.fullname" . }}-pd-storageclass

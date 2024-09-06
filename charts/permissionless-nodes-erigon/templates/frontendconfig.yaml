@@ -1,0 +1,10 @@
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: {{ include "rpc-erigon.fullname" . }}-frontend-config
+  labels:
+  {{- include "rpc-erigon.labels" . | nindent 4 }}
+  {{- toYaml .Values.labels | nindent 4 }}
+spec:
+  redirectToHttps:
+    enabled: true
