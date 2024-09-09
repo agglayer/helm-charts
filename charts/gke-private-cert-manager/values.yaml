@@ -1,0 +1,6 @@
+gcp:
+  projectId: my-project
+  location: somewhere
+  ca:
+    poolId: some-pool
+    name: some-ca-name

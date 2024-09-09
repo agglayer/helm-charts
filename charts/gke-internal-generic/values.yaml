@@ -1,0 +1,17 @@
+name: my-project
+
+hostname: example.com
+
+replicas: 1
+
+image:
+  repository: nobody
+  tag: main
+
+containerPorts:
+  http: 80
+
+ingress:
+  annotations: some-annotations
+
+env:
