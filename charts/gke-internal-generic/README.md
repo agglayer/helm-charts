@@ -7,21 +7,21 @@ This Helm chart deploys a generic _internal_ containerized app or service to a G
 Here is an example snippet with recommended options
 
 ```yaml
-name: <PROJECT>
+name: my-project
 
-hostname: <HOSTNAME>
+hostname: example.com
 
-replicas: <REPLICAS>
+replicas: 1
 
 image:
-  repository: <IMAGE_REPOSITORY>
-  tag: <IMAGE_TAG>
+  repository: nobody
+  tag: main
 
 containerPorts:
-  http: <CONTAINER_PORT_HTTP>
+  http: 80
 
-tlsSecret: <TLS_SECRET>
+ingress:
+  annotations: some-annotations
 
 env:
-  myEnvVar: <MY_ENV_VAR>
 ```

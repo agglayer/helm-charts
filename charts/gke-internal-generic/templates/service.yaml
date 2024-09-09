@@ -4,9 +4,6 @@ metadata:
   name: {{ .Values.name }}
   labels:
     app: {{ .Values.name }}
-  annotations:
-    # networking.gke.io/load-balancer-type: "Internal"
-    # cloud.google.com/app-protocols: '{"https":"HTTPS","http":"HTTP"}'
 spec:
   type: ClusterIP
   ports:
@@ -14,9 +11,5 @@ spec:
     port: 80
     targetPort: http
     protocol: TCP
-  # - name: https
-  #   port: 443
-  #   targetPort: https
-  #   protocol: TCP
   selector:
     app: {{ .Values.name }}
