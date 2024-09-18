@@ -9,13 +9,15 @@ global:
   p_service: cdk
   partner: polygon
   tag: v3
-  # 1Password vault config
-  vault: cdk-dev
-  item: bali-pless-rpc
 
 jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?
   enabled: true
+
+# 1Password vault config
+op-secrets:
+  vault: cdk-dev
+  item: bali-pless-rpc
 
 rpc:
   genesis: validium-bali-04-genesis.json

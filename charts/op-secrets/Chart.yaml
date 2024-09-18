@@ -1,6 +1,6 @@
 apiVersion: v2
-name: permissionless-nodes-op-secrets
-description: A Helm chart for permissionless nodes 1Password secrets
+name: op-secrets
+description: A Helm chart for 1Password secrets
 
 # A chart can be either an 'application' or a 'library' chart.
 #

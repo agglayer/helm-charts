@@ -24,6 +24,10 @@ version: 0.3.7
 appVersion: "1.16.0"
 
 dependencies:
+  - name: op-secrets
+    version: 0.1.0
+    repository: file://../op-secrets
+
   - name: postgresql
     version: ~14.3.3
     repository: https://charts.bitnami.com/bitnami
