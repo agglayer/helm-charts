@@ -1,9 +1,6 @@
 dependencies:
-- name: op-secrets
-  repository: file://../op-secrets
-  version: 0.1.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
   version: 14.3.3
-digest: sha256:4a2637cb8d4c9d525a5bd7f099b8cab6ab00e63a5ca95df964e8cefdb4ff0cef
-generated: "2024-09-13T11:52:51.45556+02:00"
+digest: sha256:5f31b909d996a90c685a15c3c3239146b39ed9896b75dcddc9441a6b152485d8
+generated: "2024-09-25T10:46:09.154144+02:00"
