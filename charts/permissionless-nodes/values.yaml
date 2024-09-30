@@ -9,9 +9,6 @@ global:
   p_service: cdk
   partner: polygon
   tag: v3
-  # 1Password vault config
-  vault: cdk-dev
-  item: bali-pless-rpc
 
 jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?
