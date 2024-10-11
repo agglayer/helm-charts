@@ -21,9 +21,9 @@ spec:
               service:
                 name: {{ include "agglayer.fullname" . }}
                 port:
-                  number: 2223
+                  number: {{ .Values.ports.telemetry }}
   defaultBackend:
     service:
       name: {{ include "agglayer.fullname" . }}
       port:
-        number: {{ .Values.service.port }}
+        number: {{ .Values.ports.app }}

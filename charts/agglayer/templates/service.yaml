@@ -11,16 +11,13 @@ metadata:
       "metrics-port": "metrics-backendconfig"
     }}'
 spec:
-  type: {{ .Values.service.type }}
   ports:
     - name: app-port
       protocol: TCP
-      port: 4444
-      targetPort: 4444
+      port: {{ .Values.ports.app }}
     - name: metrics-port
       protocol: TCP
-      port: 2223
-      targetPort: 2223
+      port: {{ .Values.ports.telemetry }}
   selector:
     {{- include "agglayer.selectorLabels" . | nindent 4 }}
 
@@ -37,7 +34,7 @@ spec:
     unhealthyThreshold: 5
     type: HTTP
     requestPath: /health
-    port: 4444
+    port: {{ .Values.ports.app }}
 
 ---
 apiVersion: cloud.google.com/v1
@@ -52,4 +49,4 @@ spec:
     unhealthyThreshold: 5
     type: HTTP
     requestPath: /metrics
-    port: 2223
+    port: {{ .Values.ports.telemetry }}

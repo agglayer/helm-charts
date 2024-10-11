@@ -66,20 +66,14 @@
     {{- if (index $opSecrets.data "DATA_NODE_KEYVERSION") }}
         {{- $keyVersion = index $opSecrets.data "DATA_NODE_KEYVERSION" | b64dec }}
     {{- end }}
-    {{- if (index $opSecrets.data "DATA_NODE_FULLNODERPCS") }}
-        {{- $fullNodeRPCs = index $opSecrets.data "DATA_NODE_FULLNODERPCS" | b64dec }}
-    {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_PROOFSIGNERS") }}
         {{- $proofSigners = index $opSecrets.data "DATA_NODE_PROOFSIGNERS" | b64dec }}
     {{- end }}
 {{- end }}
 
 [FullNodeRPCs]
-{{- range split "\n" $fullNodeRPCs }}
-    {{- if ne . "" }}
-        {{- $rpc := split "," . }}
-            {{ $rpc._0 }}={{ $rpc._1 | quote }}
-    {{- end }}
+{{- range $key, $value := .Values.fullNodeRPCs }}
+{{ $key }} = {{ $value | quote }}
 {{- end }}
 
 
