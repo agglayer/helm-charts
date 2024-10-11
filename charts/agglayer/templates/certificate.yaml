@@ -5,4 +5,4 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   domains:
-  - {{ .Values.service.domain }}
+  - {{ .Values.domain }}

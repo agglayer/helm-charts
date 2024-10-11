@@ -1,20 +1,19 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "agglayer.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "agglayer.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
-  {{- end }}
   selector:
     matchLabels:
       {{- include "agglayer.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
         ad.datadoghq.com/{{ .Chart.Name }}.checks: |
           {
             "openmetrics": {
@@ -61,18 +60,24 @@ spec:
             - "--cfg"
             - "/etc/agglayer/config.toml"
           ports:
-            - containerPort: {{ .Values.service.port }}
-            - containerPort: 2223
+            - containerPort: {{ .Values.ports.app }}
+            - containerPort: {{ .Values.ports.telemetry }}
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            httpGet:
+              path: /health
+              port: {{ .Values.ports.app }}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            httpGet:
+              path: /health
+              port: {{ .Values.ports.app }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - mountPath: "/etc/agglayer"
               name: config
               readOnly: true
+            - mountPath: "/etc/agglayer/data"
+              name: data
       volumes:
         - name: config
           configMap:
@@ -80,3 +85,12 @@ spec:
             items:
               - key: "config.toml"
                 path: "config.toml"
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: {{ include "agglayer.fullname" . }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}

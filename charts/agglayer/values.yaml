@@ -10,6 +10,17 @@ image:
   pullPolicy: IfNotPresent
   tag: 0.1.2
 
+ports:
+  app: 4444
+  telemetry: 2223
+
+domain: agglayer-test.polygon.technology
+
+command: agglayer run --cfg /etc/agglayer/config.toml
+
+fullNodeRPCs:
+  1: "http://localhost:8123"
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -40,11 +51,8 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-service:
-  type: NodePort
-  port: 4444
-  domain: agglayer-wbutton.polygon.technology
-
+storage:
+  size: 1Ti
 
 resources:
   limits:
@@ -53,15 +61,6 @@ resources:
   requests:
     cpu: 1
     memory: 4Gi
-
-livenessProbe:
-  httpGet:
-    path: /health
-    port: 4444
-readinessProbe:
-  httpGet:
-    path: /health
-    port: 4444
 
 autoscaling:
   enabled: false
