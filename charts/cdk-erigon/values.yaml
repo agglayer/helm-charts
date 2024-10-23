@@ -1,6 +1,5 @@
+# General config
 replicaCount: 1
-
-is_sequencer: 0
 
 image:
   repository: hermeznetwork/cdk-erigon
@@ -9,17 +8,11 @@ image:
   command: ["cdk-erigon"]
   args: ["--config=/etc/cdk-erigon/erigon.yaml", "--metrics", "--metrics.addr=0.0.0.0", "--metrics.port=9090"]
 
-chainName: network
-
 serviceAccount:
   create: true
   automount: true
   annotations: {}
   name: ""
-
-datadir:
-  path: /data/
-  size: 750Gi
 
 service:
   type: ClusterIP
@@ -37,6 +30,24 @@ resources:
     cpu: 1
     memory: 2Gi
 
-nodeSelector: {}
-tolerations: []
-affinity: {}
+datadir:
+  path: /data/
+  size: 750Gi
+
+# cdk-erigon config
+chainName: network
+
+# Enable sequencer
+# ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#sequencer-wip
+# enable: 1; disable: 0
+is_sequencer: 0
+
+# cdk-erigon config file
+# ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#config
+config: ""
+
+# cdk-erigon dynamic configuration
+# ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#dynamic-chain-configuration
+dynamicIntegrationAllocs: ""
+dynamicIntegrationChainspec: ""
+dynamicIntegrationConf: ""
