@@ -1,0 +1,42 @@
+replicaCount: 1
+
+is_sequencer: 0
+
+image:
+  repository: hermeznetwork/cdk-erigon
+  pullPolicy: IfNotPresent
+  tag: "v2.1.0"
+  command: ["cdk-erigon"]
+  args: ["--config=/etc/cdk-erigon/erigon.yaml", "--metrics", "--metrics.addr=0.0.0.0", "--metrics.port=9090"]
+
+chainName: network
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+datadir:
+  path: /data/
+  size: 750Gi
+
+service:
+  type: ClusterIP
+  datastream:
+    port: 6900
+  rpc:
+    port: 8123
+  metrics:
+    port: 9090
+
+resources:
+  limits:
+    memory: 10Gi
+  requests:
+    cpu: 1
+    memory: 2Gi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
