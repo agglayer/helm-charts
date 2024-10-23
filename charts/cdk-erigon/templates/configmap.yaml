@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "cdk-erigon.fullname" . }}
+data:
+  erigon.yaml: |-
+{{ .Values.config | indent 4 }}
+  dynamic-integration-allocs.json: |-
+{{ .Values.dynamicIntegrationAllocs | indent 4 }}
+  dynamic-integration-chainspec.json: |-
+{{ .Values.dynamicIntegrationChainspec | indent 4 }}
+  dynamic-integration-conf.json: |-
+{{ .Values.dynamicIntegrationConf | indent 4 }}

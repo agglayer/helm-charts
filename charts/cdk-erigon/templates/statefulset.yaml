@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "cdk-erigon.fullname" . }}
+  labels:
+    {{- include "cdk-erigon.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "cdk-erigon.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "cdk-erigon.fullname" . }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "cdk-erigon.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "cdk-erigon.serviceAccountName" . }}
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 0
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: CDK_ERIGON_SEQUENCER
+              value:  "{{ .Values.is_sequencer }}"
+          {{ if .Values.image.command }}
+          command: {{- range .Values.image.command }}
+            - {{ . }} {{- end}}
+          {{- end}}
+          {{ if .Values.image.args }}
+          args: {{- range .Values.image.args }}
+            - {{ . }} {{- end}}
+          {{- end}}
+          ports:
+            - name: rpc
+              containerPort: {{ .Values.service.rpc.port }}
+              protocol: TCP
+            - name: datastream
+              containerPort: {{ .Values.service.datastream.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.service.metrics.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: datadir
+              mountPath: {{ .Values.datadir.path }}
+              readOnly: false
+            - name: cdk-erigon-config
+              mountPath: /etc/cdk-erigon/
+              readOnly: true
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: cdk-erigon-config
+          configMap:
+            name: {{ include "cdk-erigon.fullname" . }}
+            items:
+            - key: "erigon.yaml"
+              path: "erigon.yaml"
+            - key: "dynamic-integration-allocs.json"
+              path: "dynamic-integration-allocs.json"
+            - key: "dynamic-integration-chainspec.json"
+              path: "dynamic-integration-chainspec.json"
+            - key: "dynamic-integration-chainspec.json"
+              path: "{{ .Values.chainName }}-chainspec.json"
+            - key: "dynamic-integration-conf.json"
+              path: "dynamic-integration-conf.json"
+  volumeClaimTemplates:
+    - metadata:
+        name: datadir
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.datadir.size }}
