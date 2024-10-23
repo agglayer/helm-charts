@@ -54,8 +54,8 @@ spec:
         - /bin/sh
         - -c
         - |
-          echo "Verifying op-secrets Secret exists..."
-          until kubectl get secret op-secrets -n {{ .Release.Namespace }}; do
-            echo "Waiting for op-secrets Secret to be created..."
+          echo "Verifying {{ .Release.Name }}-op-secrets Secret exists..."
+          until kubectl get secret {{ .Release.Name }}-op-secrets -n {{ .Release.Namespace }}; do
+            echo "Waiting for {{ .Release.Name }}-op-secrets Secret to be created..."
             sleep 5
           done
