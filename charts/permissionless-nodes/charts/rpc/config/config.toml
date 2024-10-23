@@ -2,7 +2,7 @@
 {{- $rpcUrl := "" }}
 {{- $trustedSequencer := "" }}
 {{- $forkIdChunkSize := 20000 }}
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
 {{- if $opSecrets.data }}
     {{- if (index $opSecrets.data "dbPlessPassword") }}
         {{- $dbPassword = index $opSecrets.data "dbPlessPassword" | b64dec }}

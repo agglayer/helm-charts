@@ -1,4 +1,4 @@
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
 {
   "runExecutorServer": true,
   "runExecutorClient": false,
