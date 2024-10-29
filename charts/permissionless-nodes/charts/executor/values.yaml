@@ -101,6 +101,8 @@ volumeMounts:
     mountPath: "/etc/zkevm"
     readOnly: true
 
+existingSecret: "op-secrets"
+
 nodeSelector: {}
 
 tolerations: []
