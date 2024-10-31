@@ -1,8 +1,9 @@
-apiVersion: networking.gke.io/v1
-kind: ManagedCertificate
+apiVersion: v1
+kind: Secret
 metadata:
-  name: managed-cert
+  name: {{ include "agglayer.fullname" . }}-cloudflare-origin-cert
   namespace: {{ .Release.Namespace }}
-spec:
-  domains:
-  - {{ .Values.domain }}
+type: kubernetes.io/tls
+data:
+  tls.crt: {{ .Values.tls.base64Cert }}
+  tls.key: {{ .Values.tls.base64Key }}
