@@ -16,6 +16,10 @@ ports:
 
 domain: agglayer-test.polygon.technology
 
+tls:
+  base64Cert: ""
+  base64Key: ""
+
 command: agglayer run --cfg /etc/agglayer/config.toml
 
 fullNodeRPCs:

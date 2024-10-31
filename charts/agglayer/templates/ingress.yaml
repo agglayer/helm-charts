@@ -8,10 +8,13 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
   annotations:
-    networking.gke.io/managed-certificates: managed-cert
     ingressClassName: "gce"
     ingress.kubernetes.io/healthcheck-path: "/metrics"
 spec:
+  tls:
+    - hosts:
+      - {{ .Values.domain }}
+      secretName: {{ include "agglayer.fullname" . }}-cloudflare-origin-cert
   rules:
     - http:
         paths:
