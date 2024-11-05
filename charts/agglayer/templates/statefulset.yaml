@@ -76,7 +76,7 @@ spec:
             - mountPath: "/etc/agglayer"
               name: config
               readOnly: true
-            - mountPath: "/etc/agglayer/data"
+            - mountPath: {{ .Values.storage.path | quote }}
               name: data
       volumes:
         - name: config

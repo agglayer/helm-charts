@@ -25,6 +25,8 @@ command: agglayer run --cfg /etc/agglayer/config.toml
 fullNodeRPCs:
   1: "http://localhost:8123"
 
+agglayerProverEndpoint: agglayer-prover-bali.agglayer-prover-bali.il4.europe-west1.lb.prj-polygonlabs-cdk-dev.internal:4445
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -56,6 +58,7 @@ securityContext: {}
   # runAsUser: 1000
 
 storage:
+  path: /etc/agglayer/data
   size: 1Ti
 
 resources:
