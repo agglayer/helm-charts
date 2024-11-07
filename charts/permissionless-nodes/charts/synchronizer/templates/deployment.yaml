@@ -69,7 +69,7 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: synchronizer-config
+            name: {{ include "synchronizer.fullname" . }}-config
             items:
               - key: "config.toml"
                 path: "config.toml"

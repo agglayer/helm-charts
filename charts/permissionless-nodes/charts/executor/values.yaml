@@ -86,21 +86,6 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
 
-# Additional volumes on the output Deployment definition.
-volumes:
-  - name: config
-    configMap:
-      name: executor-config
-      items:
-        - key: "config_executor.json"
-          path: "executor.json"
-
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts:
-  - name: config
-    mountPath: "/etc/zkevm"
-    readOnly: true
-
 existingSecret: "op-secrets"
 
 nodeSelector: {}
