@@ -37,7 +37,7 @@ roleRef:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }-wait-op-secrets
+  name: {{ .Release.Name }}-wait-op-secrets
   annotations:
     helm.sh/hook: pre-install
     helm.sh/hook-weight: "-2"
