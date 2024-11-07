@@ -44,7 +44,7 @@ is_sequencer: 0
 
 # cdk-erigon config file
 # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#config
-config: ""
+existingSecret: "secretName"
 
 # cdk-erigon dynamic configuration
 # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#dynamic-chain-configuration

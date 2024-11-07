@@ -96,19 +96,21 @@ spec:
       {{- end }}
       volumes:
         - name: cdk-erigon-config
-          configMap:
-            name: {{ include "cdk-erigon.fullname" . }}
-            items:
-            - key: "erigon.yaml"
-              path: "erigon.yaml"
-            - key: "dynamic-integration-allocs.json"
-              path: "dynamic-integration-allocs.json"
-            - key: "dynamic-integration-chainspec.json"
-              path: "dynamic-integration-chainspec.json"
-            - key: "dynamic-integration-chainspec.json"
-              path: "{{ .Values.chainName }}-chainspec.json"
-            - key: "dynamic-integration-conf.json"
-              path: "dynamic-integration-conf.json"
+          projected:
+            sources:
+            - configMap:
+                name: {{ include "cdk-erigon.fullname" . }}
+                items:
+                  - key: "dynamic-integration-allocs.json"
+                    path: "dynamic-integration-allocs.json"
+                  - key: "dynamic-integration-chainspec.json"
+                    path: "dynamic-integration-chainspec.json"
+                  - key: "dynamic-integration-chainspec.json"
+                    path: "{{ .Values.chainName }}-chainspec.json"
+                  - key: "dynamic-integration-conf.json"
+                    path: "dynamic-integration-conf.json"
+            - secret:
+                name: {{ .Values.existingSecret }}
   volumeClaimTemplates:
     - metadata:
         name: datadir
