@@ -59,6 +59,8 @@
     {{- end }}
 {{- end }}
 
+prover-entrypoint = {{ .Values.agglayerProverEndpoint | quote }}
+
 [full-node-rpcs]
 {{- range $key, $value := .Values.fullNodeRPCs }}
 {{ $key }} = {{ $value | quote }}
@@ -126,9 +128,7 @@ runtime-timeout = 5
 [certificate-orchestrator]
 input-backpressure-buffer-size = 1000
 
-[certificate-orchestrator.prover.sp1-local]
-
-prover-entrypoint = {{ .Values.agglayerProverEndpoint | quote }}
+[certificate-orchestrator.prover.sp1-local] 
 
 [storage]
 db-path = {{ .Values.storage.path | quote }}
