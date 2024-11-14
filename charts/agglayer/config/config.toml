@@ -4,6 +4,7 @@
 {{- $l1NodeURL := "" }}
 {{- $l1NodeURLWS := "" }}
 {{- $l1RollupManagerContract := "" }}
+{{- $l1GlobalExitRootContract := "" }}
 {{- $datadogApiKey := "" }}
 {{- $kmsKeyName := "" }}
 {{- $projectId := "" }}
@@ -32,6 +33,9 @@
     {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_L1_ROLLUPMANAGERCONTRACT") }}
         {{- $l1RollupManagerContract = index $opSecrets.data "DATA_NODE_L1_ROLLUPMANAGERCONTRACT" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_L1_GLOBAL_EXIT_ROOT_CONTRACT") }}
+        {{- $l1GlobalExitRootContract = index $opSecrets.data "DATA_NODE_L1_GLOBAL_EXIT_ROOT_CONTRACT" | b64dec }}
     {{- end }}
     {{- if (index $opSecrets.data "datadog_api_key") }}
         {{- $datadogApiKey = index $opSecrets.data "datadog_api_key" | b64dec }}
@@ -94,17 +98,18 @@ outputs = ["stderr"]
 format = "json"
 
 [auth.gcpkms]
-project-id = {{ $projectId | quote }}
-location = {{ $location | quote }}
-keyring = {{ $keyring | quote }}
-key-name = {{ $keyName | quote }}
-key-version = {{ $keyVersion | atoi }}
+ProjectId = {{ $projectId | quote }}
+Location = {{ $location | quote }}
+Keyring = {{ $keyring | quote }}
+KeyName = {{ $keyName | quote }}
+KeyVersion = {{ $keyVersion | atoi }}
 
 [l1]
 chain-id = {{ $l1ChainID | atoi }}
 node-url = {{ $l1NodeURL | quote }}
 ws-node-url = {{ $l1NodeURLWS | quote }}
 rollup-manager-contract = {{ $l1RollupManagerContract | quote }}
+polygon-zkevm-global-exit-root-v2-contract = {{ $l1GlobalExitRootContract | quote }}
 rpc-timeout = 45
 
 [l2]
@@ -119,8 +124,8 @@ send-tx = "unlimited"
 [rate-limiting.network]
 
 [epoch.block-clock]
-epoch-duration = 15
-genesis-block = 0
+epoch-duration = 300
+genesis-block = 7074700
 
 [shutdown]
 runtime-timeout = 5
@@ -128,7 +133,7 @@ runtime-timeout = 5
 [certificate-orchestrator]
 input-backpressure-buffer-size = 1000
 
-[certificate-orchestrator.prover.sp1-local] 
+[certificate-orchestrator.prover.sp1-local]
 
 [storage]
 db-path = {{ .Values.storage.path | quote }}
