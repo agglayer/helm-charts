@@ -20,6 +20,8 @@ tls:
   base64Cert: ""
   base64Key: ""
 
+genesisBlock: 1
+
 command: agglayer run --cfg /etc/agglayer/config.toml
 
 fullNodeRPCs:

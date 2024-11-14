@@ -125,7 +125,7 @@ send-tx = "unlimited"
 
 [epoch.block-clock]
 epoch-duration = 300
-genesis-block = 7074700
+genesis-block = {{ .Values.genesisBlock }}
 
 [shutdown]
 runtime-timeout = 5
