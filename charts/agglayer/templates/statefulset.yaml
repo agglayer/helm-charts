@@ -62,21 +62,22 @@ spec:
           ports:
             - containerPort: {{ .Values.ports.app }}
             - containerPort: {{ .Values.ports.telemetry }}
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.ports.app }}
-          readinessProbe:
-            httpGet:
-              path: /health
-              port: {{ .Values.ports.app }}
+          # TMP: disabling probes for now as the new version doesn't expose API until it's synced with l1
+          # livenessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: {{ .Values.ports.app }}
+          # readinessProbe:
+          #   httpGet:
+          #     path: /health
+          #     port: {{ .Values.ports.app }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - mountPath: "/etc/agglayer"
               name: config
               readOnly: true
-            - mountPath: "/etc/agglayer/data"
+            - mountPath: {{ .Values.storage.path | quote }}
               name: data
       volumes:
         - name: config

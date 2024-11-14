@@ -1,12 +1,10 @@
-{{- $dbUser := "" }}
 {{- $rpcHost := "" }}
 {{- $rpcPort := "" }}
-{{- $dbName := "agglayer" }}
-{{- $dbHost := "localhost" }}
-{{- $dbPassword := "" }}
 {{- $l1ChainID := 11155111 }}
 {{- $l1NodeURL := "" }}
+{{- $l1NodeURLWS := "" }}
 {{- $l1RollupManagerContract := "" }}
+{{- $l1GlobalExitRootContract := "" }}
 {{- $datadogApiKey := "" }}
 {{- $kmsKeyName := "" }}
 {{- $projectId := "" }}
@@ -18,23 +16,11 @@
 {{- $proofSigners := "" }}
 {{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
 {{- if $opSecrets.data }}
-    {{- if (index $opSecrets.data "DATA_NODE_DB_USER") }}
-        {{- $dbUser = index $opSecrets.data "DATA_NODE_DB_USER" | b64dec }}
-    {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_RPC_HOST") }}
         {{- $rpcHost = index $opSecrets.data "DATA_NODE_RPC_HOST" | b64dec }}
     {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_RPC_PORT") }}
         {{- $rpcPort = index $opSecrets.data "DATA_NODE_RPC_PORT" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "DATA_NODE_DB_NAME") }}
-        {{- $dbName = index $opSecrets.data "DATA_NODE_DB_NAME" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "DATA_NODE_DB_HOST") }}
-        {{- $dbHost = index $opSecrets.data "DATA_NODE_DB_HOST" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "DATA_NODE_DB_PASSWORD") }}
-        {{- $dbPassword = index $opSecrets.data "DATA_NODE_DB_PASSWORD" | b64dec }}
     {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_L1_CHAINID") }}
         {{- $l1ChainID = index $opSecrets.data "DATA_NODE_L1_CHAINID" | b64dec }}
@@ -42,8 +28,14 @@
     {{- if (index $opSecrets.data "DATA_NODE_L1_NODEURL") }}
         {{- $l1NodeURL = index $opSecrets.data "DATA_NODE_L1_NODEURL" | b64dec }}
     {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_L1_NODEURL_WS") }}
+        {{- $l1NodeURLWS = index $opSecrets.data "DATA_NODE_L1_NODEURL_WS" | b64dec }}
+    {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_L1_ROLLUPMANAGERCONTRACT") }}
         {{- $l1RollupManagerContract = index $opSecrets.data "DATA_NODE_L1_ROLLUPMANAGERCONTRACT" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "DATA_NODE_L1_GLOBAL_EXIT_ROOT_CONTRACT") }}
+        {{- $l1GlobalExitRootContract = index $opSecrets.data "DATA_NODE_L1_GLOBAL_EXIT_ROOT_CONTRACT" | b64dec }}
     {{- end }}
     {{- if (index $opSecrets.data "datadog_api_key") }}
         {{- $datadogApiKey = index $opSecrets.data "datadog_api_key" | b64dec }}
@@ -71,13 +63,14 @@
     {{- end }}
 {{- end }}
 
-[FullNodeRPCs]
+prover-entrypoint = {{ .Values.agglayerProverEndpoint | quote }}
+
+[full-node-rpcs]
 {{- range $key, $value := .Values.fullNodeRPCs }}
 {{ $key }} = {{ $value | quote }}
 {{- end }}
 
-
-[ProofSigners]
+[proof-signers]
 {{- range split "\n" $proofSigners }}
     {{- if ne . "" }}
         {{- $signer := split "," . }}
@@ -85,52 +78,62 @@
     {{- end }}
 {{- end }}
 
+[rpc]
+host = "0.0.0.0"
+port = 4444
+read-timeout = "60s"
+write-timeout = "60s"
+max-requests-per-ip-and-second = 5000
 
-[RPC]
-Host = "0.0.0.0"
-Port = 4444
-ReadTimeout = "60s"
-WriteTimeout = "60s"
-MaxRequestsPerIPAndSecond = 5000
+[outbound.rpc.settle]
+max-retries = 3
+retry-interval = 7
+confirmations = 1
+settlement-timeout = 1200
 
-[Log]
-Environment = "production" # "production" or "development"
-Level = "info"
-Outputs = ["stderr"]
-Format = "json"
+[log]
+environment = "production" # "production" or "development"
+level = "info"
+outputs = ["stderr"]
+format = "json"
 
-[DB]
-User = {{ $dbUser | quote }}
-Password = {{ $dbPassword | quote }}
-Name = {{ $dbName | quote }}
-Host = {{ $dbHost | quote }}
-Port = "5432"
-EnableLog = false
-MaxConns = 200
-
-[EthTxManager]
-FrequencyToMonitorTxs = "1s"
-WaitTxToBeMined = "2m"
-ForcedGas = 0
-GasPriceMarginFactor = 1.2
-MaxGasPriceLimit = 0
-{{- if $kmsKeyName }}
-KMSKeyName = {{ $kmsKeyName | quote }}
-{{- end }}
-{{- if $projectId }}
+[auth.gcpkms]
 ProjectId = {{ $projectId | quote }}
 Location = {{ $location | quote }}
 Keyring = {{ $keyring | quote }}
 KeyName = {{ $keyName | quote }}
 KeyVersion = {{ $keyVersion | atoi }}
-{{- end }}
-KMSConnectionTimeout = "30s"
-GasOffset = 100000
 
-[L1]
-ChainID = {{ $l1ChainID | atoi }}
-NodeURL = {{ $l1NodeURL | quote }}
-RollupManagerContract = {{ $l1RollupManagerContract | quote }}
+[l1]
+chain-id = {{ $l1ChainID | atoi }}
+node-url = {{ $l1NodeURL | quote }}
+ws-node-url = {{ $l1NodeURLWS | quote }}
+rollup-manager-contract = {{ $l1RollupManagerContract | quote }}
+polygon-zkevm-global-exit-root-v2-contract = {{ $l1GlobalExitRootContract | quote }}
+rpc-timeout = 45
 
-[Telemetry]
-PrometheusAddr = "0.0.0.0:2223"
+[l2]
+rpc-timeout = 45
+
+[telemetry]
+prometheus-addr = "0.0.0.0:2223"
+
+[rate-limiting]
+send-tx = "unlimited"
+
+[rate-limiting.network]
+
+[epoch.block-clock]
+epoch-duration = 300
+genesis-block = 7074700
+
+[shutdown]
+runtime-timeout = 5
+
+[certificate-orchestrator]
+input-backpressure-buffer-size = 1000
+
+[certificate-orchestrator.prover.sp1-local]
+
+[storage]
+db-path = {{ .Values.storage.path | quote }}
