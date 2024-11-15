@@ -63,10 +63,10 @@
     {{- end }}
 {{- end }}
 
-prover-entrypoint = {{ .Values.agglayerProverEndpoint | quote }}
+prover-entrypoint = {{ .Values.config.agglayerProverEndpoint | quote }}
 
 [full-node-rpcs]
-{{- range $key, $value := .Values.fullNodeRPCs }}
+{{- range $key, $value := .Values.config.fullNodeRPCs }}
 {{ $key }} = {{ $value | quote }}
 {{- end }}
 
@@ -92,8 +92,8 @@ confirmations = 1
 settlement-timeout = 1200
 
 [log]
-environment = "production" # "production" or "development"
-level = "info"
+environment = {{ .Values.config.log.environment | quote }} # "production" or "development"
+level = {{ .Values.config.log.level | quote }}
 outputs = ["stderr"]
 format = "json"
 
@@ -124,8 +124,8 @@ send-tx = "unlimited"
 [rate-limiting.network]
 
 [epoch.block-clock]
-epoch-duration = 300
-genesis-block = {{ .Values.genesisBlock }}
+epoch-duration = {{ .Values.config.epoch.blockClock.epochDuration | int }}
+genesis-block = {{ .Values.config.epoch.blockClock.genesisBlock | int }}
 
 [shutdown]
 runtime-timeout = 5

@@ -20,14 +20,22 @@ tls:
   base64Cert: ""
   base64Key: ""
 
-genesisBlock: 1
+config:
+  fullNodeRPCs:
+    # 1: "http://localhost:8123" # Commented out to avoid having it prepended to the list
+
+  epoch:
+    blockClock:
+      epochDuration: 50
+      genesisBlock: 1
+  
+  agglayerProverEndpoint: http://localhost:4445
+
+  log:
+    environment: development
+    level: info
 
 command: agglayer run --cfg /etc/agglayer/config.toml
-
-fullNodeRPCs:
-  1: "http://localhost:8123"
-
-agglayerProverEndpoint: localhost:4445
 
 imagePullSecrets: []
 nameOverride: ""
