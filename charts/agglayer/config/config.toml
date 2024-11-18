@@ -108,6 +108,7 @@ KeyVersion = {{ $keyVersion | atoi }}
 chain-id = {{ $l1ChainID | atoi }}
 node-url = {{ $l1NodeURL | quote }}
 ws-node-url = {{ $l1NodeURLWS | quote }}
+max-reconnection-elapsed-time = {{ .Values.config.l1.maxReconnectionElapsedTime | quote }}
 rollup-manager-contract = {{ $l1RollupManagerContract | quote }}
 polygon-zkevm-global-exit-root-v2-contract = {{ $l1GlobalExitRootContract | quote }}
 rpc-timeout = 45
