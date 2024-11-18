@@ -31,6 +31,9 @@ config:
   
   agglayerProverEndpoint: http://localhost:4445
 
+  l1:
+    maxReconnectionElapsedTime: "10s"
+
   log:
     environment: development
     level: info
