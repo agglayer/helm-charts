@@ -1,0 +1,39 @@
+# General config
+replicaCount: 1
+
+image:
+  repository: hermeznetwork/zkevm-pool-manager
+  pullPolicy: IfNotPresent
+  tag: "v0.1.2"
+  command: ["/app/zkevm-pool-manager"]
+  args: ["run", "--cfg", "/etc/pool-manager/pool-manager-config.toml"]
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 8545
+
+resources:
+  limits:
+    memory: 1G
+  requests:
+    cpu: 1
+    memory: 512M
+
+config:
+  log:
+    environment: development # "production" or "development"
+    level: info
+  server:
+    port: 8545
+  sender:
+    sequencerURL: http://cdk-erigon-sequencer:8123
+  monitor:
+    l2NodeURL: http://cdk-erigon-rpc:8123
+
+existingSecret: op-secrets
