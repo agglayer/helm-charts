@@ -1,9 +1,18 @@
+{{- $l1RpcURL := "" }}
+
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+{{- if $opSecrets.data }}
+    {{- if (index $opSecrets.data "l1RpcURL") }}
+        {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
+    {{- end }}
+{{- end }}
+
 AggLayerURL = {{ .Values.config.agglayerURL | quote }}
 ContractVersions = {{ .Values.config.contractsVersion | quote }}
 ForkId = {{ .Values.config.forkId | int }}
 genesisBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
 IsValidiumMode = {{ .Values.config.isValidium | bool }}
-L1URL = {{ .Values.config.l1.rpcURL | quote }}
+L1URL = {{ $l1RpcURL | quote }}
 L2Coinbase = {{ .Values.config.l2.sequencerAddress | quote }}
 L2URL = {{ .Values.config.l2.rpcURL | quote }}
 PathRWData = {{ .Values.storage.path | quote }}
