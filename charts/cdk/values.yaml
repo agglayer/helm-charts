@@ -2,6 +2,7 @@ replicas: 1
 
 container:
   image:
+    pullPolicy: IfNotPresent
     repository: ghcr.io/0xpolygon/cdk
     tag: main
 
@@ -15,7 +16,7 @@ securityContext: {}
 
 config:
   agglayerURL: http://agglayer:4444
-  bridgeAddress: 0x123
+  bridgeAddress: "0x123"
   contractsVersion: banana
   forkId: 12
   isValidium: true
@@ -26,20 +27,21 @@ config:
   
   l1:
     chainId: 123
-    globalExitRootAddress: 0x123
-    polTokenAddress: 0x123
-    rollupAddress: 0x123
-    rollupManagerAddress: 0x123
+    globalExitRootAddress: "0x123"
+    polTokenAddress: "0x123"
+    rollupAddress: "0x123"
+    rollupManagerAddress: "0x123"
     rollupManagerBlockNumber: 123
 
   l2:
-    agglayerAddress: 0x123
-    globalExitRootAddress: 0x123
+    agglayerAddress: "0x123"
+    globalExitRootAddress: "0x123"
     rpcURL: http://localhost:8545
-    sequencerAddress: 0x123
+    sequencerAddress: "0x123"
 
   log:
     environment: development # "production" or "development"
     level: info
 
-genesis:
+genesis: |
+  {}

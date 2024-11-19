@@ -13,7 +13,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
       labels:
         {{- include "cdk.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
@@ -26,8 +26,8 @@ spec:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
           entrypoint:
             - /bin/sh
             - -c
@@ -49,11 +49,11 @@ spec:
       volumes:
         - name: config
           configMap:
-            name: {{ .Release.Name }}-config
+            name: {{ include "cdk.fullname" . }}
             items:
               - key: "config.toml"
                 path: "config.toml"
-              - key: genesis
+              - key: "genesis.json"
                 path: "genesis.json"
   volumeClaimTemplates:
     - metadata:
