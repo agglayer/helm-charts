@@ -30,16 +30,16 @@ config:
     environment: development # "production" or "development"
     level: info
   etherman:
-    l2Url: "http://l2:8545"
+    l2Url: "http://cdk-erigon-rpc:8123"
   claimTxManager:
     path: /etc/bridge/claimtx.keystore
   network:
-    genBlockNumber: 4794475
-    polygonBridgeAddress: "0x1348947e282138d8f377b467f7d9c2eb0f335d1f"
-    polygonZkEVMGlobalExitRootAddress: "0x2968d6d736178f8fe7393cc33c87f29d9c287e78"
-    polygonRollupManagerAddress: "0xe2ef6215adc132df6913c8dd16487abf118d1764"
-    polygonZkEVMAddress: "0x9d89c08828386bc23e79ba45ea601e3f2464ad5d"
-    l2PolygonBridgeAddress: "0x1348947e282138d8f377b467f7d9c2eb0f335d1f"
+    genBlockNumber: 0
+    polygonBridgeAddress: "0x0000000000000000000000000000000000000000"
+    polygonZkEVMGlobalExitRootAddress: "0x0000000000000000000000000000000000000000"
+    polygonRollupManagerAddress: "0x0000000000000000000000000000000000000000"
+    polygonZkEVMAddress: "0x0000000000000000000000000000000000000000"
+    l2PolygonBridgeAddress: "0x0000000000000000000000000000000000000000"
 
 existingSecret: "secretName"
 secretItem:
