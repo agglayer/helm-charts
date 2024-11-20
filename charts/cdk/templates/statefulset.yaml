@@ -48,13 +48,22 @@ spec:
               name: data
       volumes:
         - name: config
-          configMap:
-            name: {{ include "cdk.fullname" . }}
-            items:
-              - key: "config.toml"
-                path: "config.toml"
-              - key: "genesis.json"
-                path: "genesis.json"
+          projected:
+            sources:
+            - configMap:
+                name: {{ include "cdk.fullname" . }}
+                items:
+                  - key: "config.toml"
+                    path: "config.toml"
+                  - key: "genesis.json"
+                    path: "genesis.json"
+            - secret:
+                name: op-secrets
+                items:
+                  - key: sequencer.keystore
+                    path: sequencer.keystore
+                  - key: aggregator.keystore
+                    path: aggregator.keystore
   volumeClaimTemplates:
     - metadata:
         name: data
