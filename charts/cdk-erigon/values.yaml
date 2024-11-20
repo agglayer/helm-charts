@@ -45,9 +45,13 @@ is_sequencer: 0
 # cdk-erigon config file
 # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#config
 existingSecret: "secretName"
+secretItem:
+  key: "erigon.yaml"
+  path: "erigon.yaml"
 
 # cdk-erigon dynamic configuration
 # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#dynamic-chain-configuration
 dynamicIntegrationAllocs: ""
 dynamicIntegrationChainspec: ""
 dynamicIntegrationConf: ""
+firstBatchConf: ""

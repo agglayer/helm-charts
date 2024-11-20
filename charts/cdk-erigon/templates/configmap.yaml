@@ -9,3 +9,5 @@ data:
 {{ .Values.dynamicIntegrationChainspec | indent 4 }}
   dynamic-integration-conf.json: |-
 {{ .Values.dynamicIntegrationConf | indent 4 }}
+  first-batch-conf.json: |-
+{{ .Values.firstBatchConf | indent 4 }}
