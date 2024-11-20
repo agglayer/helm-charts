@@ -1,21 +1,25 @@
-{{- $dbUserPassword := "" }}
 {{- $poolManagerDbName := "" }}
-{{- $poolManagerDbHost := "" }}
-{{- $poolManagerDbPort := "" }}
+{{- $dbUser := "" }}
+{{- $dbUserPassword := "" }}
+{{- $dbHost := "" }}
+{{- $dbPort := "" }}
 
 {{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
 {{- if $opSecrets.data }}
-    {{- if (index $opSecrets.data "dbUserPassword") }}
-        {{- $dbUserPassword = index $opSecrets.data "dbUserPassword" | b64dec }}
-    {{- end }}
     {{- if (index $opSecrets.data "poolManagerDbName") }}
         {{- $poolManagerDbName = index $opSecrets.data "poolManagerDbName" | b64dec }}
     {{- end }}
-    {{- if (index $opSecrets.data "poolManagerDbHost") }}
-        {{- $poolManagerDbHost = index $opSecrets.data "poolManagerDbHost" | b64dec }}
+    {{- if (index $opSecrets.data "dbUser") }}
+        {{- $dbUser = index $opSecrets.data "dbUser" | b64dec }}
     {{- end }}
-    {{- if (index $opSecrets.data "poolManagerDbPort") }}
-        {{- $poolManagerDbPort = index $opSecrets.data "poolManagerDbPort" | b64dec }}
+    {{- if (index $opSecrets.data "dbUserPassword") }}
+        {{- $dbUserPassword = index $opSecrets.data "dbUserPassword" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "dbHost") }}
+        {{- $dbHost = index $opSecrets.data "dbHost" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "dbPort") }}
+        {{- $dbPort = index $opSecrets.data "dbPort" | b64dec }}
     {{- end }}
 {{- end }}
 
@@ -47,11 +51,11 @@ data:
     BatchRequestsLimit = 20
 
     [DB]
-    User = "user"
+    User = {{ $dbUser | quote }}
     Password = {{ $dbUserPassword | quote }}
     Name = {{ $poolManagerDbName | quote }}
-    Host = {{ $poolManagerDbHost | quote }}
-    Port = {{ $poolManagerDbPort | quote }}
+    Host = {{ $dbHost | quote }}
+    Port = {{ $dbPort | quote }}
     EnableLog = false
     MaxConns = 200
 
