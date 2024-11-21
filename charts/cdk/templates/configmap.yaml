@@ -22,31 +22,25 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   config.toml: |
-    PathRWData = {{ .Values.storage.path | quote }}
-    L1URL = {{ $l1RpcURL | quote }}
-    L2URL = {{ .Values.config.l2.rpcURL | quote }}
     AggLayerURL = {{ .Values.config.agglayerURL | quote }}
-
-    ForkId = {{ .Values.config.forkId | int }}
-    IsValidiumMode = {{ eq .Values.config.isValidium true }}
-
-    ContractVersions = {{ .Values.config.contractsVersion | quote }}
-
-    L2Coinbase = {{ .Values.config.l2.sequencerAddress | quote }}
-    SequencerPrivateKeyPath =  {{ .Values.config.sequencerPrivateKeyPath | quote }}
-    SequencerPrivateKeyPassword = {{ $sequencerPrivateKeyPassword | quote }}
-
-    AggregatorPrivateKeyPath = {{ .Values.config.aggregatorPrivateKeyPath | quote }}
     AggregatorPrivateKeyPassword = {{ $aggregatorPrivateKeyPassword | quote }}
-    SenderProofToL1Addr = {{ .Values.config.l2.agglayerAddress | quote }}
+    AggregatorPrivateKeyPath = {{ .Values.config.aggregatorPrivateKeyPath | quote }}
+    ContractVersions = {{ .Values.config.contractsVersion | quote }}
+    ForkId = {{ .Values.config.forkId | int }}
+    genesisBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
+    IsValidiumMode = {{ eq .Values.config.isValidium true }}
+    L1URL = {{ $l1RpcURL | quote }}
+    L2Coinbase = {{ .Values.config.l2.sequencerAddress | quote }}
+    L2URL = {{ .Values.config.l2.rpcURL | quote }}
+    PathRWData = {{ .Values.storage.path | quote }}
     polygonBridgeAddr = {{ .Values.config.bridgeAddress | quote }}
-
-    RPCURL = {{ .Values.config.l2.rpcURL | quote }}
-    WitnessURL = {{ .Values.config.l2.rpcURL | quote }}
-
     rollupCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
     rollupManagerCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
-    genesisBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
+    RPCURL = {{ .Values.config.l2.rpcURL | quote }}
+    SenderProofToL1Addr = {{ .Values.config.l2.agglayerAddress | quote }}
+    SequencerPrivateKeyPassword = "/etc/cdk/aggregator.keystore"
+    SequencerPrivateKeyPath =  "/etc/cdk/sequencer.keystore"
+    WitnessURL = {{ .Values.config.l2.rpcURL | quote }}
 
     [L1Config]
     chainId = {{ .Values.config.l1.chainId | int }}

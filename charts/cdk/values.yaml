@@ -20,8 +20,6 @@ config:
   contractsVersion: banana
   forkId: 12
   isValidium: true
-  sequencerPrivateKeyPath: "/path/to/sequencer.keytore"
-  aggregatorPrivateKeyPath: "/path/to/aggregator.keystore"
 
   aggSender:
     certificateSendInterval: 1m
