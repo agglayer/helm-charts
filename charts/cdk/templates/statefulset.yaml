@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "cdk.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "cdk.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "cdk.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "cdk.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          entrypoint:
+            - /bin/sh
+            - -c
+          command:
+            - cdk-node
+            - run
+            - --cfg=/etc/cdk/config.toml
+            - --custom-network-file=/etc/cdk/genesis.json
+            - --save-config-path={{ .Values.storage.path }}
+            - --components=aggsender
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: "/etc/cdk"
+              name: config
+              readOnly: true
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+      volumes:
+        - name: config
+          projected:
+            sources:
+            - configMap:
+                name: {{ include "cdk.fullname" . }}
+                items:
+                  - key: "config.toml"
+                    path: "config.toml"
+                  - key: "genesis.json"
+                    path: "genesis.json"
+            - secret:
+                name: op-secrets
+                items:
+                  - key: sequencer.keystore
+                    path: sequencer.keystore
+                  - key: aggregator.keystore
+                    path: aggregator.keystore
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
