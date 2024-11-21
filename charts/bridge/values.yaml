@@ -1,0 +1,47 @@
+# General config
+replicaCount: 1
+
+image:
+  repository: hermeznetwork/zkevm-bridge-service
+  pullPolicy: IfNotPresent
+  tag: "v0.6.0-RC1"
+  command: ["/app/zkevm-bridge"]
+  args: ["run", "--cfg", "/etc/bridge/bridge-config.toml"]
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  limits:
+    memory: 1G
+  requests:
+    cpu: 1
+    memory: 512M
+
+config:
+  log:
+    environment: development # "production" or "development"
+    level: info
+  etherman:
+    l2Url: "http://cdk-erigon-rpc:8123"
+  claimTxManager:
+    path: /etc/bridge/claimtx.keystore
+  network:
+    genBlockNumber: 0
+    polygonBridgeAddress: "0x0000000000000000000000000000000000000000"
+    polygonZkEVMGlobalExitRootAddress: "0x0000000000000000000000000000000000000000"
+    polygonRollupManagerAddress: "0x0000000000000000000000000000000000000000"
+    polygonZkEVMAddress: "0x0000000000000000000000000000000000000000"
+    l2PolygonBridgeAddress: "0x0000000000000000000000000000000000000000"
+
+existingSecret: "secretName"
+secretItem:
+  key: "claimtx.keystore"
+  path: "claimtx.keystore"
