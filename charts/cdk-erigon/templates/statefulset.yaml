@@ -109,8 +109,13 @@ spec:
                     path: "{{ .Values.chainName }}-chainspec.json"
                   - key: "dynamic-integration-conf.json"
                     path: "dynamic-integration-conf.json"
+                  - key: "first-batch-conf.json"
+                    path: "first-batch-conf.json"
             - secret:
                 name: {{ .Values.existingSecret }}
+                items:
+                  - key: {{ .Values.secretItem.key }}
+                    path: {{ .Values.secretItem.path }}
   volumeClaimTemplates:
     - metadata:
         name: datadir
