@@ -24,7 +24,7 @@ data:
   config.toml: |
     AggLayerURL = {{ .Values.config.agglayerURL | quote }}
     AggregatorPrivateKeyPassword = {{ $aggregatorPrivateKeyPassword | quote }}
-    AggregatorPrivateKeyPath = {{ .Values.config.aggregatorPrivateKeyPath | quote }}
+    AggregatorPrivateKeyPath = "/etc/cdk/aggregator.keystore"
     ContractVersions = {{ .Values.config.contractsVersion | quote }}
     ForkId = {{ .Values.config.forkId | int }}
     genesisBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
@@ -38,7 +38,7 @@ data:
     rollupManagerCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
     RPCURL = {{ .Values.config.l2.rpcURL | quote }}
     SenderProofToL1Addr = {{ .Values.config.l2.agglayerAddress | quote }}
-    SequencerPrivateKeyPassword = "/etc/cdk/aggregator.keystore"
+    SequencerPrivateKeyPassword = {{ $sequencerPrivateKeyPassword | quote }}
     SequencerPrivateKeyPath =  "/etc/cdk/sequencer.keystore"
     WitnessURL = {{ .Values.config.l2.rpcURL | quote }}
 
