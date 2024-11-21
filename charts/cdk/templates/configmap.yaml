@@ -1,9 +1,17 @@
 {{- $l1RpcURL := "" }}
+{{- $sequencerPrivateKeyPassword := "" }}
+{{- $aggregatorPrivateKeyPassword := "" }}
 
 {{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
 {{- if $opSecrets.data }}
     {{- if (index $opSecrets.data "l1RpcURL") }}
         {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "sequencerPrivateKeyPassword") }}
+        {{- $sequencerPrivateKeyPassword = index $opSecrets.data "sequencerPrivateKeyPassword" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "aggregatorPrivateKeyPassword") }}
+        {{- $aggregatorPrivateKeyPassword = index $opSecrets.data "aggregatorPrivateKeyPassword" | b64dec }}
     {{- end }}
 {{- end }}
 
@@ -15,6 +23,8 @@ metadata:
 data:
   config.toml: |
     AggLayerURL = {{ .Values.config.agglayerURL | quote }}
+    AggregatorPrivateKeyPassword = {{ $aggregatorPrivateKeyPassword | quote }}
+    AggregatorPrivateKeyPath = {{ .Values.config.aggregatorPrivateKeyPath | quote }}
     ContractVersions = {{ .Values.config.contractsVersion | quote }}
     ForkId = {{ .Values.config.forkId | int }}
     genesisBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
@@ -24,10 +34,12 @@ data:
     L2URL = {{ .Values.config.l2.rpcURL | quote }}
     PathRWData = {{ .Values.storage.path | quote }}
     polygonBridgeAddr = {{ .Values.config.bridgeAddress | quote }}
-    RPCURL = {{ .Values.config.l2.rpcURL | quote }}
     rollupCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
     rollupManagerCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
+    RPCURL = {{ .Values.config.l2.rpcURL | quote }}
     SenderProofToL1Addr = {{ .Values.config.l2.agglayerAddress | quote }}
+    SequencerPrivateKeyPassword = "/etc/cdk/aggregator.keystore"
+    SequencerPrivateKeyPath =  "/etc/cdk/sequencer.keystore"
     WitnessURL = {{ .Values.config.l2.rpcURL | quote }}
 
     [L1Config]
