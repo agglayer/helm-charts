@@ -23,9 +23,6 @@ service:
   metrics:
     port: 9090
 
-ingress:
-  hostname: something.dev.polygon
-
 resources:
   limits:
     memory: 10Gi

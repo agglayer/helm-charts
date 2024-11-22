@@ -32,9 +32,6 @@ container:
     polygonZkEvmRpcUrl: "http://cdk-erigon-rpc:8123"
     zkEvmNetworkConfigPolygonZkEvmGlobalExitRootAddress: ""
 
-ingress:
-  hostname: something.dev.polygon
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
