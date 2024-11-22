@@ -52,6 +52,6 @@ jobs:
           for chart in $CHARTS; do
             echo "Processing chart $chart"
             helm dependency update charts/$chart
-            helm package charts/$chart
-            helm push $chart*.tgz ${{ env.ARTIFACT_REGISTRY }}
+            helm package charts/$chart --destination charts/$chart
+            helm push charts/$chart/$chart*.tgz ${{ env.ARTIFACT_REGISTRY }}
           done
