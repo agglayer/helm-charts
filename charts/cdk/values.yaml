@@ -36,6 +36,7 @@ config:
   l2:
     agglayerAddress: "0x123"
     globalExitRootAddress: "0x123"
+    rollupId: 123
     rpcURL: http://localhost:8545
     sequencerAddress: "0x123"
 
