@@ -37,7 +37,7 @@ Name = "state_db"
 Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
 EnableLog = false
-MaxConns = 20
+MaxConns = 200
 [State.Batch]
 [State.Batch.Constraints]
 MaxTxsPerBatch = 300
