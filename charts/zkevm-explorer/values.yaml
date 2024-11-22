@@ -1,0 +1,26 @@
+replicas: 1
+
+container:
+  image:
+    pullPolicy: IfNotPresent
+    repository: hermeznetwork/zkevm-explorer
+    tag: latest
+  
+  ports:
+    app: 4004
+  
+  env:
+    chainId: 123
+    coin: ETH
+    ethereumJsonRPCHttpURL: http://localhost:8123
+    network: Integration Networks
+    subNetwork: some-subnetwork
+
+ingress:
+  hostname: explorer.cdk9.dev.polygon
+
+existingSecret: secretName
+
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
