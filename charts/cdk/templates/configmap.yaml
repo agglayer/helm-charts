@@ -52,6 +52,9 @@ data:
     [L2Config]
     GlobalExitRootAddr = {{ .Values.config.l2.globalExitRootAddress | quote }}
 
+    [BridgeL2Sync]
+    OriginNetwork={{ .Values.config.l2.rollupId | int }}
+
     [Log]
     Environment = {{ .Values.config.log.environment | quote }}
     Level = {{ .Values.config.log.level | quote }}
