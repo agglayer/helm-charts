@@ -1,0 +1,65 @@
+# Default values for bridgeUI.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+env: "dev"
+region: "europe-west2"
+
+container:
+  image:
+    repository: hermeznetwork/zkevm-bridge-ui
+    pullPolicy: IfNotPresent
+    tag: etrog-v2
+
+  ports:
+    app: 80
+
+  env:
+    bridgeApiUrl: ""
+    enableDepositLimits: true
+    enableDepositWarning: false
+    enableFiatExchangeRates: false
+    enableOutdatedNetworkModal: false
+    enableReportForm: false
+    ethereumBridgeContractAddress: ""
+    ethereumExplorerUrl: "https://sepolia.etherscan.io"
+    ethereumForceUpdateGlobalExitRoot: true
+    ethereumProofOfEfficiencyContractAddress: ""
+    ethereumRollupManagerAddress: ""
+    polygonZkEvmBridgeContractAddress: ""
+    polygonZkEvmExplorerUrl: ""
+    polygonZkEvmNetworkId: ""
+    polygonZkEvmRpcUrl: "http://cdk-erigon-rpc:8123"
+    zkEvmNetworkConfigPolygonZkEvmGlobalExitRootAddress: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources:
+  limits:
+    cpu: 4
+    memory: 8Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80

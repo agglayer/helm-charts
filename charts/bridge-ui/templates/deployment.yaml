@@ -1,0 +1,95 @@
+{{- $l1RpcURL := "" }}
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+{{- if $opSecrets.data }}
+    {{- if (index $opSecrets.data "l1RpcURL") }}
+        {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
+    {{- end }}
+{{- end }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bridgeUI.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bridgeUI.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "bridgeUI.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "bridgeUI.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          ports:
+            - name: app
+              containerPort: {{ .Values.container.ports.app }}
+              protocol: TCP
+          env:
+            - name: BRIDGE_API_URL
+              value: {{ .Values.container.env.bridgeApiUrl }}
+            - name: ENABLE_DEPOSIT_LIMITS
+              value: {{ .Values.container.env.enableDepositLimits | quote }}
+            - name: ENABLE_DEPOSIT_WARNING
+              value: {{ .Values.container.env.enableDepositWarning | quote }}
+            - name: ENABLE_FIAT_EXCHANGE_RATES
+              value: {{ .Values.container.env.enableFiatExchangeRates | quote }}
+            - name: ENABLE_OUTDATED_NETWORK_MODAL
+              value: {{ .Values.container.env.enableOutdatedNetworkModal | quote }}
+            - name: ENABLE_REPORT_FORM
+              value: {{ .Values.container.env.enableReportForm | quote }}
+            - name: ETHEREUM_BRIDGE_CONTRACT_ADDRESS
+              value: {{ .Values.container.env.ethereumBridgeContractAddress }}
+            - name: ETHEREUM_EXPLORER_URL
+              value: {{ .Values.container.env.ethereumExplorerUrl }}
+            - name: ETHEREUM_FORCE_UPDATE_GLOBAL_EXIT_ROOT
+              value: {{ .Values.container.env.ethereumForceUpdateGlobalExitRoot | quote }}
+            - name: ETHEREUM_PROOF_OF_EFFICIENCY_CONTRACT_ADDRESS
+              value: {{ .Values.container.env.ethereumProofOfEfficiencyContractAddress }}
+            - name: ETHEREUM_ROLLUP_MANAGER_ADDRESS
+              value: {{ .Values.container.env.ethereumRollupManagerAddress }}
+            - name: ETHEREUM_RPC_URL
+              value: {{ $l1RpcURL }}
+            - name: POLYGON_ZK_EVM_BRIDGE_CONTRACT_ADDRESS
+              value: {{ .Values.container.env.polygonZkEvmBridgeContractAddress }}
+            - name: POLYGON_ZK_EVM_EXPLORER_URL
+              value: {{ .Values.container.env.polygonZkEvmExplorerUrl }}
+            - name: POLYGON_ZK_EVM_NETWORK_ID
+              value: {{ .Values.container.env.polygonZkEvmNetworkId }}
+            - name: POLYGON_ZK_EVM_RPC_URL
+              value: {{ .Values.container.env.polygonZkEvmRpcUrl }}
+            - name: ZKEVM_NETWORKCONFIG_POLYGONZKEVMGLOBALEXITROOTADDRESS
+              value: {{ .Values.container.env.zkEvmNetworkConfigPolygonZkEvmGlobalExitRootAddress }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
