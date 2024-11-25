@@ -46,7 +46,7 @@ spec:
               protocol: TCP
           env:
             - name: BRIDGE_API_URL
-              value: {{ .Values.container.env.bridgeApiUrl }}
+              value: {{ .Values.container.env.bridgeApiUrl | quote }}
             - name: ENABLE_DEPOSIT_LIMITS
               value: {{ .Values.container.env.enableDepositLimits | quote }}
             - name: ENABLE_DEPOSIT_WARNING
@@ -58,27 +58,27 @@ spec:
             - name: ENABLE_REPORT_FORM
               value: {{ .Values.container.env.enableReportForm | quote }}
             - name: ETHEREUM_BRIDGE_CONTRACT_ADDRESS
-              value: {{ .Values.container.env.ethereumBridgeContractAddress }}
+              value: {{ .Values.container.env.ethereumBridgeContractAddress | quote }}
             - name: ETHEREUM_EXPLORER_URL
-              value: {{ .Values.container.env.ethereumExplorerUrl }}
+              value: {{ .Values.container.env.ethereumExplorerUrl | quote }}
             - name: ETHEREUM_FORCE_UPDATE_GLOBAL_EXIT_ROOT
               value: {{ .Values.container.env.ethereumForceUpdateGlobalExitRoot | quote }}
             - name: ETHEREUM_PROOF_OF_EFFICIENCY_CONTRACT_ADDRESS
-              value: {{ .Values.container.env.ethereumProofOfEfficiencyContractAddress }}
+              value: {{ .Values.container.env.ethereumProofOfEfficiencyContractAddress | quote }}
             - name: ETHEREUM_ROLLUP_MANAGER_ADDRESS
-              value: {{ .Values.container.env.ethereumRollupManagerAddress }}
+              value: {{ .Values.container.env.ethereumRollupManagerAddress | quote }}
             - name: ETHEREUM_RPC_URL
               value: {{ $l1RpcURL }}
             - name: POLYGON_ZK_EVM_BRIDGE_CONTRACT_ADDRESS
-              value: {{ .Values.container.env.polygonZkEvmBridgeContractAddress }}
+              value: {{ .Values.container.env.polygonZkEvmBridgeContractAddress | quote }}
             - name: POLYGON_ZK_EVM_EXPLORER_URL
-              value: {{ .Values.container.env.polygonZkEvmExplorerUrl }}
+              value: {{ .Values.container.env.polygonZkEvmExplorerUrl | quote }}
             - name: POLYGON_ZK_EVM_NETWORK_ID
-              value: {{ .Values.container.env.polygonZkEvmNetworkId }}
+              value: {{ .Values.container.env.polygonZkEvmNetworkId | quote }}
             - name: POLYGON_ZK_EVM_RPC_URL
-              value: {{ .Values.container.env.polygonZkEvmRpcUrl }}
+              value: {{ .Values.container.env.polygonZkEvmRpcUrl | quote }}
             - name: ZKEVM_NETWORKCONFIG_POLYGONZKEVMGLOBALEXITROOTADDRESS
-              value: {{ .Values.container.env.zkEvmNetworkConfigPolygonZkEvmGlobalExitRootAddress }}
+              value: {{ .Values.container.env.zkEvmNetworkConfigPolygonZkEvmGlobalExitRootAddress | quote }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
