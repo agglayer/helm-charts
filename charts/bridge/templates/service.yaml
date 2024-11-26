@@ -4,6 +4,7 @@ metadata:
   name: {{ include "bridge.fullname" . }}
   labels:
     {{- include "bridge.labels" . | nindent 4 }}
+  annotations:
     beta.cloud.google.com/backend-config: '{"default": \"{{ include "bridge.fullname" . }}-healthcheck\"}'
 spec:
   type: {{ .Values.service.type }}
