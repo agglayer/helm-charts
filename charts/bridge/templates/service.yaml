@@ -4,6 +4,7 @@ metadata:
   name: {{ include "bridge.fullname" . }}
   labels:
     {{- include "bridge.labels" . | nindent 4 }}
+    beta.cloud.google.com/backend-config: '{"default": \"{{ include "bridge.fullname" . }}-healthcheck\"}'
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,3 +14,14 @@ spec:
       name: http
   selector:
     {{- include "bridge.selectorLabels" . | nindent 4 }}
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ include "bridge.fullname" . }}-healthcheck
+spec:
+  healthCheck:
+    timeoutSec: 1
+    type: HTTP
+    requestPath: /
+    port: {{ .Values.service.port }}
