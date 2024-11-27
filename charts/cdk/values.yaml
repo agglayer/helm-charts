@@ -24,6 +24,7 @@ config:
   aggSender:
     certificateSendInterval: 1m
     checkSettledInterval: 5s
+    saveCertificatesToFilesPath: /tmp
   
   l1:
     chainId: 123

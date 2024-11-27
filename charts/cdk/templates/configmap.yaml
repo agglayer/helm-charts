@@ -63,5 +63,6 @@ data:
     [AggSender]
     CertificateSendInterval = {{ .Values.config.aggSender.certificateSendInterval | quote }}
     CheckSettledInterval = {{ .Values.config.aggSender.checkSettledInterval | quote }}
+    SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
   genesis.json: |-
 {{ .Values.genesis | indent 4 }}
