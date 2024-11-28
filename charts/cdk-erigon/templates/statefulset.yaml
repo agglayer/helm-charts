@@ -102,13 +102,11 @@ spec:
                 name: {{ include "cdk-erigon.fullname" . }}
                 items:
                   - key: "dynamic-integration-allocs.json"
-                    path: "dynamic-integration-allocs.json"
+                    path: "dynamic-{{ .Values.chainName }}-allocs.json"
                   - key: "dynamic-integration-chainspec.json"
-                    path: "dynamic-integration-chainspec.json"
-                  - key: "dynamic-integration-chainspec.json"
-                    path: "{{ .Values.chainName }}-chainspec.json"
+                    path: "dynamic-{{ .Values.chainName }}-chainspec.json"
                   - key: "dynamic-integration-conf.json"
-                    path: "dynamic-integration-conf.json"
+                    path: "dynamic-{{ .Values.chainName }}-conf.json"
                   - key: "first-batch-conf.json"
                     path: "first-batch-conf.json"
             - secret:
