@@ -55,6 +55,9 @@ data:
     [BridgeL2Sync]
     OriginNetwork={{ .Values.config.l2.rollupId | int }}
 
+    [L1InfoTreeSync]
+    SyncBlockChunkSize={{ .Values.config.l1.syncBlockChunkSize | int }}
+
     [Log]
     Environment = {{ .Values.config.log.environment | quote }}
     Level = {{ .Values.config.log.level | quote }}
