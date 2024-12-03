@@ -63,6 +63,7 @@
     {{- end }}
 {{- end }}
 
+debug-mode = {{ .Values.config.debugMode }}
 prover-entrypoint = {{ .Values.config.agglayerProverEndpoint | quote }}
 
 [full-node-rpcs]

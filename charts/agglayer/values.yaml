@@ -21,15 +21,16 @@ tls:
   base64Key: ""
 
 config:
-  fullNodeRPCs:
-    # 1: "http://localhost:8123" # Commented out to avoid having it prepended to the list
+  agglayerProverEndpoint: http://localhost:4445
+  debugMode: false
 
   epoch:
     blockClock:
       epochDuration: 50
       genesisBlock: 1
-  
-  agglayerProverEndpoint: http://localhost:4445
+
+  fullNodeRPCs:
+    # 1: "http://localhost:8123" # Commented out to avoid having it prepended to the list
 
   l1:
     maxReconnectionElapsedTime: "10s"
