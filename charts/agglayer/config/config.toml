@@ -85,6 +85,7 @@ port = 4444
 read-timeout = "60s"
 write-timeout = "60s"
 max-requests-per-ip-and-second = 5000
+max-request-body-size = {{ .Values.config.rpc.maxRequestBodySize | int }}
 
 [outbound.rpc.settle]
 max-retries = 3
