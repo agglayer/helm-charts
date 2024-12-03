@@ -33,6 +33,7 @@ config:
     rollupAddress: "0x123"
     rollupManagerAddress: "0x123"
     rollupManagerBlockNumber: 123
+    syncBlockChunkSize: 10
 
   l2:
     agglayerAddress: "0x123"
