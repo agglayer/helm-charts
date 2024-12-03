@@ -24,6 +24,7 @@ config:
   aggSender:
     certificateSendInterval: 1m
     checkSettledInterval: 5s
+    maxCertSize: 8388608
     saveCertificatesToFilesPath: /tmp
   
   l1:
