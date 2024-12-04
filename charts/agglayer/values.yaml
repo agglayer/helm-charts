@@ -40,7 +40,11 @@ config:
     level: info
 
   rpc:
-    maxRequestBodySize: 10485760 # 10MB
+    maxRequestBodySize: 104857600 # 10MB
+
+  prover:
+    grpc:
+      maxDecodingMessageSize: 104857600 # 10MB
 
 command: agglayer run --cfg /etc/agglayer/config.toml
 

@@ -85,7 +85,16 @@ port = 4444
 read-timeout = "60s"
 write-timeout = "60s"
 max-requests-per-ip-and-second = 5000
+# size is define in bytes e.g. 100 * 1024 * 1024
+# same for `max_response_body_size`
+# default value is equal to 10MB
 max-request-body-size = {{ .Values.config.rpc.maxRequestBodySize | int }}
+
+[prover.grpc]
+# size is define in bytes e.g. 100 * 1024 * 1024
+# same for `max-encoding-message-size`
+# default value is equal to 4MB
+max-decoding-message-size = {{ .Values.config.prover.grpc.maxDecodingMessageSize | int }}
 
 [outbound.rpc.settle]
 max-retries = 3
