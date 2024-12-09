@@ -37,7 +37,7 @@ Name = "state_db"
 Host = "{{ .Release.Name }}-postgresql"
 Port = "5432"
 EnableLog = false
-MaxConns = 20
+MaxConns = 200
 [State.Batch]
 [State.Batch.Constraints]
 MaxTxsPerBatch = 300
@@ -93,7 +93,7 @@ ApiKey = ""
 [RPC]
 Host = "0.0.0.0"
 Port = 8123
-ReadTimeout = "60s"
+ReadTimeout = "600s"
 WriteTimeout = "60s"
 MaxRequestsPerIPAndSecond = 5000
 SequencerNodeURI = ""
