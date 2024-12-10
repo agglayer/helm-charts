@@ -93,7 +93,7 @@ ApiKey = ""
 [RPC]
 Host = "0.0.0.0"
 Port = 8123
-ReadTimeout = "60s"
+ReadTimeout = "600s"
 WriteTimeout = "60s"
 MaxRequestsPerIPAndSecond = 5000
 SequencerNodeURI = ""
