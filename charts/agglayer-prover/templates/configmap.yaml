@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "agglayerProver.fullname" . }}
+data:
+  config.toml: |
+    grpc-endpoint = "0.0.0.0:{{ .Values.container.ports.app }}"
+    max-concurrency-limit = {{ .Values.config.maxConcurrencyLimit | int }}
+    max-request-duration = {{ .Values.config.maxRequestDuration | int }}
+    max-buffered-queries = {{ .Values.config.maxBufferedQueries | int }}
+
+    [log]
+    environment = {{ .Values.config.log.environment | quote }}
+    level = {{ .Values.config.log.level | quote }}
+    outputs = ["stderr"]
+    format = "json"
+
+    [telemetry]
+    prometheus-addr = "0.0.0.0:{{ .Values.container.ports.telemetry }}"
+
+    [cpu-prover]
+    enabled = {{ .Values.config.cpuProver.enabled }}
+    max-concurrency-limit = {{ .Values.config.cpuProver.maxConcurrencyLimit | int }}
+    proving-timeout = {{ .Values.config.cpuProver.provingTimeout | int }}
+
+    [network-prover]
+    enabled = {{ .Values.config.networkProver.enabled }}
+    proving-timeout = {{ .Values.config.networkProver.provingTimeout | int }}
+
+    [grpc]
+    max-decoding-message-size = {{ .Values.config.grpc.maxDecodingMessageSize | int }}

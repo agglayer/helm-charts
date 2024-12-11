@@ -1,0 +1,62 @@
+env: dev
+region: europe-west2
+
+container:
+  image:
+    repository: ghcr.io/agglayer/agglayer
+    pullPolicy: IfNotPresent
+    tag: 0.2.0-rc.20
+  
+  ports:
+    app: 4445
+    telemetry: 9090
+
+  replicaCount: 1
+
+  env:
+    proverNetworkRPC: https://rpc.succinct.xyz/
+
+resources:
+  limits:
+    cpu: 4
+    memory: 16Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+
+config:
+  maxConcurrencyLimit: 100
+  maxRequestDuration: 300
+  maxBufferedQueries: 100
+
+  log:
+    environment: development # "production" or "development"
+    level: debug
+
+  cpuProver:
+    enabled: false
+    maxConcurrencyLimit: 300
+    provingTimeout: 300
+
+  networkProver:
+    enabled: true
+    provingTimeout: 300
+  
+  grpc:
+    # size is define in bytes e.g. 100 * 1024 * 1024
+    # same for `max-encoding-message-size`
+    # default value is equal to 4MB
+    maxDecodingMessageSize: 104857600
+
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80

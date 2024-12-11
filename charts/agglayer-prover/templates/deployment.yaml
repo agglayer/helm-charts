@@ -1,0 +1,87 @@
+{{- $sp1PrivateKey := "" }}
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+{{- if $opSecrets.data }}
+    {{- if (index $opSecrets.data "SP1_PRIVATE_KEY") }}
+        {{- $sp1PrivateKey = index $opSecrets.data "SP1_PRIVATE_KEY" | b64dec }}
+    {{- end }}
+{{- end }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "agglayerProver.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agglayerProver.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.container.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "agglayerProver.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "agglayerProver.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          command:
+            - agglayer
+            - prover
+          args:
+            - "--cfg"
+            - "/etc/agglayer/config.toml"
+          ports:
+            - name: app
+              containerPort: {{ .Values.container.ports.app }}
+              protocol: TCP
+            - name: telemetry
+              containerPort: {{ .Values.container.ports.telemetry }}
+              protocol: TCP
+          env:
+            - name: PROVER_NETWORK_RPC
+              value: {{ .Values.container.env.proverNetworkRPC | quote }}
+            - name: SP1_PRIVATE_KEY
+              value: {{ $sp1PrivateKey }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: "/etc/agglayer"
+              name: config
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "agglayerProver.fullname" . }}
+            items:
+              - key: "config.toml"
+                path: "config.toml"
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
