@@ -136,7 +136,7 @@ URI  = "{{ .Release.Name }}-executor:50061"
 
 [Executor]
 URI = "{{ .Release.Name }}-executor:50071"
-MaxGRPCMessageSize = 100000000
+MaxGRPCMessageSize = 150000000
 
 [Metrics]
 Host = "0.0.0.0"
