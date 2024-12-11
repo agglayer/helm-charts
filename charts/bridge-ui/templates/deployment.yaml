@@ -1,10 +1,4 @@
-{{- $l1RpcURL := "" }}
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
-{{- if $opSecrets.data }}
-    {{- if (index $opSecrets.data "l1RpcURL") }}
-        {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
-    {{- end }}
-{{- end }}
+{{- $combinedJson := .Values.combinedJson | fromJson }}
 
 apiVersion: apps/v1
 kind: Deployment
@@ -58,27 +52,27 @@ spec:
             - name: ENABLE_REPORT_FORM
               value: {{ .Values.container.env.enableReportForm | quote }}
             - name: ETHEREUM_BRIDGE_CONTRACT_ADDRESS
-              value: {{ .Values.container.env.ethereumBridgeContractAddress | quote }}
+              value: {{ $combinedJson.polygonZkEVMBridgeAddress | quote }}
             - name: ETHEREUM_EXPLORER_URL
               value: {{ .Values.container.env.ethereumExplorerUrl | quote }}
             - name: ETHEREUM_FORCE_UPDATE_GLOBAL_EXIT_ROOT
               value: {{ .Values.container.env.ethereumForceUpdateGlobalExitRoot | quote }}
             - name: ETHEREUM_PROOF_OF_EFFICIENCY_CONTRACT_ADDRESS
-              value: {{ .Values.container.env.ethereumProofOfEfficiencyContractAddress | quote }}
+              value: {{ $combinedJson.rollupAddress | quote }}
             - name: ETHEREUM_ROLLUP_MANAGER_ADDRESS
-              value: {{ .Values.container.env.ethereumRollupManagerAddress | quote }}
+              value: {{ $combinedJson.polygonRollupManagerAddress | quote }}
             - name: ETHEREUM_RPC_URL
-              value: {{ $l1RpcURL }}
+              value: {{ .Values.container.env.l1RpcURL }}
             - name: POLYGON_ZK_EVM_BRIDGE_CONTRACT_ADDRESS
-              value: {{ .Values.container.env.polygonZkEvmBridgeContractAddress | quote }}
+              value: {{ $combinedJson.polygonZkEVMBridgeAddress | quote }}
             - name: POLYGON_ZK_EVM_EXPLORER_URL
               value: {{ .Values.container.env.polygonZkEvmExplorerUrl | quote }}
             - name: POLYGON_ZK_EVM_NETWORK_ID
-              value: {{ .Values.container.env.polygonZkEvmNetworkId | quote }}
+              value: {{ $combinedJson.rollupID | quote }}
             - name: POLYGON_ZK_EVM_RPC_URL
               value: {{ .Values.container.env.polygonZkEvmRpcUrl | quote }}
             - name: ZKEVM_NETWORKCONFIG_POLYGONZKEVMGLOBALEXITROOTADDRESS
-              value: {{ .Values.container.env.zkEvmNetworkConfigPolygonZkEvmGlobalExitRootAddress | quote }}
+              value: {{ $combinedJson.polygonZkEVMGlobalExitRootAddress | quote }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

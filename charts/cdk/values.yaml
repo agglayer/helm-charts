@@ -28,24 +28,23 @@ config:
     saveCertificatesToFilesPath: /tmp
   
   l1:
+    rpcUrl: ""
     chainId: 123
-    globalExitRootAddress: "0x123"
-    polTokenAddress: "0x123"
-    rollupAddress: "0x123"
-    rollupManagerAddress: "0x123"
-    rollupManagerBlockNumber: 123
     syncBlockChunkSize: 10
 
   l2:
     agglayerAddress: "0x123"
-    globalExitRootAddress: "0x123"
-    rollupId: 123
+    aggregatorPrivateKeyPassword: ""
+    aggregatorKeystore: ""
     rpcURL: http://localhost:8545
     sequencerAddress: "0x123"
+    sequencerPrivateKeyPassword: ""
+    sequencerKeystore: ""
 
   log:
     environment: development # "production" or "development"
     level: info
 
-genesis: |
-  {}
+genesis: ""
+
+combinedJson: ""

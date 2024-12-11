@@ -50,7 +50,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: CDK_ERIGON_SEQUENCER
-              value:  "{{ .Values.is_sequencer }}"
+              value:  "{{ .Values.config.isSequencer }}"
           {{ if .Values.image.command }}
           command: {{- range .Values.image.command }}
             - {{ . }} {{- end}}
@@ -109,11 +109,8 @@ spec:
                     path: "dynamic-{{ .Values.chainName }}-conf.json"
                   - key: "first-batch-conf.json"
                     path: "first-batch-conf.json"
-            - secret:
-                name: {{ .Values.existingSecret }}
-                items:
-                  - key: {{ .Values.secretItem.key }}
-                    path: {{ .Values.secretItem.path }}
+                  - key: "erigon.yaml"
+                    path: "erigon.yaml"
   volumeClaimTemplates:
     - metadata:
         name: datadir

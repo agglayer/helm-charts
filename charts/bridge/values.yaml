@@ -33,18 +33,18 @@ config:
     environment: development # "production" or "development"
     level: info
   etherman:
+    l1Url: ""
     l2Url: "http://cdk-erigon-rpc:8123"
   claimTxManager:
     path: /etc/bridge/claimtx.keystore
-  network:
-    genBlockNumber: 0
-    polygonBridgeAddress: "0x0000000000000000000000000000000000000000"
-    polygonZkEVMGlobalExitRootAddress: "0x0000000000000000000000000000000000000000"
-    polygonRollupManagerAddress: "0x0000000000000000000000000000000000000000"
-    polygonZkEVMAddress: "0x0000000000000000000000000000000000000000"
-    l2PolygonBridgeAddress: "0x0000000000000000000000000000000000000000"
+    password: ""
+    keystore: ""
+  db:
+    database: "postgres"
+    user: ""
+    password: ""
+    name: "bridge_db"
+    host: ""
+    port: ""
 
-existingSecret: "secretName"
-secretItem:
-  key: "claimtx.keystore"
-  path: "claimtx.keystore"
+combinedJson: ""

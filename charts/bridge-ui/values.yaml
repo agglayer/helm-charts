@@ -21,16 +21,13 @@ container:
     enableFiatExchangeRates: false
     enableOutdatedNetworkModal: false
     enableReportForm: false
-    ethereumBridgeContractAddress: ""
     ethereumExplorerUrl: "https://sepolia.etherscan.io"
     ethereumForceUpdateGlobalExitRoot: true
-    ethereumProofOfEfficiencyContractAddress: ""
-    ethereumRollupManagerAddress: ""
-    polygonZkEvmBridgeContractAddress: ""
     polygonZkEvmExplorerUrl: ""
-    polygonZkEvmNetworkId: ""
     polygonZkEvmRpcUrl: "http://cdk-erigon-rpc:8123"
-    zkEvmNetworkConfigPolygonZkEvmGlobalExitRootAddress: ""
+    l1RpcURL: ""
+
+combinedJson: ""
 
 ingress:
   hostname: something.dev.polygon

@@ -57,13 +57,10 @@ spec:
                     path: "config.toml"
                   - key: "genesis.json"
                     path: "genesis.json"
-            - secret:
-                name: op-secrets
-                items:
-                  - key: sequencer.keystore
-                    path: sequencer.keystore
-                  - key: aggregator.keystore
-                    path: aggregator.keystore
+                  - key: "sequencer.keystore"
+                    path: "sequencer.keystore"
+                  - key: "aggregator.keystore"
+                    path: "aggregator.keystore"
   volumeClaimTemplates:
     - metadata:
         name: data

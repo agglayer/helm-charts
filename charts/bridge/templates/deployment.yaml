@@ -78,11 +78,8 @@ spec:
                 items:
                   - key: "bridge-config.toml"
                     path: "bridge-config.toml"
-            - secret:
-                name: {{ .Values.existingSecret }}
-                items:
-                  - key: {{ .Values.secretItem.key }}
-                    path: {{ .Values.secretItem.path }}
+                  - key: "claimtx.keystore"
+                    path: "claimtx.keystore"
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

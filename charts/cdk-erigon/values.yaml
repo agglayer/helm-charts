@@ -40,21 +40,31 @@ datadir:
 # cdk-erigon config
 chainName: network
 
-# Enable sequencer
-# ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#sequencer-wip
-# enable: 1; disable: 0
-is_sequencer: 0
-
 # cdk-erigon config file
 # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#config
-existingSecret: "secretName"
-secretItem:
-  key: "erigon.yaml"
-  path: "erigon.yaml"
+config:
+  # Enable sequencer
+  # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#sequencer-wip
+  # enable: 1; disable: 0
+  isSequencer: 0
+  allowFreeTransactions: false
+  enableNormalcy: false
+  genesis_root: "0x"
+  address:
+    admin: "0x"
+    sequencer: "0x"
+  l1:
+    chainId: 0
+    rpcUrl: ""
+  l2:
+    poolManagerUrl: ""
+    sequencerRpcUrl: ""
+    sequencerDatastreamerUrl: ""
 
 # cdk-erigon dynamic configuration
 # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#dynamic-chain-configuration
 dynamicIntegrationAllocs: ""
-dynamicIntegrationChainspec: ""
-dynamicIntegrationConf: ""
-firstBatchConf: ""
+
+# combined.json
+# ref: https://github.com/0xPolygon/cdk-contracts-tooling
+combinedJson: ""

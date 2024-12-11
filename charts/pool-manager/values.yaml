@@ -35,5 +35,11 @@ config:
     sequencerURL: http://cdk-erigon-sequencer:8123
   monitor:
     l2NodeURL: http://cdk-erigon-rpc:8123
+  db:
+    user: ""
+    password: ""
+    name: "bridge_db"
+    host: ""
+    port: ""
 
 existingSecret: op-secrets

@@ -1,3 +1,5 @@
+# parse combined.json
+{{- $combinedJson := .Values.combinedJson | fromJson }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,8 +8,194 @@ data:
   dynamic-integration-allocs.json: |-
 {{ .Values.dynamicIntegrationAllocs | indent 4 }}
   dynamic-integration-chainspec.json: |-
-{{ .Values.dynamicIntegrationChainspec | indent 4 }}
+    {
+      "ChainName": "dynamic-{{ .Values.chainName }}",
+      "chainId": {{ $combinedJson.l2ChainID | int }},
+      "consensus": "ethash",
+      "homesteadBlock": 0,
+      "daoForkBlock": 0,
+      "eip150Block": 0,
+      "eip155Block": 0,
+      "byzantiumBlock": 0,
+      "constantinopleBlock": 0,
+      "petersburgBlock": 0,
+      "istanbulBlock": 0,
+      "muirGlacierBlock": 0,
+      "berlinBlock": 0,
+      {{ if .Values.config.enableNormalcy }}
+      "londonBlock": 0,
+      "shanghaiTime": 0,
+      "cancunTime": 0,
+      "normalcyBlock": 0,
+      {{ else }}
+      "terminalTotalDifficulty": 58750000000000000000000,
+      "londonBlock": 9999999999999999999999999999999999999999999999999, 
+      "shanghaiTime": 9999999999999999999999999999999999999999999999999, 
+      "cancunTime": 9999999999999999999999999999999999999999999999999, 
+      "normalcyBlock": 9999999999999999999999999999999999999999999999999, 
+      {{ end }}
+      "arrowGlacierBlock": 9999999999999999999999999999999999999999999999999,
+      "grayGlacierBlock": 9999999999999999999999999999999999999999999999999,
+      "terminalTotalDifficultyPassed": false,
+      "pragueTime": 9999999999999999999999999999999999999999999999999,
+      "ethash": {}
+    }
+
   dynamic-integration-conf.json: |-
-{{ .Values.dynamicIntegrationConf | indent 4 }}
+    {
+      "root": {{ .Values.config.genesis_root | quote }},
+      "timestamp": {{ $combinedJson.createRollupTimestamp | int }},
+      "gasLimit": 0,
+      "difficulty": 0
+    }
   first-batch-conf.json: |-
-{{ .Values.firstBatchConf | indent 4 }}
+    {
+      "batchL2Data": {{ $combinedJson.batchL2Data | quote }},
+      "globalExitRoot": {{ $combinedJson.globalExitRoot | quote }},
+      "timestamp": {{ $combinedJson.createRollupTimestamp | int }},
+      "sequencer": {{ .Values.config.address.sequencer | quote }},
+      "l1BlockNumber": {{ $combinedJson.l1BlockNumber | int }},
+      "l1BlockHash": {{ $combinedJson.l1BlockHash | quote }},
+      "l1ParentHash": {{ $combinedJson.l1ParentHash | quote }}
+    }
+
+  erigon.yaml: |
+    log.console.json: true
+    log.console.verbosity: info
+    log.dir.json: true
+    log.dir.verbosity: info
+    log.dir.path: /tmp/cdk-erigon.log
+    datadir: {{ .Values.datadir.path | quote }}
+    chain: "dynamic-{{ .Values.chainName }}"
+    zkevm.rebuild-tree-after: 10_000
+    zkevm.increment-tree-always: false
+    zkevm.smt-regenerate-in-memory: false
+    zkevm.witness-memdb-size: 2GB
+    zkevm.witness-full: false
+    zkevm.limbo: true
+
+    {{ if .Values.config.isSequencer }}
+    zkevm.data-stream-host: 0.0.0.0
+    txpool.disable: false
+    zkevm.data-stream-port: {{ .Values.service.datastream.port | int }}
+    {{ else }}
+    zkevm.l2-sequencer-rpc-url: {{ .Values.config.l2.sequencerRpcUrl | quote }}
+    zkevm.l2-datastreamer-url: {{ .Values.config.l2.sequencerDatastreamerUrl | quote }}
+    zkevm.pool-manager-url: {{ .Values.config.l2.poolManagerUrl | quote }}
+    txpool.disable: true
+    {{ end }}
+    
+    {{ if .Values.config.allowFreeTransactions }}
+    zkevm.allow-free-transactions: true
+    {{ else }}
+    zkevm.effective-gas-price-eth-transfer: 1
+    zkevm.effective-gas-price-erc20-transfer: 1
+    zkevm.effective-gas-price-contract-invocation: 1
+    zkevm.effective-gas-price-contract-deployment: 1
+    zkevm.default-gas-price: 1000000000
+    zkevm.gas-price-factor: 0.015
+    rpc.gascap: 50_000_000
+    {{ end }}
+
+    zkevm.sync-limit: 0
+    zkevm.reject-smart-contract-deployments: false
+    zkevm.disable-virtual-counters: true
+    zkevm.virtual-counters-smt-reduction: 0.6
+    zkevm.da-url: ""
+    zkevm.initial-batch.config: /etc/cdk-erigon/first-batch-conf.json
+    zkevm.rpc-ratelimit: 250
+    zkevm.rpc-get-batch-witness-concurrency-limit: 1
+    zkevm.datastream-version: 3
+    zkevm.datastream-new-block-timeout: 500ms
+    zkevm.data-stream-writeTimeout: 20s
+    zkevm.data-stream-inactivity-timeout: 10m
+    zkevm.data-stream-inactivity-check-interval: 5m
+    zkevm.sequencer-block-seal-time: 6s
+    zkevm.sequencer-batch-seal-time: 30m
+    zkevm.sequencer-batch-verification-timeout: 30m
+    zkevm.sequencer-timeout-on-empty-tx-pool: 250ms
+    zkevm.sequencer-halt-on-batch-number: 0
+    zkevm.allow-pre-eip155-transactions: true
+    zkevm.executor-strict: false
+    zkevm.executor-request-timeout: 60s
+    zkevm.executor-max-concurrent-requests: 1
+    zkevm.executor-payload-output: ""
+    zkevm.address-admin: {{ .Values.config.address.admin | quote }}
+    zkevm.address-sequencer: {{ .Values.config.address.sequencer | quote }}
+    zkevm.address-rollup: {{ $combinedJson.rollupAddress | quote }}
+    zkevm.address-zkevm: {{ $combinedJson.polygonRollupManagerAddress | quote }}
+    zkevm.address-ger-manager: {{ $combinedJson.polygonZkEVMGlobalExitRootAddress | quote }}
+    zkevm.l1-sync-start-block: 0
+    zkevm.l1-sync-stop-batch: 0
+    zkevm.l1-chain-id: {{ .Values.config.l1.chainId | int }}
+    zkevm.l1-rpc-url: {{ .Values.config.l1.rpcUrl | quote }}
+    zkevm.l1-cache-enabled: false
+    zkevm.l1-cache-port: 6969
+    zkevm.l1-rollup-id: {{ $combinedJson.rollupId | int }}
+    zkevm.l1-block-range: 20_000
+    zkevm.l1-query-delay: 6_000
+    zkevm.l1-highest-block-type: finalized
+    zkevm.l1-matic-contract-address: {{ $combinedJson.polTokenAddress | quote }}
+    zkevm.l1-first-block: {{ $combinedJson.upgradeToULxLyBlockNumber | int }}
+    zkevm.l1-contract-address-check: true
+    zkevm.l2-chain-id: {{ $combinedJson.l2ChainID | int }}
+    zkevm.l2-datastreamer-timeout: 0s
+    snapshots: false
+    externalcl: true
+    txpool.pricelimit: 1
+    txpool.pricebump: 10
+    txpool.accountslots: 16
+    txpool.globalslots: 10_000
+    txpool.globalbasefeeslots: 30_000
+    txpool.globalqueue: 30_000
+    txpool.trace.senders: ""
+    maxpeers: 0
+    port: 30303
+    p2p.protocol: [67, 68]
+    p2p.allowed-ports: [30303, 30304, 30305, 30306, 30307]
+    sentry.api.addr: ""
+    sentry.log-peer-info: false
+    downloader.api.addr: ""
+    bootnodes: ""
+    staticpeers: ""
+    trustedpeers: ""
+    nodiscover: true
+    v5disc: false
+    netrestrict: ""
+    private.api.addr: localhost:9092
+    private.api.ratelimit: 31872
+    torrent.port: 42070
+    torrent.verbosity: 2
+    torrent.download.rate: 16mb
+    torrent.upload.rate: 4mb
+    torrent.download.slots: 3
+    torrent.maxpeers: 0
+    torrent.staticpeers: ""
+    torrent.conns.perfile: 10
+    graphql: false
+    rpc.batch.concurrency: 2
+    rpc.streaming.disable: false
+    rpc.batch.limit: 100
+    rpc.returndata.limit: 100_000
+    rpc.accessList: ""
+    http: true
+    http.addr: 0.0.0.0
+    http.port: {{ .Values.service.rpc.port | int }}
+    http.compression: false
+    http.corsdomain: "*"
+    http.vhosts: "*"
+    http.api: [eth, debug, net, trace, web3, erigon, zkevm, txpool]
+    http.trace: false
+    ws: true
+    ws.addr: 0.0.0.0
+    ws.port: 8133
+    metrics: true
+    metrics.addr: 0.0.0.0
+    metrics.port: {{ .Values.service.metrics.port | int }}
+    pprof: true
+    pprof.addr: 0.0.0.0
+    pprof.port: 6060
+    debug.timers: false
+    debug.no-sync: false
+    debug.limit: 0
+    db.size.limit: {{ .Values.datadir.size | quote }}
