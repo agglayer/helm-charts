@@ -131,7 +131,7 @@ data:
     zkevm.l1-rpc-url: {{ .Values.config.l1.rpcUrl | quote }}
     zkevm.l1-cache-enabled: false
     zkevm.l1-cache-port: 6969
-    zkevm.l1-rollup-id: {{ $combinedJson.rollupId | int }}
+    zkevm.l1-rollup-id: {{ $combinedJson.rollupID | int }}
     zkevm.l1-block-range: 20_000
     zkevm.l1-query-delay: 6_000
     zkevm.l1-highest-block-type: finalized

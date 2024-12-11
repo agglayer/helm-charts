@@ -38,7 +38,7 @@ data:
     GlobalExitRootAddr = {{ $combinedJson.polygonZkEVMGlobalExitRootAddress | quote }}
 
     [BridgeL2Sync]
-    OriginNetwork={{ $combinedJson.rollupId | int }}
+    OriginNetwork={{ $combinedJson.rollupID | int }}
 
     [L1InfoTreeSync]
     SyncBlockChunkSize={{ .Values.config.l1.syncBlockChunkSize | int }}
