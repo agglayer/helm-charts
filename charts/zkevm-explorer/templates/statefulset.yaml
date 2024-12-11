@@ -1,27 +1,4 @@
-{{- $dbName := "" }}
-{{- $dbUser := "" }}
-{{- $dbUserPassword := "" }}
-{{- $dbHost := "" }}
-{{- $dbPort := "" }}
-
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
-{{- if $opSecrets.data }}
-    {{- if (index $opSecrets.data "explorerDbName") }}
-        {{- $dbName = index $opSecrets.data "dbUser" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbUser") }}
-        {{- $dbUser = index $opSecrets.data "dbUser" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbUserPassword") }}
-        {{- $dbUserPassword = index $opSecrets.data "dbUserPassword" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbHost") }}
-        {{- $dbHost = index $opSecrets.data "dbHost" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbPort") }}
-        {{- $dbPort = index $opSecrets.data "dbPort" | b64dec }}
-    {{- end }}
-{{- end }}
+{{- $combinedJson := .Values.combinedJson | fromJson }}
 
 apiVersion: apps/v1
 kind: StatefulSet
@@ -66,7 +43,7 @@ spec:
             - name: SUBNETWORK
               value: {{ .Values.container.env.subNetwork | quote }}
             - name: CHAIN_ID
-              value: {{ .Values.container.env.chainId | quote }}
+              value: {{ $combinedJson.l2ChainID | quote }}
             - name: COIN
               value: {{ .Values.container.env.coin | quote }}
             - name: ETHEREUM_JSONRPC_VARIANT
@@ -74,7 +51,7 @@ spec:
             - name: ETHEREUM_JSONRPC_HTTP_URL
               value: {{ .Values.container.env.ethereumJsonRPCHttpURL | quote }}
             - name: DATABASE_URL
-              value: "postgresql://{{ $dbUser }}:{{ $dbUserPassword }}@{{ $dbHost }}:{{ $dbPort }}/{{ $dbName }}"
+              value: "postgresql://{{ .Values.db.user }}:{{ .Values.db.password }}@{{ .Values.db.host }}:{{ .Values.db.port }}/{{ .Values.db.name }}"
             - name: ECTO_USE_SSL
               value: "false"
             - name: MIX_ENV
