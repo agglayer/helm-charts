@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "agglayerProver.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agglayerProver.labels" . | nindent 4 }}
+spec:
+  ports:
+    - name: app-port
+      protocol: TCP
+      port: {{ .Values.container.ports.app }}
+    - name: telemetry-port
+      protocol: TCP
+      port: {{ .Values.container.ports.telemetry }}
+  selector:
+    {{- include "agglayerProver.selectorLabels" . | nindent 4 }}
