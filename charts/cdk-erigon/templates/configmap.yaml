@@ -122,8 +122,8 @@ data:
     zkevm.executor-payload-output: ""
     zkevm.address-admin: {{ .Values.config.address.admin | quote }}
     zkevm.address-sequencer: {{ .Values.config.address.sequencer | quote }}
-    zkevm.address-rollup: {{ $combinedJson.rollupAddress | quote }}
-    zkevm.address-zkevm: {{ $combinedJson.polygonRollupManagerAddress | quote }}
+    zkevm.address-rollup: {{ $combinedJson.polygonRollupManagerAddress | quote }}
+    zkevm.address-zkevm: {{ $combinedJson.rollupAddress | quote }}
     zkevm.address-ger-manager: {{ $combinedJson.polygonZkEVMGlobalExitRootAddress | quote }}
     zkevm.l1-sync-start-block: 0
     zkevm.l1-sync-stop-batch: 0
