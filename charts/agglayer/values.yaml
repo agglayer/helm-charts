@@ -39,6 +39,11 @@ config:
     environment: development
     level: info
 
+  outbound:
+    rpc:
+      settle:
+        gasMultiplierFactor: 130
+
   rpc:
     maxRequestBodySize: 10485760 # 10MB
 

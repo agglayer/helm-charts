@@ -101,6 +101,7 @@ max-retries = 3
 retry-interval = 7
 confirmations = 1
 settlement-timeout = 1200
+gas-multiplier-factor = {{ .Values.config.outbound.rpc.settle.gasMultiplierFactor | int }}
 
 [log]
 environment = {{ .Values.config.log.environment | quote }} # "production" or "development"
