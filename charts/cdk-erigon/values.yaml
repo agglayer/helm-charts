@@ -24,6 +24,7 @@ service:
     port: 9090
 
 ingress:
+  create: true
   hostname: something.dev.polygon
 
 resources:

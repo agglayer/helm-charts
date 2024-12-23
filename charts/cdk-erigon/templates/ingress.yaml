@@ -1,3 +1,4 @@
+{{- if .Values.ingress.create -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -28,3 +29,4 @@ spec:
                 name: {{ include "cdk-erigon.fullname" . }}
                 port:
                   name: rpc
+{{- end }}
