@@ -39,12 +39,11 @@ datadir:
   size: 750G
 
 # cdk-erigon config
-
-# Enable sequencer
-# ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#sequencer-wip
-# enable: 1; disable: 0
 config:
   chainName: network
+  # Enable sequencer
+  # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#sequencer-wip
+  # enable: 1; disable: 0
   isSequencer: 0
   allowFreeTransactions: true
   enableNormalcy: true
@@ -73,6 +72,9 @@ config:
     batchL2Data: "0x"
     globalExitRoot: "0x"
     genesisRoot: "0x"
+    poolManagerUrl: "http://pool-manager:8545"
+    sequencerUrl: "http://cdk-erigon-sequencer:8123"
+    sequencerDatastreamerUrl: "cdk-erigon-sequencer:6900"
   
   wallets:
     admin:
@@ -84,9 +86,7 @@ config:
     l1:
       rpcUrl: ""
 
-dynamicIntegrationAllocs: ""
-
-# cdk-erigon config file
 
 # cdk-erigon dynamic configuration
 # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#dynamic-chain-configuration
+dynamicIntegrationAllocs: ""

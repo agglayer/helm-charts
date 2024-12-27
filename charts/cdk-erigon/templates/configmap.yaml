@@ -142,9 +142,9 @@ data:
     zkevm.data-stream-port: 6900
     txpool.disable: false
     {{ else }}
-    zkevm.pool-manager-url: http://pool-manager:8545
-    zkevm.l2-sequencer-rpc-url: http://cdk-erigon-sequencer:8123
-    zkevm.l2-datastreamer-url: cdk-erigon-sequencer:6900
+    zkevm.pool-manager-url: {{ .Values.config.rollup.poolManagerUrl | quote }}
+    zkevm.l2-sequencer-rpc-url: {{ .Values.config.rollup.sequencerUrl | quote }}
+    zkevm.l2-datastreamer-url: {{ .Values.config.rollup.sequencerDatastreamerUrl | quote }}
     txpool.disable: true
     {{ end }}
 
