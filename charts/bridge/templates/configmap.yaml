@@ -1,39 +1,3 @@
-{{- $l1RpcURL := "" }}
-
-{{- $claimTxPrivateKeyPassword := "" }}
-
-{{- $bridgeDbName := "" }}
-{{- $dbUser := "" }}
-{{- $dbUserPassword := "" }}
-{{- $dbHost := "" }}
-{{- $dbPort := "" }}
-
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
-{{- if $opSecrets.data }}
-    {{- if (index $opSecrets.data "claimTxPrivateKeyPassword") }}
-        {{- $claimTxPrivateKeyPassword = index $opSecrets.data "claimTxPrivateKeyPassword" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "l1RpcURL") }}
-        {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
-    {{- end }}
-
-    {{- if (index $opSecrets.data "bridgeDbName") }}
-        {{- $bridgeDbName = index $opSecrets.data "bridgeDbName" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbUser") }}
-        {{- $dbUser = index $opSecrets.data "dbUser" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbUserPassword") }}
-        {{- $dbUserPassword = index $opSecrets.data "dbUserPassword" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbHost") }}
-        {{- $dbHost = index $opSecrets.data "dbHost" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbPort") }}
-        {{- $dbPort = index $opSecrets.data "dbPort" | b64dec }}
-    {{- end }}
-{{- end }}
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -53,15 +17,15 @@ data:
 
     [SyncDB]
     Database = "postgres"
-    User = {{ $dbUser | quote }}
-    Password = {{ $dbUserPassword | quote }}
-    Name = {{ $bridgeDbName | quote }}
-    Host = {{ $dbHost | quote }}
-    Port = {{ $dbPort | quote }}
+    User = {{ .Values.config.sensitive.database.user | quote }}
+    Password = {{ .Values.config.sensitive.database.password | quote }}
+    Name = {{ .Values.config.database.name | quote }}
+    Host = {{ .Values.config.database.host | quote }}
+    Port = {{ .Values.config.database.port | quote }}
 
     [Etherman]
-    l1URL = {{ $l1RpcURL | quote }}
-    L2URLs = [{{ .Values.config.etherman.l2Url | quote }}]
+    l1URL = {{ .Values.config.sensitive.l1.rpcUrl | quote }}
+    L2URLs = [{{ .Values.config.l2.rpcUrl | quote }}]
 
     [Synchronizer]
     SyncInterval = "5s"
@@ -80,22 +44,25 @@ data:
     BridgeVersion = "v1"
     [BridgeServer.DB]
     Database = "postgres"
-    User = {{ $dbUser | quote }}
-    Password = {{ $dbUserPassword | quote }}
-    Name = {{ $bridgeDbName | quote }}
-    Host = {{ $dbHost | quote }}
-    Port = {{ $dbPort | quote }}
+    User = {{ .Values.config.sensitive.database.user | quote }}
+    Password = {{ .Values.config.sensitive.database.password | quote }}
+    Name = {{ .Values.config.database.name | quote }}
+    Host = {{ .Values.config.database.host | quote }}
+    Port = {{ .Values.config.database.port | quote }}
 
     [NetworkConfig]
-    GenBlockNumber = {{ .Values.config.network.genBlockNumber | int64 }}
-    PolygonBridgeAddress = {{ .Values.config.network.polygonBridgeAddress | quote }}
-    PolygonZkEVMGlobalExitRootAddress = {{ .Values.config.network.polygonZkEVMGlobalExitRootAddress | quote }}
-    PolygonRollupManagerAddress = {{ .Values.config.network.polygonRollupManagerAddress | quote }}
-    PolygonZkEVMAddress = {{ .Values.config.network.polygonZkEVMAddress | quote }}
-    L2PolygonBridgeAddresses = [{{ .Values.config.network.l2PolygonBridgeAddress | quote }}]
+    GenBlockNumber = {{ .Values.config.rollupManager.genesisBlockNumber | int64 }}
+    PolygonBridgeAddress = {{ .Values.config.rollupManager.bridgeAddress | quote }}
+    PolygonZkEVMGlobalExitRootAddress = {{ .Values.config.rollupManager.globalExitRootManagerAddress | quote }}
+    PolygonRollupManagerAddress = {{ .Values.config.rollupManager.address | quote }}
+    PolygonZkEVMAddress = {{ .Values.config.rollup.address | quote }}
+    L2PolygonBridgeAddresses = [{{ .Values.config.rollupManager.bridgeAddress | quote }}]
 
     [ClaimTxManager]
     FrequencyToMonitorTxs = "5s"
-    PrivateKey = {Path = {{ .Values.config.claimTxManager.path | quote }}, Password = {{ $claimTxPrivateKeyPassword | quote }}}
+    PrivateKey = {Path = "/etc/bridge/claimtx.keystore", Password = {{ .Values.config.sensitive.wallets.claimtx.password | quote }}}
     Enabled = true
     RetryInterval = "1s"
+
+  claimtx.keystore: |
+    {{ .Values.config.wallets.claimtx.keystore }}
