@@ -1,28 +1,3 @@
-{{- $poolManagerDbName := "" }}
-{{- $dbUser := "" }}
-{{- $dbUserPassword := "" }}
-{{- $dbHost := "" }}
-{{- $dbPort := "" }}
-
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
-{{- if $opSecrets.data }}
-    {{- if (index $opSecrets.data "poolManagerDbName") }}
-        {{- $poolManagerDbName = index $opSecrets.data "poolManagerDbName" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbUser") }}
-        {{- $dbUser = index $opSecrets.data "dbUser" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbUserPassword") }}
-        {{- $dbUserPassword = index $opSecrets.data "dbUserPassword" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbHost") }}
-        {{- $dbHost = index $opSecrets.data "dbHost" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbPort") }}
-        {{- $dbPort = index $opSecrets.data "dbPort" | b64dec }}
-    {{- end }}
-{{- end }}
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -42,7 +17,7 @@ data:
 
     [Server]
     Host = "0.0.0.0"
-    Port = {{ .Values.config.server.port }}
+    Port = {{ .Values.service.port }}
     ReadTimeout = "60s"
     WriteTimeout = "60s"
     MaxRequestsPerIPAndSecond = 500
@@ -51,22 +26,22 @@ data:
     BatchRequestsLimit = 20
 
     [DB]
-    User = {{ $dbUser | quote }}
-    Password = {{ $dbUserPassword | quote }}
-    Name = {{ $poolManagerDbName | quote }}
-    Host = {{ $dbHost | quote }}
-    Port = {{ $dbPort | quote }}
+    User = {{ .Values.config.sensitive.database.user | quote }}
+    Password = {{ .Values.config.sensitive.database.password | quote }}
+    Name = {{ .Values.config.database.name | quote }}
+    Host = {{ .Values.config.database.host | quote }}
+    Port = {{ .Values.config.database.port | quote }}
     EnableLog = false
     MaxConns = 200
 
     [Sender]
-    SequencerURL = {{ .Values.config.sender.sequencerURL | quote }}
+    SequencerURL = {{ .Values.config.rollup.sequencerUrl | quote }}
     ResendTxsCheckInterval = "1s"
     Workers = 5
     QueueSize = 25
 
     [Monitor]
-    L2NodeURL = {{ .Values.config.monitor.l2NodeURL | quote }}
+    L2NodeURL = {{ .Values.config.l2.rpcUrl | quote }}
     Workers = 5
     QueueSize = 25
     RetryWaitInterval = "3s"

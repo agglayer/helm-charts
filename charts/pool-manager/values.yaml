@@ -29,11 +29,18 @@ config:
   log:
     environment: development # "production" or "development"
     level: info
-  server:
-    port: 8545
-  sender:
-    sequencerURL: http://cdk-erigon-sequencer:8123
-  monitor:
-    l2NodeURL: http://cdk-erigon-rpc:8123
+  l2:
+    rpcUrl: "http://"
 
-existingSecret: op-secrets
+  rollup:
+    sequencerUrl: "http://"
+
+  database:
+    host: ""
+    port: ""
+    name: ""
+  
+  sensitive:
+    database:
+      user: ""
+      password: ""
