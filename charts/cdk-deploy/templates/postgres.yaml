@@ -1,0 +1,32 @@
+{{- if .Values.postgres.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.postgres.releaseName }}
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "100"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ .Values.chainName }}
+  sources:
+  - repoURL: registry-1.docker.io/bitnamicharts
+    chart: postgresql
+    targetRevision: {{ .Values.postgres.targetRevision }}
+    helm:
+      releaseName: {{ .Values.postgres.releaseName }}
+      valueFiles: |-
+        {{- range $.Values.postgres.values.files }}
+        - $values/{{ . }}
+        {{- end }}    
+  - repoURL: {{ .Values.postgres.repoUrl }}
+    targetRevision: {{ Values.postgres.values.targetRevision }}
+    ref: values
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: {{ .Values.namespace }}
+  syncPolicy:
+    automated:
+      prune: true
+{{- end }}

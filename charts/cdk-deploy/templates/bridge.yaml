@@ -1,0 +1,32 @@
+{{- if .Values.bridge.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.bridge.releaseName }}
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "100"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ .Values.chainName }}
+  sources:
+  - repoURL: europe-west2-docker.pkg.dev/prj-polygonlabs-shared-prod/polygonlabs-docker-prod
+    chart: bridge
+    targetRevision: {{ .Values.bridge.targetRevision }}
+    helm:
+      releaseName: {{ .Values.bridge.releaseName }}
+      valueFiles: |-
+        {{- range $.Values.bridge.values.files }}
+        - $values/{{ . }}
+        {{- end }}    
+  - repoURL: {{ .Values.bridge.repoUrl }}
+    targetRevision: {{ Values.bridge.values.targetRevision }}
+    ref: values
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: {{ .Values.namespace }}
+  syncPolicy:
+    automated:
+      prune: true
+{{- end }}

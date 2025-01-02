@@ -1,0 +1,32 @@
+{{- if .Values.cdkErigonRpc.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.cdkErigonRpc.releaseName }}
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "100"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ .Values.chainName }}
+  sources:
+  - repoURL: europe-west2-docker.pkg.dev/prj-polygonlabs-shared-prod/polygonlabs-docker-prod
+    chart: cdk-erigon
+    targetRevision: {{ .Values.cdkErigonRpc.targetRevision }}
+    helm:
+      releaseName: {{ .Values.cdkErigonRpc.releaseName }}
+      valueFiles: |-
+        {{- range $.Values.cdkErigonRpc.values.files }}
+        - $values/{{ . }}
+        {{- end }}    
+  - repoURL: {{ .Values.cdkErigonRpc.repoUrl }}
+    targetRevision: {{ Values.cdkErigonRpc.values.targetRevision }}
+    ref: values
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: {{ .Values.namespace }}
+  syncPolicy:
+    automated:
+      prune: true
+{{- end }}

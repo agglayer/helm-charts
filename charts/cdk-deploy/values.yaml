@@ -1,0 +1,90 @@
+chainName: default
+namespace: default
+
+bridgeUi:
+  releaseName: bridge-ui
+  enabled: false
+  targetRevision: 2.0.0
+  values:
+    files:
+    - path/to/values/files_01.yaml
+    - path/to/values/files_02.yaml
+    repoUrl: https://github.com/0xPolygon/gke-shared-dev-configs
+    targetRevision: main
+
+bridge:
+  releaseName: bridge
+  enabled: false
+  targetRevision: 2.0.0
+  values:
+    files:
+    - path/to/values/files_01.yaml
+    - path/to/values/files_02.yaml
+    repoUrl: https://github.com/0xPolygon/gke-shared-dev-configs
+    targetRevision: main
+
+cdkErigonRpc:
+  releaseName: cdk-erigon-rpc
+  enabled: false
+  targetRevision: 2.0.0
+  values:
+    files:
+    - path/to/values/files_01.yaml
+    - path/to/values/files_02.yaml
+    repoUrl: https://github.com/0xPolygon/gke-shared-dev-configs
+    targetRevision: main
+
+cdkErigonSequencer:
+  releaseName: cdk-erigon-sequencer
+  enabled: false
+  targetRevision: 2.0.0
+  values:
+    files:
+    - path/to/values/files_01.yaml
+    - path/to/values/files_02.yaml
+    repoUrl: https://github.com/0xPolygon/gke-shared-dev-configs
+    targetRevision: main
+
+cdkNode:
+  releaseName: cdk-node
+  enabled: false
+  targetRevision: 2.0.0
+  values:
+    files:
+    - path/to/values/files_01.yaml
+    - path/to/values/files_02.yaml
+    repoUrl: https://github.com/0xPolygon/gke-shared-dev-configs
+    targetRevision: main
+
+explorer:
+  releaseName: zkevm-explorer
+  enabled: false
+  targetRevision: 2.0.0
+  values:
+    files:
+    - path/to/values/files_01.yaml
+    - path/to/values/files_02.yaml
+    repoUrl: https://github.com/0xPolygon/gke-shared-dev-configs
+    targetRevision: main
+
+poolManager:
+  releaseName: pool-manager
+  enabled: false
+  targetRevision: 2.0.0
+  values:
+    files:
+    - path/to/values/files_01.yaml
+    - path/to/values/files_02.yaml
+    repoUrl: https://github.com/0xPolygon/gke-shared-dev-configs
+    targetRevision: main
+
+postgres:
+  releaseName: postgres
+  enabled: false
+  targetRevision: 16.2.1
+  values:
+    files:
+    - path/to/values/files_01.yaml
+    - path/to/values/files_02.yaml
+    repoUrl: https://github.com/0xPolygon/gke-shared-dev-configs
+    targetRevision: main

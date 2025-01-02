@@ -1,0 +1,32 @@
+{{- if .Values.poolManager.enabled -}}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ .Values.poolManager.releaseName }}
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "100"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: {{ .Values.chainName }}
+  sources:
+  - repoURL: europe-west2-docker.pkg.dev/prj-polygonlabs-shared-prod/polygonlabs-docker-prod
+    chart: pool-manager
+    targetRevision: {{ .Values.poolManager.targetRevision }}
+    helm:
+      releaseName: {{ .Values.poolManager.releaseName }}
+      valueFiles: |-
+        {{- range $.Values.poolManager.values.files }}
+        - $values/{{ . }}
+        {{- end }}    
+  - repoURL: {{ .Values.poolManager.repoUrl }}
+    targetRevision: {{ Values.poolManager.values.targetRevision }}
+    ref: values
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: {{ .Values.namespace }}
+  syncPolicy:
+    automated:
+      prune: true
+{{- end }}
