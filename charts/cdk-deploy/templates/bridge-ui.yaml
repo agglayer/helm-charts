@@ -16,12 +16,12 @@ spec:
     targetRevision: {{ .Values.bridgeUi.targetRevision }}
     helm:
       releaseName: {{ .Values.bridgeUi.releaseName }}
-      valueFiles: |-
+      valueFiles:
         {{- range $.Values.bridgeUi.values.files }}
         - $values/{{ . }}
         {{- end }}    
-  - repoURL: {{ .Values.bridgeUi.repoUrl }}
-    targetRevision: {{ Values.bridgeUi.values.targetRevision }}
+  - repoURL: {{ .Values.bridgeUi.values.repoUrl }}
+    targetRevision: {{ .Values.bridgeUi.values.targetRevision }}
     ref: values
   destination:
     server: "https://kubernetes.default.svc"

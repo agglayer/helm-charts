@@ -16,12 +16,12 @@ spec:
     targetRevision: {{ .Values.cdkErigonRpc.targetRevision }}
     helm:
       releaseName: {{ .Values.cdkErigonRpc.releaseName }}
-      valueFiles: |-
+      valueFiles:
         {{- range $.Values.cdkErigonRpc.values.files }}
         - $values/{{ . }}
         {{- end }}    
-  - repoURL: {{ .Values.cdkErigonRpc.repoUrl }}
-    targetRevision: {{ Values.cdkErigonRpc.values.targetRevision }}
+  - repoURL: {{ .Values.cdkErigonRpc.values.repoUrl }}
+    targetRevision: {{ .Values.cdkErigonRpc.values.targetRevision }}
     ref: values
   destination:
     server: "https://kubernetes.default.svc"

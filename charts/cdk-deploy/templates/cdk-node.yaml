@@ -16,12 +16,12 @@ spec:
     targetRevision: {{ .Values.cdkNode.targetRevision }}
     helm:
       releaseName: {{ .Values.cdkNode.releaseName }}
-      valueFiles: |-
+      valueFiles:
         {{- range $.Values.cdkNode.values.files }}
         - $values/{{ . }}
         {{- end }}    
-  - repoURL: {{ .Values.cdkNode.repoUrl }}
-    targetRevision: {{ Values.cdkNode.values.targetRevision }}
+  - repoURL: {{ .Values.cdkNode.values.repoUrl }}
+    targetRevision: {{ .Values.cdkNode.values.targetRevision }}
     ref: values
   destination:
     server: "https://kubernetes.default.svc"

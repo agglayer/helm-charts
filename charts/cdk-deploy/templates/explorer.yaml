@@ -16,12 +16,12 @@ spec:
     targetRevision: {{ .Values.explorer.targetRevision }}
     helm:
       releaseName: {{ .Values.explorer.releaseName }}
-      valueFiles: |-
+      valueFiles:
         {{- range $.Values.explorer.values.files }}
         - $values/{{ . }}
         {{- end }}    
-  - repoURL: {{ .Values.explorer.repoUrl }}
-    targetRevision: {{ Values.explorer.values.targetRevision }}
+  - repoURL: {{ .Values.explorer.values.repoUrl }}
+    targetRevision: {{ .Values.explorer.values.targetRevision }}
     ref: values
   destination:
     server: "https://kubernetes.default.svc"

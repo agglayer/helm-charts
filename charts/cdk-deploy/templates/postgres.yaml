@@ -16,12 +16,12 @@ spec:
     targetRevision: {{ .Values.postgres.targetRevision }}
     helm:
       releaseName: {{ .Values.postgres.releaseName }}
-      valueFiles: |-
+      valueFiles:
         {{- range $.Values.postgres.values.files }}
         - $values/{{ . }}
         {{- end }}    
-  - repoURL: {{ .Values.postgres.repoUrl }}
-    targetRevision: {{ Values.postgres.values.targetRevision }}
+  - repoURL: {{ .Values.postgres.values.repoUrl }}
+    targetRevision: {{ .Values.postgres.values.targetRevision }}
     ref: values
   destination:
     server: "https://kubernetes.default.svc"
