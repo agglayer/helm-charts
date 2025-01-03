@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ .Values.cdkNode.releaseName }}
+  name: {{ .Values.chainName }}-{{ .Values.cdkNode.releaseName }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "400"

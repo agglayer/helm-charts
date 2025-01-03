@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ .Values.cdkErigonSequencer.releaseName }}
+  name: {{ .Values.chainName }}-{{ .Values.cdkErigonSequencer.releaseName }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "200"

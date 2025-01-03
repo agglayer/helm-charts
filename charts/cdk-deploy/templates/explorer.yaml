@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: {{ .Values.explorer.releaseName }}
+  name: {{ .Values.chainName }}-{{ .Values.explorer.releaseName }}
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "500"
