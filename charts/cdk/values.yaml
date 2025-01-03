@@ -73,5 +73,12 @@ config:
     environment: development # "production" or "development"
     level: info
 
+resources:
+  limits:
+    memory: 1Gi
+  requests:
+    cpu: 1
+    memory: 512Mi
+
 genesis: |
   {}
