@@ -28,11 +28,9 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.container.image.pullPolicy }}
-          entrypoint:
-            - /bin/sh
-            - -c
           command:
             - cdk-node
+          args:
             - run
             - --cfg=/etc/cdk/config.toml
             - --custom-network-file=/etc/cdk/genesis.json
