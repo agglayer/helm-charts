@@ -10,28 +10,16 @@ container:
     app: 4004
   
   env:
+    chainId: 123
     coin: ETH
+    ethereumJsonRPCHttpURL: http://localhost:8123
     network: Integration Networks
+    subNetwork: some-subnetwork
 
 ingress:
   hostname: explorer.cdk9.dev.polygon
 
-config:
-  chainName: network
-  
-  l2:
-    chainId: 0
-    rpcUrl: "http://"
-
-  database:
-    host: ""
-    port: ""
-    name: ""
-  
-  sensitive:
-    database:
-      user: ""
-      password: ""
+existingSecret: secretName
 
 podLabels: {}
 podSecurityContext: {}

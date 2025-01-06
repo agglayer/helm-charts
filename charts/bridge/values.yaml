@@ -32,34 +32,19 @@ config:
   log:
     environment: development # "production" or "development"
     level: info
+  etherman:
+    l2Url: "http://cdk-erigon-rpc:8123"
+  claimTxManager:
+    path: /etc/bridge/claimtx.keystore
+  network:
+    genBlockNumber: 0
+    polygonBridgeAddress: "0x0000000000000000000000000000000000000000"
+    polygonZkEVMGlobalExitRootAddress: "0x0000000000000000000000000000000000000000"
+    polygonRollupManagerAddress: "0x0000000000000000000000000000000000000000"
+    polygonZkEVMAddress: "0x0000000000000000000000000000000000000000"
+    l2PolygonBridgeAddress: "0x0000000000000000000000000000000000000000"
 
-  l2:
-    rpcUrl: "http://"
-
-  rollupManager:
-    address: "0x"
-    genesisBlockNumber: 0
-    globalExitRootManagerAddress: "0x"
-    bridgeAddress: "0x"
-
-  rollup:
-    address: ""
-
-  database:
-    host: ""
-    port: ""
-    name: ""
-  
-  wallets:
-    claimtx:
-      keystore: "{}"
-
-  sensitive:
-    l1:
-      rpcUrl: ""
-    wallets:
-      claimtx:
-        password: ""
-    database:
-      user: ""
-      password: ""
+existingSecret: "secretName"
+secretItem:
+  key: "claimtx.keystore"
+  path: "claimtx.keystore"

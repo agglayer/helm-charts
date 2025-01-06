@@ -36,57 +36,26 @@ resources:
 
 datadir:
   path: /data/
-  size: 750G
+  size: 750Gi
 
 # cdk-erigon config
-config:
-  chainName: network
-  # Enable sequencer
-  # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#sequencer-wip
-  # enable: 1; disable: 0
-  isSequencer: 0
-  allowFreeTransactions: true
-  enableNormalcy: true
+chainName: network
 
-  l1:
-    chainId: 0
-  
-  l2:
-    chainId: 0
+# Enable sequencer
+# ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#sequencer-wip
+# enable: 1; disable: 0
+is_sequencer: 0
 
-  rollupManager:
-    address: "0x"
-    creation:
-      blockNumber: 0
-    globalExitRootManagerAddress: "0x"
-    polAddress: "0x"
-
-  rollup:
-    address: ""
-    id: ""
-    creation:
-      timestamp: 0
-      blockNumber: 0
-      blockHash: "0x"
-      parentBlockHash: "0x"
-    batchL2Data: "0x"
-    globalExitRoot: "0x"
-    genesisRoot: "0x"
-    poolManagerUrl: "http://pool-manager:8545"
-    sequencerUrl: "http://cdk-erigon-sequencer:8123"
-    sequencerDatastreamerUrl: "cdk-erigon-sequencer:6900"
-  
-  wallets:
-    admin:
-      address: "0x"
-    sequencer:
-      address: "0x"
-
-  sensitive:
-    l1:
-      rpcUrl: ""
-
+# cdk-erigon config file
+# ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#config
+existingSecret: "secretName"
+secretItem:
+  key: "erigon.yaml"
+  path: "erigon.yaml"
 
 # cdk-erigon dynamic configuration
 # ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#dynamic-chain-configuration
 dynamicIntegrationAllocs: ""
+dynamicIntegrationChainspec: ""
+dynamicIntegrationConf: ""
+firstBatchConf: ""
