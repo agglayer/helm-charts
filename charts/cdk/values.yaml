@@ -7,7 +7,7 @@ container:
     tag: main
 
 storage:
-  path: /data
+  path: /etc/cdk/data
   size: 500Gi
 
 podLabels: {}
@@ -15,7 +15,10 @@ podSecurityContext: {}
 securityContext: {}
 
 config:
+  agglayerURL: http://agglayer:4444
+  bridgeAddress: "0x123"
   contractsVersion: banana
+  forkId: 12
   isValidium: true
 
   aggSender:
@@ -23,52 +26,23 @@ config:
     checkSettledInterval: 5s
     maxCertSize: 8388608
     saveCertificatesToFilesPath: /tmp
-
+  
   l1:
-    chainId: 0
+    chainId: 123
+    globalExitRootAddress: "0x123"
+    polTokenAddress: "0x123"
+    rollupAddress: "0x123"
+    rollupManagerAddress: "0x123"
+    rollupManagerBlockNumber: 123
     syncBlockChunkSize: 10
-  
+
   l2:
-    chainId: 0
-    rpcUrl: "http://"
+    agglayerAddress: "0x123"
+    globalExitRootAddress: "0x123"
+    rollupId: 123
+    rpcURL: http://localhost:8545
+    sequencerAddress: "0x123"
 
-  agglayer:
-    address: ""
-    url: ""
-  
-  rollupManager:
-    address: "0x"
-    creation:
-      blockNumber: 0
-    genesisBlockNumber: 0
-    globalExitRootManagerAddress: "0x"
-    polAddress: "0x"
-    bridgeAddress: "0x"
-
-  rollup:
-    address: ""
-    id: ""
-    forkId: ""
-    creation:
-      blockNumber: 0
-  
-  wallets:
-    sequencer:
-      address: "0x"
-      keystore: "{}"
-    aggregator:
-      address: "0x"
-      keystore: "{}"
-
-  sensitive:
-    l1:
-      rpcUrl: ""
-    wallets:
-      sequencer:
-        password: ""
-      aggregator:
-        password: ""
-  
   log:
     environment: development # "production" or "development"
     level: info

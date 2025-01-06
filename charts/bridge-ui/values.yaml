@@ -15,15 +15,22 @@ container:
     app: 80
 
   env:
+    bridgeApiUrl: ""
     enableDepositLimits: true
     enableDepositWarning: false
     enableFiatExchangeRates: false
     enableOutdatedNetworkModal: false
     enableReportForm: false
+    ethereumBridgeContractAddress: ""
     ethereumExplorerUrl: "https://sepolia.etherscan.io"
     ethereumForceUpdateGlobalExitRoot: true
+    ethereumProofOfEfficiencyContractAddress: ""
+    ethereumRollupManagerAddress: ""
     polygonZkEvmBridgeContractAddress: ""
     polygonZkEvmExplorerUrl: ""
+    polygonZkEvmNetworkId: ""
+    polygonZkEvmRpcUrl: "http://cdk-erigon-rpc:8123"
+    zkEvmNetworkConfigPolygonZkEvmGlobalExitRootAddress: ""
 
 ingress:
   hostname: something.dev.polygon
@@ -59,21 +66,3 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
-
-config:
-  l2:
-    rpcUrl: "http://"
-
-  rollupManager:
-    address: "0x"
-    globalExitRootManagerAddress: "0x"
-    bridgeAddress: "0x"
-    bridgeUrl: "http://"
-
-  rollup:
-    address: ""
-    id: 0
-
-  sensitive:
-    l1:
-      rpcUrl: ""

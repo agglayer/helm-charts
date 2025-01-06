@@ -50,7 +50,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: CDK_ERIGON_SEQUENCER
-              value:  "{{ .Values.config.isSequencer }}"
+              value:  "{{ .Values.is_sequencer }}"
           {{ if .Values.image.command }}
           command: {{- range .Values.image.command }}
             - {{ . }} {{- end}}
@@ -102,15 +102,18 @@ spec:
                 name: {{ include "cdk-erigon.fullname" . }}
                 items:
                   - key: "dynamic-integration-allocs.json"
-                    path: "dynamic-{{ .Values.config.chainName }}-allocs.json"
+                    path: "dynamic-{{ .Values.chainName }}-allocs.json"
                   - key: "dynamic-integration-chainspec.json"
-                    path: "dynamic-{{ .Values.config.chainName }}-chainspec.json"
+                    path: "dynamic-{{ .Values.chainName }}-chainspec.json"
                   - key: "dynamic-integration-conf.json"
-                    path: "dynamic-{{ .Values.config.chainName }}-conf.json"
+                    path: "dynamic-{{ .Values.chainName }}-conf.json"
                   - key: "first-batch-conf.json"
                     path: "first-batch-conf.json"
-                  - key: "erigon.yaml"
-                    path: "erigon.yaml"
+            - secret:
+                name: {{ .Values.existingSecret }}
+                items:
+                  - key: {{ .Values.secretItem.key }}
+                    path: {{ .Values.secretItem.path }}
   volumeClaimTemplates:
     - metadata:
         name: datadir
