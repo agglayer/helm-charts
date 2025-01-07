@@ -89,5 +89,7 @@ spec:
               value: "false"
             - name: DISABLE_INDEXER
               value: "false"
+            - name: DISABLE_EXCHANGE_RATES
+              value: "true"
             - name: INDEXER_ZKEVM_BATCHES_ENABLED
               value: "true"
