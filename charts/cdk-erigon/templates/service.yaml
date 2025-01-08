@@ -4,6 +4,8 @@ metadata:
   name: {{ include "cdk-erigon.fullname" . }}
   labels:
     {{- include "cdk-erigon.labels" . | nindent 4 }}
+  annotations:
+    {{ toYaml .Values.service.annotations | indent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -21,6 +23,6 @@ spec:
       name: metrics
   # StatefulSets require headless services
   # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
-  clusterIP: None
+  clusterIP: {{ .Values.service.clusterIP }}
   selector:
     {{- include "cdk-erigon.selectorLabels" . | nindent 4 }}

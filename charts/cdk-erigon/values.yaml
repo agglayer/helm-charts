@@ -16,12 +16,14 @@ serviceAccount:
 
 service:
   type: ClusterIP
+  clusterIP: None
   datastream:
     port: 6900
   rpc:
     port: 8123
   metrics:
     port: 9090
+  annotations: {}
 
 ingress:
   create: true
