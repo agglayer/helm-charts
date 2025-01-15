@@ -1,0 +1,44 @@
+{{- range .Values.backend.apps }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+spec:
+  replicas: {{ .replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+    spec:
+      {{- if .serviceAccount.create }}
+      serviceAccountName: {{ .name }}
+      {{- end }}
+      containers:
+        - name: {{ .name }}
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          ports:
+            - containerPort: {{ .port }}
+          {{- if .database.enabled }}
+          env:
+            - name: DB_HOST
+              value: {{ .database.host }}
+            - name: DB_PORT
+              value: {{ .database.port | quote }}
+            - name: DB_NAME
+              value: {{ .database.name }}
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .database.secretName }}
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .database.secretName }}
+                  key: password
+          {{- end }}
+---
+{{- end }}

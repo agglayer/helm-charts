@@ -1,0 +1,15 @@
+{{- range .Values.backend.apps }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .port }}
+      targetPort: {{ .port }}
+      protocol: TCP
+  selector:
+    app: {{ .name }}
+---
+{{- end }}

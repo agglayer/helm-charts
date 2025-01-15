@@ -1,0 +1,14 @@
+{{- range .Values.frontend.apps }}
+{{- if .tls.enabled }}
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: {{ .tls.certificateName }}
+spec:
+  domains:
+  {{- range .tls.domains }}
+    - {{ . }}
+  {{- end }}
+---
+{{- end }}
+{{- end }}
