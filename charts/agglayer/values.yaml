@@ -72,19 +72,12 @@ serviceAccount:
 
 podLabels: {}
 
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
 storage:
   path: /etc/agglayer/data
+  size: 1Ti
+
+backup:
+  bucket: "gs://"
   size: 1Ti
 
 resources:
