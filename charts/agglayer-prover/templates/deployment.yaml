@@ -1,8 +1,8 @@
-{{- $sp1PrivateKey := "" }}
+{{- $networkPrivateKey := "" }}
 {{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
 {{- if $opSecrets.data }}
     {{- if (index $opSecrets.data "NETWORK_PRIVATE_KEY") }}
-        {{- $sp1PrivateKey = index $opSecrets.data "NETWORK_PRIVATE_KEY" | b64dec }}
+        {{- $networkPrivateKey = index $opSecrets.data "NETWORK_PRIVATE_KEY" | b64dec }}
     {{- end }}
 {{- end }}
 
@@ -58,9 +58,9 @@ spec:
               protocol: TCP
           env:
             - name: NETWORK_RPC_URL
-              value: {{ .Values.container.env.proverNetworkRPC | quote }}
+              value: {{ .Values.container.env.networkRpcUrl | quote }}
             - name: NETWORK_PRIVATE_KEY
-              value: {{ $sp1PrivateKey }}
+              value: {{ $networkPrivateKey }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
