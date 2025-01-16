@@ -1,8 +1,8 @@
-{{- $sp1PrivateKey := "" }}
+{{- $networkPrivateKey := "" }}
 {{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
 {{- if $opSecrets.data }}
-    {{- if (index $opSecrets.data "SP1_PRIVATE_KEY") }}
-        {{- $sp1PrivateKey = index $opSecrets.data "SP1_PRIVATE_KEY" | b64dec }}
+    {{- if (index $opSecrets.data "NETWORK_PRIVATE_KEY") }}
+        {{- $networkPrivateKey = index $opSecrets.data "NETWORK_PRIVATE_KEY" | b64dec }}
     {{- end }}
 {{- end }}
 
@@ -57,10 +57,10 @@ spec:
               containerPort: {{ .Values.container.ports.telemetry }}
               protocol: TCP
           env:
-            - name: PROVER_NETWORK_RPC
-              value: {{ .Values.container.env.proverNetworkRPC | quote }}
-            - name: SP1_PRIVATE_KEY
-              value: {{ $sp1PrivateKey }}
+            - name: NETWORK_RPC_URL
+              value: {{ .Values.container.env.networkRpcUrl | quote }}
+            - name: NETWORK_PRIVATE_KEY
+              value: {{ $networkPrivateKey }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

@@ -14,7 +14,7 @@ container:
   replicaCount: 1
 
   env:
-    proverNetworkRPC: https://rpc.succinct.xyz/
+    networkRpcUrl: https://rpc.succinct.xyz/
 
 resources:
   limits:
