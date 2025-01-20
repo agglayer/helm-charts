@@ -1,0 +1,14 @@
+{{- if .Values.frontend.namespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.frontend.namespace }}
+---
+{{- end }}
+{{- if .Values.backend.namespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.backend.namespace }}
+---
+{{- end }}

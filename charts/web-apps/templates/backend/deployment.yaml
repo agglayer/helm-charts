@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .name }}
+  namespace: {{ $.Values.frontend.namespace }}
 spec:
   replicas: {{ .replicaCount }}
   selector:
@@ -13,14 +14,13 @@ spec:
       labels:
         app: {{ .name }}
     spec:
-      {{- if .serviceAccount.create }}
-      serviceAccountName: {{ .name }}
-      {{- end }}
       containers:
         - name: {{ .name }}
           image: "{{ .image.repository }}:{{ .image.tag }}"
           ports:
             - containerPort: {{ .port }}
+          resources:
+            {{- toYaml .resources | nindent 12 }}
           {{- if .database.enabled }}
           env:
             - name: DB_HOST
