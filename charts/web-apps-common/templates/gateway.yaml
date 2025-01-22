@@ -1,0 +1,18 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: web-apps-gateway 
+  namespace: {{ .Values.gateway.gateway }} 
+  annotations:
+    networking.gke.io/certmap: {{ .Values.gateway.certmap }}
+spec:
+  gatewayClassName: {{ .Values.gateway.className }}  
+  listeners:
+  - name: https
+    protocol: HTTPS
+    port: 443
+    allowedRoutes:
+      kinds:
+      - kind: HTTPRoute
+      namespaces:
+        from: All

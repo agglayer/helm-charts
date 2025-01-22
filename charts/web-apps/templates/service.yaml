@@ -1,9 +1,9 @@
-{{- range .Values.frontend.apps }}
+{{- range .Values.apps }}
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ .name }}-svc
-  namespace: {{ $.Values.frontend.namespace }}
+  namespace: {{ .namespace }}
 spec:
   selector:
     app: {{ .name }}

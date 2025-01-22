@@ -1,9 +1,9 @@
-{{- range .Values.backend.apps }}
+{{- range .Values.apps }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .name }}
-  namespace: {{ $.Values.frontend.namespace }}
+  namespace: {{ .namespace }}
 spec:
   replicas: {{ .replicaCount }}
   selector:

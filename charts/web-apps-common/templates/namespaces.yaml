@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.global.namespace.frontend }}
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.global.namespace.backend }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.gateway.gateway }}

@@ -1,10 +1,10 @@
-{{- range .Values.frontend.apps }}
+{{- range .Values.apps }}
 {{- if .autoscaling.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .name }}
-  namespace: {{ $.Values.frontend.namespace }}
+  namespace: {{ .namespace }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
