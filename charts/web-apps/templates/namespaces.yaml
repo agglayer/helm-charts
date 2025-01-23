@@ -1,6 +1,9 @@
+{{- range .Values.apps }}
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ .Values.gateway.namespace }}
+  name: {{ .name }}
   labels:
     shared-gateway-access: "true"
+---
+{{- end }}

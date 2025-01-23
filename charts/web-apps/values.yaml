@@ -1,7 +1,7 @@
 gateway: web-apps-gateway
+gateway_namespace: gateway
 apps:
-  - name: nginx-test
-    namespace: frontend
+  - name: first
     replicaCount: 2
     certmap: "cert-map-prj-polygonlabs-webapps-dev"
     image:
@@ -27,32 +27,56 @@ apps:
       domains:
         - "test-static-webapp.polygon.technology"
 
-  - name: api-service
-    namespace: backend
+  - name: second
     replicaCount: 2
+    certmap: "cert-map-prj-polygonlabs-webapps-dev"
     image:
-      repository: nginx
+      repository: httpd
       tag: latest
-    port: 3000
+    port: 80
     resources:
       requests:
-        cpu: 200m
-        memory: 256Mi
+        cpu: 100m
+        memory: 128Mi
       limits:
-        cpu: 400m
-        memory: 512Mi
+        cpu: 250m
+        memory: 256Mi
     autoscaling:
       enabled: true
-      minReplicas: 2
-      maxReplicas: 6
-      targetCPUUtilizationPercentage: 75
-      targetMemoryUtilizationPercentage: 75
-    tls: {}
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: 80
     database: {}
-    # database:
-    #   enabled: true
-    #   host: "postgresql.database.svc.cluster.local"
-    #   port: 5432
-    #   name: "apidb"
-    #   secretName: "api-db-credentials"
+    tls:
+      enabled: true
+      domains:
+        - "test-static-webapp-2.polygon.technology"
+
+  # - name: api-service
+  #   replicaCount: 2
+  #   image:
+  #     repository: nginx
+  #     tag: latest
+  #   port: 3000
+  #   resources:
+  #     requests:
+  #       cpu: 200m
+  #       memory: 256Mi
+  #     limits:
+  #       cpu: 400m
+  #       memory: 512Mi
+  #   autoscaling:
+  #     enabled: true
+  #     minReplicas: 2
+  #     maxReplicas: 6
+  #     targetCPUUtilizationPercentage: 75
+  #     targetMemoryUtilizationPercentage: 75
+  #   tls: {}
+  #   database: {}
+  #     # enabled: true
+  #     # host: "postgresql.database.svc.cluster.local"
+  #     # port: 5432
+  #     # name: "apidb"
+  #     # secretName: "api-db-credentials"
 

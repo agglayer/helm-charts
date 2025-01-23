@@ -1,10 +1,4 @@
-global:
-  namespace:
-    frontend: frontend 
-    backend: backend
-    
-
 gateway:
   className: gke-l7-global-external-managed
   certmap: "cert-map-prj-polygonlabs-webapps-dev"
-  gateway: gateway
+  namespace: gateway
