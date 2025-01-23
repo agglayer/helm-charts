@@ -1,0 +1,151 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "op-geth.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "op-geth.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "op-geth.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "op-geth.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      serviceAccountName: download-genesis
+      initContainers:
+        - name: download-genesis
+          image: google/cloud-sdk:latest
+          command: ["sh", "-c"]
+          args:
+          - |
+            gsutil cp gs://{{ .Values.genesisFileGCP.bucket }}/{{ .Values.genesisFileGCP.object }} /genesis/genesis.json
+          volumeMounts:
+            - mountPath: "/genesis"
+              name: genesis
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - |
+              # Init genesis
+              echo 'Initializing genesis'
+              geth init --datadir={{ .Values.storage.path }} --state.scheme=hash /genesis/genesis.json
+
+              # Start op-geth
+              echo 'Starting op-geth'
+              exec geth \
+                --datadir {{ .Values.storage.path }} \
+                --http \
+                --http.corsdomain="*" \
+                --http.vhosts="*" \
+                --http.addr=0.0.0.0 \
+                --http.port={{ .Values.service.http.port }} \
+                --http.api=web3,debug,eth,txpool,net,engine \
+                --ws \
+                --ws.addr=0.0.0.0 \
+                --ws.port={{ .Values.service.ws.port }} \
+                --ws.origins="*" \
+                --ws.api=debug,eth,txpool,net,engine,web3 \
+                --log.format=json \
+                --syncmode="full" \
+                --gcmode={{ .Values.config.nodeType }} \
+                --nodiscover \
+                --maxpeers=0 \
+                --networkid={{ .Values.config.l2.chainId }} \
+                --authrpc.vhosts="*" \
+                --authrpc.addr=0.0.0.0 \
+                --authrpc.port={{ .Values.service.authrpc.port }} \
+                --authrpc.jwtsecret=/chainconfig/jwt.txt \
+                --rollup.disabletxpoolgossip=true \
+                --db.engine=pebble \
+                --state.scheme=hash
+          ports:
+            - name: authrpc
+              containerPort: {{ .Values.service.authrpc.port }}
+              protocol: TCP
+            - name: http
+              containerPort: {{ .Values.service.http.port }}
+              protocol: TCP
+            - name: ws
+              containerPort: {{ .Values.service.ws.port }}
+              protocol: TCP
+          env:
+            - name: GS_ADMIN_ADDRESS
+              value: "{{ index $opSecrets.data "admin_address" | b64dec }}"
+            - name: GS_ADMIN_PRIVATE_KEY
+              value: "{{ index $opSecrets.data "admin_private_key" | b64dec }}"
+            - name: GS_BATCHER_ADDRESS
+              value: "{{ index $opSecrets.data "batcher_address" | b64dec }}"
+            - name: GS_BATCHER_PRIVATE_KEY
+              value: "{{ index $opSecrets.data "batcher_private_key" | b64dec }}"
+            - name: GS_PROPOSER_ADDRESS
+              value: "{{ index $opSecrets.data "proposer_address" | b64dec }}"
+            - name: GS_PROPOSER_PRIVATE_KEY
+              value: "{{ index $opSecrets.data "proposer_private_key" | b64dec }}"
+            - name: GS_SEQUENCER_ADDRESS
+              value: "{{ index $opSecrets.data "sequencer_address" | b64dec }}"
+            - name: GS_SEQUENCER_PRIVATE_KEY
+              value: "{{ index $opSecrets.data "sequencer_private_key" | b64dec }}"
+            - name: L1_CHAIN_ID
+              value: "{{ .Values.config.l1.chainId }}"
+            - name: L1_BLOCK_TIME
+              value: "{{ .Values.config.l1.blockTime }}"
+            - name: L2_CHAIN_ID
+              value: "{{ .Values.config.l2.chainId }}"
+            - name: L2_BLOCK_TIME
+              value: "{{ .Values.config.l2.blockTime }}"
+            - name: L1_RPC_URL
+              value: "{{ index $opSecrets.data "l1_rpc_url" | b64dec }}"
+            - name: L1_RPC_KIND
+              value: "{{ index $opSecrets.data "l1_rpc_kind" | b64dec }}"
+            - name: IMPL_SALT
+              value: "{{ index $opSecrets.data "impl_salt" | b64dec }}"
+            - name: DEPLOYMENT_CONTEXT
+              value: "getting-started"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: "/genesis"
+              name: genesis
+              readOnly: true
+            - mountPath: "/chainconfig"
+              name: config
+              readOnly: true
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+      volumes:
+        - name: genesis
+          emptyDir: {}
+        - name: config
+          projected:
+            sources:
+              - secret:
+                  name: {{ .Values.existingSecret }}
+                  items:
+                    - key: "jwt"
+                      path: "jwt.txt"
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}

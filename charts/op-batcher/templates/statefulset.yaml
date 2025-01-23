@@ -1,0 +1,56 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "op-batcher.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "op-batcher.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "op-batcher.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "op-batcher.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - |
+              exec op-batcher \
+                --l2-eth-rpc={{ .Values.config.l2.opGethUrl }} \
+                --rollup-rpc={{ .Values.config.l2.opNodeUrl }} \
+                --poll-interval=1s \
+                --sub-safety-margin=6 \
+                --num-confirmations=1 \
+                --safe-abort-nonce-too-low-count=3 \
+                --resubmission-timeout=30s \
+                --rpc.addr=0.0.0.0 \
+                --rpc.port=8548 \
+                --rpc.enable-admin \
+                --max-channel-duration=25 \
+                --l1-eth-rpc={{ index $opSecrets.data "l1_rpc_url" | b64dec }} \
+                --private-key={{ index $opSecrets.data "batcher_private_key" | b64dec }} \
+                --throttle-interval=0
+          ports:
+            - name: rpc
+              containerPort: {{ .Values.service.rpc.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}

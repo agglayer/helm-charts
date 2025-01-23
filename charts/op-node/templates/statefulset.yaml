@@ -1,0 +1,77 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "op-node.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "op-node.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "op-node.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "op-node.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+          args:
+            - |
+              exec op-node \
+                --l2={{ .Values.config.l2.opGethUrl }} \
+                --l2.jwt-secret=/chainconfig/jwt.txt \
+                --sequencer.enabled \
+                --sequencer.l1-confs=5 \
+                --verifier.l1-confs=4 \
+                --rollup.config=/chainconfig/rollup.json \
+                --rpc.addr=0.0.0.0 \
+                --p2p.disable \
+                --rpc.enable-admin \
+                --p2p.sequencer.key={{ index $opSecrets.data "sequencer_private_key" | b64dec }} \
+                --l1={{ index $opSecrets.data "l1_rpc_url" | b64dec }} \
+                --l1.rpckind={{ index $opSecrets.data "l1_rpc_kind" | b64dec }} \
+                --l1.beacon={{ index $opSecrets.data "l1_rpc_url" | b64dec }} \
+                --syncmode=execution-layer \
+                --rollup.config=/chainconfig/rollup.json
+          ports:
+            - name: rpc
+              containerPort: {{ .Values.service.rpc.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: "/chainconfig"
+              readOnly: true
+      volumes:
+        - name: config
+          projected:
+            sources:
+              - configMap:
+                  name: {{ include "op-node.fullname" . }}
+                  items:
+                    - key: "rollup.json"
+                      path: "rollup.json"
+              - secret:
+                  name: {{ .Values.existingSecret }}
+                  items:
+                    - key: "jwt"
+                      path: "jwt.txt"
