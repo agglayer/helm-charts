@@ -52,11 +52,16 @@ data:
     [L2Config]
     GlobalExitRootAddr = {{ .Values.config.l2.globalExitRootAddress | quote }}
 
+    [BridgeL1Sync]
+    BlockFinality="FinalizedBlock"
+
     [BridgeL2Sync]
     OriginNetwork={{ .Values.config.l2.rollupId | int }}
+    BlockFinality="FinalizedBlock"
 
     [L1InfoTreeSync]
     SyncBlockChunkSize={{ .Values.config.l1.syncBlockChunkSize | int }}
+    BlockFinality="FinalizedBlock"
 
     [Log]
     Environment = {{ .Values.config.log.environment | quote }}
@@ -68,5 +73,6 @@ data:
     CheckSettledInterval = {{ .Values.config.aggSender.checkSettledInterval | quote }}
     MaxCertSize = {{ .Values.config.aggSender.maxCertSize | int }}
     SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
+    BlockFinality="FinalizedBlock"
   genesis.json: |-
 {{ .Values.genesis | indent 4 }}
