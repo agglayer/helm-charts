@@ -4,7 +4,7 @@ replicaCount: 1
 image:
   repository: hermeznetwork/zkevm-bridge-service
   pullPolicy: IfNotPresent
-  tag: "v0.6.0-RC1"
+  tag: "v0.6.0-RC6"
   command: ["/app/zkevm-bridge"]
   args: ["run", "--cfg", "/etc/bridge/bridge-config.toml"]
 
@@ -43,6 +43,8 @@ config:
     polygonRollupManagerAddress: "0x0000000000000000000000000000000000000000"
     polygonZkEVMAddress: "0x0000000000000000000000000000000000000000"
     l2PolygonBridgeAddress: "0x0000000000000000000000000000000000000000"
+    l2PolygonZkEVMGlobalExitRootAddress: "0x0000000000000000000000000000000000000000"
+    isSovereignChain: true
 
 existingSecret: "secretName"
 secretItem:

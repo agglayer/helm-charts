@@ -93,6 +93,8 @@ data:
     PolygonRollupManagerAddress = {{ .Values.config.network.polygonRollupManagerAddress | quote }}
     PolygonZkEVMAddress = {{ .Values.config.network.polygonZkEVMAddress | quote }}
     L2PolygonBridgeAddresses = [{{ .Values.config.network.l2PolygonBridgeAddress | quote }}]
+    L2PolygonZkEVMGlobalExitRootAddresses = [{{ .Values.config.network.l2PolygonZkEVMGlobalExitRootAddress | quote }}]
+    SovereignChains = [{{ .Values.config.network.isSovereignChain }}]
 
     [ClaimTxManager]
     FrequencyToMonitorTxs = "5s"
