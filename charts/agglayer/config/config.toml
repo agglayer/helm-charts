@@ -153,5 +153,5 @@ db-path = {{ .Values.storage.path | quote }}
 
 [storage.backup.enabled]
 path = {{ .Values.backup.path | quote }}
-state_max_backup_number = 100
-pending_max_backup_number = 100
+state_max_backup_count = 100
+pending_max_backup_count = 100

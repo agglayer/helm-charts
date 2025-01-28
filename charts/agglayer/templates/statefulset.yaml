@@ -16,6 +16,9 @@ spec:
         # https://cloud.google.com/kubernetes-engine/docs/how-to/extended-duration-pods
         cluster-autoscaler.kubernetes.io/safe-to-evict: "false"
         checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
+        # https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/cloud-storage-fuse-csi-driver
+        gke-gcsfuse/volumes: "true"
+        gke-gcsfuse/ephemeral-storage-limit: 1Gi
         ad.datadoghq.com/{{ .Chart.Name }}.checks: |
           {
             "openmetrics": {
