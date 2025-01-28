@@ -150,3 +150,8 @@ input-backpressure-buffer-size = 1000
 
 [storage]
 db-path = {{ .Values.storage.path | quote }}
+
+[storage.backup.enabled]
+path = {{ .Values.storage.path | quote }}
+state_max_backup_number = 100
+pending_max_backup_number = 100
