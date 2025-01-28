@@ -96,7 +96,7 @@ spec:
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
             - name: backup
-              mountPath: /backup
+              mountPath: {{ .Values.backup.path | quote }}
               readOnly: false
       tolerations:
       - key: group
