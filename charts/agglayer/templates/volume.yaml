@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "agglayer.fullname" . }}-backup-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: {{ .Values.backup.size }}
+  storageClassName: {{ include "agglayer.fullname" . }}-backup  
+  mountOptions:
+    - implicit-dirs
+  csi:
+    driver: gcsfuse.csi.storage.gke.io
+    volumeHandle: {{ .Values.backup.bucket }}
+  claimRef:
+    name: {{ include "agglayer.fullname" . }}-backup-pvc
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "agglayer.fullname" . }}-backup-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.backup.size }}
+  storageClassName: {{ include "agglayer.fullname" . }}-backup
