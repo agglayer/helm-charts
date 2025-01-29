@@ -78,7 +78,7 @@ storage:
 
 backup:
   path: /backup
-  bucket: "gs://"
+  bucket: "bucket_name"
   size: 1Ti
 
 resources:
