@@ -57,7 +57,6 @@ data:
 
     [BridgeL2Sync]
     OriginNetwork={{ .Values.config.l2.rollupId | int }}
-    BlockFinality="FinalizedBlock"
 
     [L1InfoTreeSync]
     SyncBlockChunkSize={{ .Values.config.l1.syncBlockChunkSize | int }}
