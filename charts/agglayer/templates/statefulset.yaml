@@ -51,25 +51,12 @@ spec:
       {{- end }}
       serviceAccountName: {{ include "agglayer.serviceAccountName" . }}
       securityContext:
-        fsGroup: 1001
-        fsGroupChangePolicy: Always
-        seccompProfile:
-          type: RuntimeDefault
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       shareProcessNamespace: true
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-              - ALL
-            privileged: false
-            readOnlyRootFilesystem: false
-            runAsGroup: 0
-            runAsNonRoot: true
-            runAsUser: 1001
-            seccompProfile:
-              type: RuntimeDefault
+            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
