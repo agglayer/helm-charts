@@ -13,6 +13,7 @@ image:
 ports:
   app: 4444
   telemetry: 2223
+  admin: 9091
 
 domain: agglayer-test.polygon.technology
 
