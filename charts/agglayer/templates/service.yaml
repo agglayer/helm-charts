@@ -18,6 +18,9 @@ spec:
     - name: metrics-port
       protocol: TCP
       port: {{ .Values.ports.telemetry }}
+    - name: admin-port
+      protocol: TCP
+      port: {{ .Values.ports.admin }}
   selector:
     {{- include "agglayer.selectorLabels" . | nindent 4 }}
 
