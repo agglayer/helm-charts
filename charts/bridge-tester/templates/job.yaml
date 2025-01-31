@@ -79,7 +79,7 @@ spec:
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --value $(date +%s) \
-                          --destination-network 23 \
+                          --destination-network {{ .Values.config.pp2.rollupId }} \
                           --rpc-url $rpc_pp1_url
                   echo ""
       
@@ -89,7 +89,7 @@ spec:
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --value $(date +%s) \
-                          --destination-network 23 \
+                          --destination-network {{ .Values.config.pp2.rollupId }} \
                           --rpc-url $rpc_pp1_url \
                           --token-address $l2_seb_address
                   echo ""
@@ -110,7 +110,7 @@ spec:
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --value $(date +%s) \
-                          --destination-network 22 \
+                          --destination-network {{ .Values.config.pp1.rollupId }} \
                           --rpc-url $rpc_pp2_url
                   echo ""
       
@@ -120,7 +120,7 @@ spec:
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --value $(date +%s) \
-                          --destination-network 22 \
+                          --destination-network {{ .Values.config.pp1.rollupId }} \
                           --rpc-url $rpc_pp2_url \
                           --token-address $l2_weth_address
                   echo ""
@@ -138,8 +138,8 @@ spec:
                   echo "# Claim everything from PP1"
                   polycli ulxly claim-everything \
                           --bridge-address $bridge_address \
-                          --bridge-service-map 22=$bridge_pp1_url \
-                          --bridge-service-map 23=$bridge_pp2_url \
+                          --bridge-service-map {{ .Values.config.pp1.rollupId }}=$bridge_pp1_url \
+                          --bridge-service-map {{ .Values.config.pp2.rollupId }}=$bridge_pp2_url \
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --rpc-url $rpc_pp1_url \
@@ -149,8 +149,8 @@ spec:
                   echo "# Claim everything from PP2"
                   polycli ulxly claim-everything \
                           --bridge-address $bridge_address \
-                          --bridge-service-map 22=$bridge_pp1_url \
-                          --bridge-service-map 23=$bridge_pp2_url \
+                          --bridge-service-map {{ .Values.config.pp1.rollupId }}=$bridge_pp1_url \
+                          --bridge-service-map {{ .Values.config.pp2.rollupId }}=$bridge_pp2_url \
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --rpc-url $rpc_pp2_url \
@@ -160,8 +160,8 @@ spec:
                   echo "# Claim everything from PP1 with offset"
                   polycli ulxly claim-everything \
                           --bridge-address $bridge_address \
-                          --bridge-service-map 22=$bridge_pp1_url \
-                          --bridge-service-map 23=$bridge_pp2_url \
+                          --bridge-service-map {{ .Values.config.pp1.rollupId }}=$bridge_pp1_url \
+                          --bridge-service-map {{ .Values.config.pp2.rollupId }}=$bridge_pp2_url \
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --rpc-url $rpc_pp1_url \
@@ -172,8 +172,8 @@ spec:
                   echo "# Claim everything from PP2 with offset"
                   polycli ulxly claim-everything \
                           --bridge-address $bridge_address \
-                          --bridge-service-map 22=$bridge_pp1_url \
-                          --bridge-service-map 23=$bridge_pp2_url \
+                          --bridge-service-map {{ .Values.config.pp1.rollupId }}=$bridge_pp1_url \
+                          --bridge-service-map {{ .Values.config.pp2.rollupId }}=$bridge_pp2_url \
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --rpc-url $rpc_pp2_url \

@@ -4,10 +4,12 @@ schedule: "*/45 * * * *" # Run every 45 minutes
 
 config:
   pp1:
+    rollupId: 123
     rpcURL: "endpoint"
     bridgeURL: "endpoint"
 
   pp2:
+    rollupId: 123
     rpcURL: "endpoint"
     bridgeURL: "endpoint"
     gasTokenAddress: "0x123"
