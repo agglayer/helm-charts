@@ -3,10 +3,10 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "bridge-tester.fullname" . }}
+  name: {{ include "bridgeTester.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "bridge-tester.labels" . | nindent 4 }}
+    {{- include "bridgeTester.labels" . | nindent 4 }}
 spec:
   schedule: {{ .Values.schedule | quote }}
   jobTemplate:
