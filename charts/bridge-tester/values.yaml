@@ -1,0 +1,16 @@
+existingSecret: op-secrets
+
+schedule: "*/45 * * * *" # Run every 45 minutes
+
+config:
+  pp1:
+    rpcURL: "endpoint"
+    bridgeURL: "endpoint"
+
+  pp2:
+    rpcURL: "endpoint"
+    bridgeURL: "endpoint"
+    gasTokenAddress: "0x123"
+
+  bridge:
+    address: "0x123"
