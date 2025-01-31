@@ -45,7 +45,7 @@ host: gcp
 location: {{ default "unspecified" .Values.region }}
 env: {{ .Values.env }}
 role: application
-team: cdk
+team: agglayer
 p_service: agglayer
 tag: v3
 tags.datadoghq.com/env: {{ .Values.env }}
