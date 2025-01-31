@@ -1,3 +1,5 @@
+env: "pp1-pp2"
+
 existingSecret: op-secrets
 
 schedule: "*/45 * * * *" # Run every 45 minutes
