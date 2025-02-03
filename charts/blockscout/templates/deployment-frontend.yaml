@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: {{ .Values.blockscout.frontend.image }}
+          ports:
+            - containerPort: {{ .Values.blockscout.frontend.port }}
+          envFrom:
+            - configMapRef:
+                name: frontend-config

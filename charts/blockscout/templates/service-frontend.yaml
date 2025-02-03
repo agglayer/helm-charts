@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: {{ .Values.namespace }}
+spec:
+  ports:
+    - name: internal
+      port: {{ .Values.blockscout.frontend.port }}
+      targetPort: {{ .Values.blockscout.frontend.port }}
+    - name: external
+      port: {{ .Values.blockscout.frontend.publicPort }}
+      targetPort: {{ .Values.blockscout.frontend.port }}
+  selector:
+    app: frontend
