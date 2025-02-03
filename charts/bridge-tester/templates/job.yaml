@@ -12,7 +12,7 @@ spec:
   jobTemplate:
     metadata:
       labels:
-        {{- include "bridgeTester.labels" . | nindent 4 }}
+        {{- include "bridgeTester.labels" . | nindent 8 }}
     spec:
       template:
         spec:
