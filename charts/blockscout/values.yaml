@@ -3,7 +3,7 @@ namespace: blockscout
 blockscout:
   postgres:
     image: postgres:17.0
-    port: 5432
+    port: "5432"
     dbName: master
     user: master
     password: master
@@ -25,20 +25,20 @@ blockscout:
     title: "Polygon CDK"
     chain_id: "1"
     l1_explorer: "https://etherscan.io/"
-    backend_exposed: false
+    backend_exposed: "false"
     l1_rpc_url: "https://rpc2.sepolia.org/"
     rpc_url: "https://rpc.zkevm-rpc.com"
     trace_url: "https://trace.zkevm-rpc.com"
     ws_url: "wss://ws.zkevm-rpc.com"
     bridge_info:
-      l1_start_block: 16896721
+      l1_start_block: '16896721'
       l1_contract: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
-      l1_network_id: 0
-      l1_rollup_index: 0
-      l2_start_block: 0
+      l1_network_id: '0'
+      l1_rollup_index: '0'
+      l2_start_block: '0'
       l2_contract: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
-      l2_network_id: 1
-      l2_rollup_index: 0
+      l2_network_id: '1'
+      l2_rollup_index: '0'
 
   stats:
     image: ghcr.io/blockscout/stats:v2.1.1
@@ -56,4 +56,4 @@ blockscout:
     chain_id: "1"
     l1_explorer: "https://etherscan.io/"
     swap_url: "https://app.uniswap.org/#/swap"
-    backend_exposed: false
+    backend_exposed: "false"

@@ -3,40 +3,41 @@ kind: ConfigMap
 metadata:
   name: backend-config
   namespace: {{ .Values.namespace }}
+
 data:
   API_V2_ENABLED: "true"
-  BACKEND_EXPOSED: {{ .Values.blockscout.backend.backend_exposed | default "false" }}
+  BACKEND_EXPOSED: "{{ .Values.blockscout.backend.backend_exposed | toString }}"
   BLOCKSCOUT_PROTOCOL: "http"
   BRIDGED_TOKENS_ENABLED: "true"
-  CHAIN_ID: {{ .Values.blockscout.backend.chain_id }}
+  CHAIN_ID: "{{ .Values.blockscout.backend.chain_id }}"
   CHAIN_TYPE: "polygon_zkevm"
   COIN: "ETH"
   DATABASE_URL: "postgresql://{{ .Values.blockscout.backend.dbUser }}:{{ .Values.blockscout.backend.dbPassword }}@postgres:{{ .Values.blockscout.postgres.port }}/{{ .Values.blockscout.backend.dbName }}"
-  DB_NAME: {{ .Values.blockscout.backend.dbName }}
-  DB_PASSWORD: {{ .Values.blockscout.backend.dbPassword }}
-  DB_USER: {{ .Values.blockscout.backend.dbUser }}
+  DB_NAME: "{{ .Values.blockscout.backend.dbName }}"
+  DB_PASSWORD: "{{ .Values.blockscout.backend.dbPassword }}"
+  DB_USER: "{{ .Values.blockscout.backend.dbUser }}"
   DISABLE_INDEXER: "false"
   ECTO_USE_SSL: "false"
   ETHEREUM_JSONRPC_HTTP_INSECURE: "true"
-  ETHEREUM_JSONRPC_HTTP_URL: {{ .Values.blockscout.backend.rpc_url }}
-  ETHEREUM_JSONRPC_TRACE_URL: {{ .Values.blockscout.backend.trace_url | default .Values.blockscout.backend.rpc_url }}
+  ETHEREUM_JSONRPC_HTTP_URL: "{{ .Values.blockscout.backend.rpc_url }}"
+  ETHEREUM_JSONRPC_TRACE_URL: "{{ .Values.blockscout.backend.trace_url | default .Values.blockscout.backend.rpc_url }}"
   ETHEREUM_JSONRPC_VARIANT: "geth"
-  ETHEREUM_JSONRPC_WS_URL: {{ .Values.blockscout.backend.ws_url }}
+  ETHEREUM_JSONRPC_WS_URL: "{{ .Values.blockscout.backend.ws_url }}"
   INDEXER_POLYGON_ZKEVM_BATCHES_ENABLED: "true"
-  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_CONTRACT: {{ .Values.blockscout.backend.bridge_info.l1_contract }}
-  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_NETWORK_ID: {{ .Values.blockscout.backend.bridge_info.l1_network_id }}
-  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_ROLLUP_INDEX: {{ .Values.blockscout.backend.bridge_info.l1_rollup_index }}
-  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_START_BLOCK: {{ .Values.blockscout.backend.bridge_info.l1_start_block }}
-  INDEXER_POLYGON_ZKEVM_L1_RPC: {{ .Values.blockscout.backend.l1_rpc_url | default "https://rpc2.sepolia.org/" }}
-  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_CONTRACT: {{ .Values.blockscout.backend.bridge_info.l2_contract }}
-  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_NETWORK_ID: {{ .Values.blockscout.backend.bridge_info.l2_network_id }}
-  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_ROLLUP_INDEX: {{ .Values.blockscout.backend.bridge_info.l2_rollup_index }}
-  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_START_BLOCK: {{ .Values.blockscout.backend.bridge_info.l2_start_block }}
+  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_CONTRACT: "{{ .Values.blockscout.backend.bridge_info.l1_contract }}"
+  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_NETWORK_ID: "{{ .Values.blockscout.backend.bridge_info.l1_network_id }}"
+  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_ROLLUP_INDEX: "{{ .Values.blockscout.backend.bridge_info.l1_rollup_index }}"
+  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_START_BLOCK: "{{ .Values.blockscout.backend.bridge_info.l1_start_block }}"
+  INDEXER_POLYGON_ZKEVM_L1_RPC: "{{ .Values.blockscout.backend.l1_rpc_url | default "https://rpc2.sepolia.org/" }}"
+  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_CONTRACT: "{{ .Values.blockscout.backend.bridge_info.l2_contract }}"
+  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_NETWORK_ID: "{{ .Values.blockscout.backend.bridge_info.l2_network_id }}"
+  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_ROLLUP_INDEX: "{{ .Values.blockscout.backend.bridge_info.l2_rollup_index }}"
+  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_START_BLOCK: "{{ .Values.blockscout.backend.bridge_info.l2_start_block }}"
   LOGO: "/images/blockscout_logo.svg"
   LOGO_FOOTER: "/images/blockscout_logo.svg"
   MIX_ENV: "prod"
   NETWORK: "POE"
   SHOW_OUTDATED_NETWORK_MODAL: "false"
-  SUBNETWORK: {{ .Values.blockscout.backend.title }}
+  SUBNETWORK: "{{ .Values.blockscout.backend.title }}"
   SUPPORTED_CHAINS: "[]"
-  TITLE: {{ .Values.blockscout.backend.title }}
+  TITLE: "{{ .Values.blockscout.backend.title }}"
