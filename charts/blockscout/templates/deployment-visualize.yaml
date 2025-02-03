@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: visualize
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: visualize
+  template:
+    metadata:
+      labels:
+        app: visualize
+    spec:
+      containers:
+        - name: visualize
+          image: {{ .Values.blockscout.visualize.image }}
+          ports:
+            - containerPort: {{ .Values.blockscout.visualize.port }}
+          envFrom:
+            - configMapRef:
+                name: visualize-config

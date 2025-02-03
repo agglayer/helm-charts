@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stats
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stats
+  template:
+    metadata:
+      labels:
+        app: stats
+    spec:
+      containers:
+        - name: stats
+          image: {{ .Values.blockscout.stats.image }}
+          ports:
+            - containerPort: {{ .Values.blockscout.stats.port }}
+          envFrom:
+            - configMapRef:
+                name: stats-config

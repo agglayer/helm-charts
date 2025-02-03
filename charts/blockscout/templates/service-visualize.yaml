@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: visualize
+  namespace: {{ include "blockscout.namespace" . }}
+spec:
+  ports:
+    - port: {{ .Values.blockscout.visualize.port }}
+  selector:
+    app: visualize

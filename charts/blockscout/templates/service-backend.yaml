@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: {{ .Values.namespace }}
+spec:
+  ports:
+    - name: internal
+      port: {{ .Values.blockscout.backend.port }}
+      targetPort: {{ .Values.blockscout.backend.port }}
+    - name: external
+      port: {{ .Values.blockscout.backend.publicPort }}
+      targetPort: {{ .Values.blockscout.backend.port }}
+  selector:
+    app: backend

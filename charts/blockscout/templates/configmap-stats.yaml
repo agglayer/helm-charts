@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stats-config
+  namespace: {{ .Values.namespace }}
+data:
+  DB_NAME: {{ .Values.blockscout.backend.dbName }}
+  DB_USER: {{ .Values.blockscout.backend.dbUser }}
+  DB_PASSWORD: {{ .Values.blockscout.backend.dbPassword }}
+  DATABASE_URL: "postgresql://{{ .Values.blockscout.backend.dbUser }}:{{ .Values.blockscout.backend.dbPassword }}@postgres:{{ .Values.blockscout.postgres.port }}/{{ .Values.blockscout.backend.dbName }}"
+  ECTO_USE_SSL: "false"
+  MIX_ENV: "prod"
+  LOGO: "/images/blockscout_logo.svg"
+  LOGO_FOOTER: "/images/blockscout_logo.svg"
+  SUPPORTED_CHAINS: "[]"
+  SHOW_OUTDATED_NETWORK_MODAL: "false"
+  DISABLE_INDEXER: "false"
+  INDEXER_ZKEVM_BATCHES_ENABLED: "true"
+  API_V2_ENABLED: "true"
+  BLOCKSCOUT_PROTOCOL: "http"
+  INDEXER_POLYGON_ZKEVM_BATCHES_ENABLED: "true"
+  BRIDGED_TOKENS_ENABLED: "true"
