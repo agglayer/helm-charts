@@ -10,6 +10,9 @@ metadata:
 spec:
   schedule: {{ .Values.schedule | quote }}
   jobTemplate:
+    metadata:
+      labels:
+        {{- include "bridgeTester.labels" . | nindent 4 }}
     spec:
       template:
         spec:
