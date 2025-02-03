@@ -9,12 +9,12 @@ metadata:
     {{- include "bridgeTester.labels" . | nindent 4 }}
 spec:
   schedule: {{ .Values.schedule | quote }}
-  jobTemplate:
-    metadata:
-      labels:
-        {{- include "bridgeTester.labels" . | nindent 8 }}
+  jobTemplate:    
     spec:
       template:
+        metadata:
+          labels:
+            {{- include "bridgeTester.labels" . | nindent 12 }}
         spec:
           containers:
             - name: script-runner
