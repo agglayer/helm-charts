@@ -35,7 +35,7 @@ spec:
             - -c
           args:
             - |
-              exec op-node \
+              op-node \
                 --l2={{ .Values.config.l2.opGethUrl }} \
                 --l2.jwt-secret=/chainconfig/jwt.txt \
                 --sequencer.enabled \
@@ -43,11 +43,10 @@ spec:
                 --verifier.l1-confs=4 \
                 --rollup.config=/chainconfig/rollup.json \
                 --rpc.addr=0.0.0.0 \
-                --p2p.disable \
                 --rpc.enable-admin \
+                --p2p.disable \
                 --p2p.sequencer.key={{ index $opSecrets.data "sequencer_private_key" | b64dec }} \
                 --l1={{ index $opSecrets.data "l1_rpc_url" | b64dec }} \
-                --l1.rpckind={{ index $opSecrets.data "l1_rpc_kind" | b64dec }} \
                 --l1.beacon={{ index $opSecrets.data "l1_rpc_url" | b64dec }} \
                 --syncmode=execution-layer \
                 --rollup.config=/chainconfig/rollup.json

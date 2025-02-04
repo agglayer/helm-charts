@@ -50,19 +50,19 @@ spec:
 
               # Start op-geth
               echo 'Starting op-geth'
-              exec geth \
+              geth \
                 --datadir {{ .Values.storage.path }} \
                 --http \
                 --http.corsdomain="*" \
                 --http.vhosts="*" \
                 --http.addr=0.0.0.0 \
                 --http.port={{ .Values.service.http.port }} \
-                --http.api=web3,debug,eth,txpool,net,engine \
+                --http.api=admin,engine,net,eth,web3,debug,miner \
                 --ws \
                 --ws.addr=0.0.0.0 \
                 --ws.port={{ .Values.service.ws.port }} \
                 --ws.origins="*" \
-                --ws.api=debug,eth,txpool,net,engine,web3 \
+                --ws.api=admin,engine,net,eth,web3,debug,miner \
                 --log.format=json \
                 --syncmode="full" \
                 --gcmode={{ .Values.config.nodeType }} \
@@ -74,6 +74,7 @@ spec:
                 --authrpc.port={{ .Values.service.authrpc.port }} \
                 --authrpc.jwtsecret=/chainconfig/jwt.txt \
                 --rollup.disabletxpoolgossip=true \
+                --rpc.allow-unprotected-txs \
                 --db.engine=pebble \
                 --state.scheme=hash
           ports:

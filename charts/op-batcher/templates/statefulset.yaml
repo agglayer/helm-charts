@@ -33,7 +33,7 @@ spec:
             - -c
           args:
             - |
-              exec op-batcher \
+              op-batcher \
                 --l2-eth-rpc={{ .Values.config.l2.opGethUrl }} \
                 --rollup-rpc={{ .Values.config.l2.opNodeUrl }} \
                 --poll-interval=1s \
@@ -47,7 +47,8 @@ spec:
                 --max-channel-duration=25 \
                 --l1-eth-rpc={{ index $opSecrets.data "l1_rpc_url" | b64dec }} \
                 --private-key={{ index $opSecrets.data "batcher_private_key" | b64dec }} \
-                --throttle-interval=0
+                --throttle-interval=0 \
+                --data-availability-type=blobs
           ports:
             - name: rpc
               containerPort: {{ .Values.service.rpc.port }}
