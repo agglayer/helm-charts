@@ -49,6 +49,7 @@ p_service: bridge-tester
 tag: v3
 tags.datadoghq.com/env: {{ .Values.env }}
 tags.datadoghq.com/name: {{ include "bridgeTester.fullname" . }}
+tags.datadoghq.com/service: {{ include "bridgeTester.fullname" . }}
 deployment: {{ htmlDateInZone (now) "UTC" }}
 {{- end }}
 
