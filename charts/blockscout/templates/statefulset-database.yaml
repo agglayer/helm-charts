@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres  # Corrected: Consistent name
+  namespace: {{ .Values.namespace }}
+spec:
+  serviceName: postgres-headless  # Corrected: Consistent name
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      securityContext:
+        fsGroup: 999
+      containers:
+        - name: postgres
+          image: "{{ .Values.blockscout.postgres.image.repository }}:{{ .Values.blockscout.postgres.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.blockscout.postgres.port }}
+          env:
+            - name: POSTGRES_DB
+              value: "{{ .Values.blockscout.postgres.dbName }}"
+            - name: POSTGRES_USER
+              value: "{{ .Values.blockscout.postgres.user }}"
+            - name: POSTGRES_PASSWORD
+              value: "{{ .Values.blockscout.postgres.password }}"
+          volumeMounts:
+            - name: init-sql
+              mountPath: /docker-entrypoint-initdb.d/
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          command: ["postgres", "-N", "500"]
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+            allowPrivilegeEscalation: false
+      volumes:
+        - name: init-sql
+          configMap:
+            name: {{ .Values.blockscout.postgres.configMapName }}
+            items:
+              - key: {{ .Values.blockscout.postgres.initSqlKey }}
+                path: {{ .Values.blockscout.postgres.initSqlPath }}
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: "standard"
