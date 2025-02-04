@@ -2,18 +2,16 @@ namespace: blockscout
 
 blockscout:
   postgres:
-    image: postgres:17.0
-    port: "5432"
-    dbName: master
-    user: master
-    password: master
-    dbConfigs:
-      - db: blockscout
-        user: blockscout
-        password: blockscout
-      - db: stats
-        user: stats
-        password: stats
+    image:
+      repository: "postgres"
+      tag: "latest"
+    port: 5432
+    dbName: "blockscout"
+    user: "blockscout"
+    password: "password"
+    configMapName: "database-config"
+    initSqlKey: "create-dbs.sql"
+    initSqlPath: "create-dbs.sql"
 
   backend:
     image: blockscout/blockscout-zkevm:6.8.1
