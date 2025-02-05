@@ -94,7 +94,7 @@ data:
     PolygonZkEVMAddress = {{ .Values.config.network.polygonZkEVMAddress | quote }}
     L2PolygonBridgeAddresses = [{{ .Values.config.network.l2PolygonBridgeAddress | quote }}]
     L2PolygonZkEVMGlobalExitRootAddresses = [{{ .Values.config.network.l2PolygonZkEVMGlobalExitRootAddress | quote }}]
-    SovereignChains = [{{ .Values.config.network.isSovereignChain }}]
+    RequireSovereignChainSmcs = [{{ .Values.config.network.requireSovereignChainSmcs }}]
 
     [ClaimTxManager]
     FrequencyToMonitorTxs = "5s"
