@@ -3,7 +3,8 @@ kind: ConfigMap
 metadata:
   name: backend-config
   namespace: {{ .Values.namespace }}
-
+  labels:
+    {{- include "blockscout.labels" . | nindent 4 }}
 data:
   API_V2_ENABLED: "true"
   BACKEND_EXPOSED: "{{ .Values.blockscout.backend.backend_exposed | toString }}"
@@ -12,7 +13,7 @@ data:
   CHAIN_ID: "{{ .Values.blockscout.backend.chain_id }}"
   CHAIN_TYPE: "polygon_zkevm"
   COIN: "ETH"
-  DATABASE_URL: "postgresql://{{ .Values.blockscout.backend.dbUser }}:{{ .Values.blockscout.backend.dbPassword }}@postgres:{{ .Values.blockscout.postgres.port }}/{{ .Values.blockscout.backend.dbName }}"
+  DATABASE_URL: "postgresql://{{ .Values.blockscout.backend.dbUser }}:{{ .Values.blockscout.backend.dbPassword }}@postgres:5432/{{ .Values.blockscout.backend.dbName }}"
   DB_NAME: "{{ .Values.blockscout.backend.dbName }}"
   DB_PASSWORD: "{{ .Values.blockscout.backend.dbPassword }}"
   DB_USER: "{{ .Values.blockscout.backend.dbUser }}"

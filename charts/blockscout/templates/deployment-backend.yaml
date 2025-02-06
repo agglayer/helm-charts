@@ -1,17 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: {{ include "blockscout.componentName" (dict "componentNameKey" "backend" "Values" .Values "Release" .Release "Chart" .Chart) }}
   namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "blockscout.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.blockscout.backend.replicas | default 1 }}
   selector:
     matchLabels:
-      app: backend
+      app.kubernetes.io/name: {{ include "blockscout.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: backend
+        {{- include "blockscout.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: backend
