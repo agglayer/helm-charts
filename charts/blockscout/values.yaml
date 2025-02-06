@@ -20,7 +20,7 @@ blockscout:
     image: blockscout/blockscout-zkevm:6.8.1
     port: 4004
     publicPort: 80
-    dbName: blockscout
+    dbName: app_db1
     dbUser: app_user1
     dbPassword: password123
     title: "Polygon CDK"
