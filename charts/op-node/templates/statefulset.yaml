@@ -48,7 +48,6 @@ spec:
                 --p2p.sequencer.key={{ index $opSecrets.data "sequencer_private_key" | b64dec }} \
                 --l1={{ index $opSecrets.data "l1_rpc_url" | b64dec }} \
                 --l1.beacon={{ index $opSecrets.data "l1_rpc_url" | b64dec }} \
-                --syncmode=execution-layer \
                 --rollup.config=/chainconfig/rollup.json
           ports:
             - name: rpc
