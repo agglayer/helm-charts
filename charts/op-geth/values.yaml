@@ -21,6 +21,10 @@ service:
     port: 8546
   annotations: {}
 
+ingress:
+  create: true
+  hostname: something.dev.polygon
+
 podLabels: {}
 podSecurityContext: {}
 securityContext: {}

@@ -87,39 +87,6 @@ spec:
             - name: ws
               containerPort: {{ .Values.service.ws.port }}
               protocol: TCP
-          # env:
-          #   - name: GS_ADMIN_ADDRESS
-          #     value: "{{ index $opSecrets.data "admin_address" | b64dec }}"
-          #   - name: GS_ADMIN_PRIVATE_KEY
-          #     value: "{{ index $opSecrets.data "admin_private_key" | b64dec }}"
-          #   - name: GS_BATCHER_ADDRESS
-          #     value: "{{ index $opSecrets.data "batcher_address" | b64dec }}"
-          #   - name: GS_BATCHER_PRIVATE_KEY
-          #     value: "{{ index $opSecrets.data "batcher_private_key" | b64dec }}"
-          #   - name: GS_PROPOSER_ADDRESS
-          #     value: "{{ index $opSecrets.data "proposer_address" | b64dec }}"
-          #   - name: GS_PROPOSER_PRIVATE_KEY
-          #     value: "{{ index $opSecrets.data "proposer_private_key" | b64dec }}"
-          #   - name: GS_SEQUENCER_ADDRESS
-          #     value: "{{ index $opSecrets.data "sequencer_address" | b64dec }}"
-          #   - name: GS_SEQUENCER_PRIVATE_KEY
-          #     value: "{{ index $opSecrets.data "sequencer_private_key" | b64dec }}"
-          #   - name: L1_CHAIN_ID
-          #     value: "{{ .Values.config.l1.chainId }}"
-          #   - name: L1_BLOCK_TIME
-          #     value: "{{ .Values.config.l1.blockTime }}"
-          #   - name: L2_CHAIN_ID
-          #     value: "{{ .Values.config.l2.chainId }}"
-          #   - name: L2_BLOCK_TIME
-          #     value: "{{ .Values.config.l2.blockTime }}"
-          #   - name: L1_RPC_URL
-          #     value: "{{ index $opSecrets.data "l1_rpc_url" | b64dec }}"
-          #   - name: L1_RPC_KIND
-          #     value: "{{ index $opSecrets.data "l1_rpc_kind" | b64dec }}"
-          #   - name: IMPL_SALT
-          #     value: "{{ index $opSecrets.data "impl_salt" | b64dec }}"
-          #   - name: DEPLOYMENT_CONTEXT
-          #     value: "getting-started"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

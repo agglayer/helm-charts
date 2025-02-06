@@ -25,7 +25,7 @@ existingSecret: "secretName"
 
 config:
   l2:
-    opGethUrl: http://op-geth:8551
+    opGethAuthUrl: http://op-geth:8551
 
   log:
     environment: development # "production" or "development"

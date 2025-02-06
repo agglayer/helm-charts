@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "aggkit.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "aggkit.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "aggkit.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "aggkit.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        fsGroup: 101
+        fsGroupChangePolicy: Always
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          entrypoint:
+            - /bin/sh
+            - -c
+          command:
+            - aggkit
+            - run
+            - --cfg=/etc/aggkit/config.toml
+            - --components=aggsender,aggoracle
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: "/etc/aggkit"
+              name: config
+              readOnly: true
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+      volumes:
+        - name: config
+          projected:
+            sources:
+            - configMap:
+                name: {{ include "aggkit.fullname" . }}
+                items:
+                  - key: "config.toml"
+                    path: "config.toml"
+            - secret:
+                name: op-secrets
+                items:
+                  - key: sequencer.keystore
+                    path: sequencer.keystore
+                  - key: aggoracle.keystore
+                    path: aggoracle.keystore
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
