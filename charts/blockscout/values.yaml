@@ -2,24 +2,27 @@ namespace: blockscout
 
 blockscout:
   postgres:
-    image:
-      repository: "postgres"
-      tag: "latest"
-    port: 5432
-    dbName: "blockscout"
-    user: "blockscout"
-    password: "password"
-    configMapName: "database-config"
-    initSqlKey: "create-dbs.sql"
-    initSqlPath: "create-dbs.sql"
+    componentName: postgres
+    image: postgres:17.0
+    replicas: 1
+    storage: 1Gi
+    dbPassword: dbPassword
+    users:
+      - user: app_user1
+        password: password123
+        db: app_db1
+      - user: reporting_user
+        password: securepass456
+        db: reporting_db
 
   backend:
+    componentName: backend
     image: blockscout/blockscout-zkevm:6.8.1
     port: 4004
     publicPort: 80
     dbName: blockscout
-    dbUser: blockscout
-    dbPassword: blockscout
+    dbUser: app_user1
+    dbPassword: password123
     title: "Polygon CDK"
     chain_id: "1"
     l1_explorer: "https://etherscan.io/"
@@ -39,14 +42,17 @@ blockscout:
       l2_rollup_index: '0'
 
   stats:
+    componentName: stats
     image: ghcr.io/blockscout/stats:v2.1.1
     port: 8050
 
   visualize:
+    componentName: visualize
     image: ghcr.io/blockscout/visualizer:v0.2.1
     port: 8050
 
   frontend:
+    componentName: frontend
     image: ghcr.io/blockscout/frontend:v1.35.0
     port: 8000
     publicPort: 80

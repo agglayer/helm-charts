@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: stats-config
   namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "blockscout.labels" . | nindent 4 }}
 data:
   DB_NAME: {{ .Values.blockscout.backend.dbName }}
   DB_USER: {{ .Values.blockscout.backend.dbUser }}

@@ -1,17 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stats
+  name: {{ include "blockscout.componentName" (dict "componentNameKey" "stats" "Values" .Values "Release" .Release "Chart" .Chart) }}
   namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "blockscout.labels" . | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: stats
+      {{- include "blockscout.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        app: stats
+        {{- include "blockscout.selectorLabels" . | nindent 8 }}
     spec:
       containers:
         - name: stats
