@@ -56,17 +56,18 @@ spec:
                   l1_rpc_url={{ index $opSecrets.data "l1RpcURL" | b64dec }}
       
                   bridge_pp1_url={{ .Values.config.pp1.bridgeURL }}
+                  bridge_pp1_address={{ .Values.config.pp1.bridgeAddress }}
                   rpc_pp1_url={{ .Values.config.pp1.rpcURL }}
       
                   bridge_pp2_url={{ .Values.config.pp2.bridgeURL }}
+                  bridge_pp2_address={{ .Values.config.pp2.bridgeAddress }}
                   rpc_pp2_url={{ .Values.config.pp2.rpcURL }}
       
-                  bridge_address={{ .Values.config.bridge.address }}
                   seb_address={{ .Values.config.pp2.gasTokenAddress }}
-                  l2_weth_address=$(cast call --rpc-url $rpc_pp2_url $bridge_address 'WETHToken()(address)')
+                  l2_weth_address=$(cast call --rpc-url $rpc_pp2_url $bridge_pp2_address 'WETHToken()(address)')
       
                   token_hash=$(cast keccak $(cast abi-encode --packed 'f(uint32,address)' 0 $seb_address))
-                  l2_seb_address=$(cast call --rpc-url $rpc_pp1_url $bridge_address 'tokenInfoToWrappedToken(bytes32)(address)' $token_hash)
+                  l2_seb_address=$(cast call --rpc-url $rpc_pp1_url $bridge_pp1_address 'tokenInfoToWrappedToken(bytes32)(address)' $token_hash)
       
                   printf "Current ETH   balance on PP 1: %s\n" $(cast balance --ether --rpc-url $rpc_pp1_url $eth_address)
                   printf "Current WSEB  balance on PP 1: %s\n" $(cast from-wei $(cast call --rpc-url $rpc_pp1_url $l2_seb_address 'balanceOf(address)(uint256)' $eth_address | sed 's/ .*//'))
@@ -78,7 +79,7 @@ spec:
                   echo "## [Step] Bridge across networks"
                   echo "# PP1 to PP2 ETH"
                   polycli ulxly bridge message \
-                          --bridge-address $bridge_address \
+                          --bridge-address $bridge_pp1_address \
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --value $(date +%s) \
@@ -88,7 +89,7 @@ spec:
       
                   echo "# PP1 to PP2 WSEB"
                   polycli ulxly bridge asset \
-                          --bridge-address $bridge_address \
+                          --bridge-address $bridge_pp1_address \
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --value $(date +%s) \
@@ -99,7 +100,7 @@ spec:
       
                   echo "# PP1 to L1 ETH"
                   polycli ulxly bridge asset \
-                          --bridge-address $bridge_address \
+                          --bridge-address $bridge_pp1_address \
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --value $(date +%s) \
@@ -109,7 +110,7 @@ spec:
       
                   echo "# PP2 to PP1 SEB"
                   polycli ulxly bridge asset \
-                          --bridge-address $bridge_address \
+                          --bridge-address $bridge_pp2_address \
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --value $(date +%s) \
@@ -119,7 +120,7 @@ spec:
       
                   echo "# PP2 to PP1 WETH"
                   polycli ulxly bridge weth \
-                          --bridge-address $bridge_address \
+                          --bridge-address $bridge_pp2_address \
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --value $(date +%s) \
@@ -130,7 +131,7 @@ spec:
       
                   echo "# PP2 to L1 SEB"
                   polycli ulxly bridge asset \
-                          --bridge-address $bridge_address \
+                          --bridge-address $bridge_pp2_address \
                           --destination-address $eth_address \
                           --private-key $private_key \
                           --value $(date +%s) \
@@ -140,7 +141,7 @@ spec:
       
                   echo "# Claim everything from PP1"
                   polycli ulxly claim-everything \
-                          --bridge-address $bridge_address \
+                          --bridge-address $bridge_pp1_address \
                           --bridge-service-map {{ .Values.config.pp1.rollupId }}=$bridge_pp1_url \
                           --bridge-service-map {{ .Values.config.pp2.rollupId }}=$bridge_pp2_url \
                           --destination-address $eth_address \
@@ -151,7 +152,7 @@ spec:
       
                   echo "# Claim everything from PP2"
                   polycli ulxly claim-everything \
-                          --bridge-address $bridge_address \
+                          --bridge-address $bridge_pp2_address \
                           --bridge-service-map {{ .Values.config.pp1.rollupId }}=$bridge_pp1_url \
                           --bridge-service-map {{ .Values.config.pp2.rollupId }}=$bridge_pp2_url \
                           --destination-address $eth_address \
@@ -162,7 +163,7 @@ spec:
       
                   echo "# Claim everything from PP1 with offset"
                   polycli ulxly claim-everything \
-                          --bridge-address $bridge_address \
+                          --bridge-address $bridge_pp1_address \
                           --bridge-service-map {{ .Values.config.pp1.rollupId }}=$bridge_pp1_url \
                           --bridge-service-map {{ .Values.config.pp2.rollupId }}=$bridge_pp2_url \
                           --destination-address $eth_address \
@@ -174,7 +175,7 @@ spec:
       
                   echo "# Claim everything from PP2 with offset"
                   polycli ulxly claim-everything \
-                          --bridge-address $bridge_address \
+                          --bridge-address $bridge_pp2_address \
                           --bridge-service-map {{ .Values.config.pp1.rollupId }}=$bridge_pp1_url \
                           --bridge-service-map {{ .Values.config.pp2.rollupId }}=$bridge_pp2_url \
                           --destination-address $eth_address \
