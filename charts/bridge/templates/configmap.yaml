@@ -64,6 +64,7 @@ data:
     L2URLs = [{{ .Values.config.etherman.l2Url | quote }}]
 
     [Synchronizer]
+    BlockFinality = "FinalizedBlock"
     SyncInterval = "5s"
     SyncChunkSize = 1000
 
