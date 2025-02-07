@@ -1,0 +1,62 @@
+replicas: 1
+
+container:
+  image:
+    pullPolicy: IfNotPresent
+    repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth
+    tag: v1.101411.4 # https://github.com/smartcontracts/simple-optimism-node/blob/main/docker-compose.yml#L31
+
+storage:
+  path: /data
+  size: 500Gi
+
+service:
+  type: ClusterIP
+  clusterIP: None
+  authrpc:
+    port: 8551
+  http:
+    port: 8545
+  ws:
+    port: 8546
+  annotations: {}
+
+ingress:
+  create: true
+  hostname: something.dev.polygon
+
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+existingSecret: "secretName"
+
+genesisFileGCP:
+  bucket: "bucket-name"
+  object: "bucket-object"
+  serviceAccount: "service-account"
+
+config:
+  nodeType: archive # "archive" or "full"
+
+  l1:
+    blockTime: 12
+    chainId: 123
+
+  l2:
+    blockTime: 12
+    chainId: 123
+
+  log:
+    environment: development # "production" or "development"
+    level: info
+
+  rollupJson: |
+    {}
+
+resources:
+  limits:
+    memory: 10Gi
+  requests:
+    cpu: 1
+    memory: 2Gi

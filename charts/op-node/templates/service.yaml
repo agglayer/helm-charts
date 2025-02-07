@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "op-node.fullname" . }}
+  labels:
+    {{- include "op-node.labels" . | nindent 4 }}
+  annotations:
+    {{ toYaml .Values.service.annotations | indent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.rpc.port }}
+      targetPort: rpc
+      protocol: TCP
+      name: rpc
+  # StatefulSets require headless services
+  # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
+  clusterIP: {{ .Values.service.clusterIP }}
+  selector:
+    {{- include "op-node.selectorLabels" . | nindent 4 }}

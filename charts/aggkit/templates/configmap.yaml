@@ -1,0 +1,75 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "aggkit.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+data:
+  config.toml: |
+    PathRWData = {{ .Values.storage.path | quote }}
+    L1URL = {{ index $opSecrets.data "l1RpcURL" | b64dec | quote }}
+    L2URL = {{ .Values.config.l2.rpcURL | quote }}
+    AggLayerURL = {{ .Values.config.agglayerURL | quote }}
+
+    ForkId = {{ .Values.config.forkId | quote }}
+    ContractVersions = {{ .Values.config.contractsVersion | quote }}
+    IsValidiumMode = {{ eq .Values.config.isValidium true }}
+
+    L2Coinbase = {{ .Values.config.l2.sequencerAddress | quote }}
+    SequencerPrivateKeyPath = ""
+    SequencerPrivateKeyPassword = ""
+
+    AggregatorPrivateKeyPath = ""
+    AggregatorPrivateKeyPassword  = ""
+    SenderProofToL1Addr = ""
+    polygonBridgeAddr = {{ .Values.config.bridgeAddress | quote }}
+
+    RPCURL = {{ .Values.config.l2.rpcURL | quote }}
+    WitnessURL = ""
+
+    rollupCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
+    rollupManagerCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
+    genesisBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
+
+    [L1Config]
+    chainId = {{ .Values.config.l1.chainId | int }}
+    polygonZkEVMGlobalExitRootAddress = {{ .Values.config.l1.globalExitRootAddress | quote }}
+    polygonRollupManagerAddress = {{ .Values.config.l1.rollupManagerAddress | quote }}
+    polTokenAddress = {{ .Values.config.l1.polTokenAddress | quote }}
+    polygonZkEVMAddress = {{ .Values.config.l1.rollupAddress | quote }}
+
+    [L2Config]
+    GlobalExitRootAddr = {{ .Values.config.l2.globalExitRootAddress | quote }}
+
+    [Log]
+    Environment = {{ .Values.config.log.environment | quote }}
+    Level = {{ .Values.config.log.level | quote }}
+    Outputs = ["stderr"]
+
+    [RPC]
+    Port = {{ .Values.config.rpc.port | int }}
+
+    [AggSender]
+    AggsenderPrivateKey = {Path = "/etc/aggkit/sequencer.keystore", Password = {{ index $opSecrets.data "sequencerPrivateKeyPassword" | b64dec | quote }}}
+    CertificateSendInterval = {{ .Values.config.aggSender.certificateSendInterval | quote }}
+    CheckSettledInterval = {{ .Values.config.aggSender.checkSettledInterval | quote }}
+    MaxCertSize = {{ .Values.config.aggSender.maxCertSize | int }}
+    SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
+
+    [AggOracle.EVMSender]
+    GlobalExitRootL2 = {{ .Values.config.l2.globalExitRootAddress | quote }}
+
+    [AggOracle.EVMSender.EthTxManager]
+    PrivateKeys = [{Path = "/etc/aggkit/aggoracle.keystore", Password = {{ index $opSecrets.data "aggoraclePrivateKeyPassword" | b64dec | quote }}}]
+
+    [AggOracle.EVMSender.EthTxManager.Etherman]
+    L1ChainID = {{ .Values.config.l2.chainId | int }}
+
+    [BridgeL2Sync]
+    BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
+
+    [L1InfoTreeSync]
+    BlockFinality="FinalizedBlock"
+    SyncBlockChunkSize=1000
+    InitialBlock = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
