@@ -58,6 +58,7 @@ data:
     Name = {{ $bridgeDbName | quote }}
     Host = {{ $dbHost | quote }}
     Port = {{ $dbPort | quote }}
+    MaxConns = 200
 
     [Etherman]
     l1URL = {{ $l1RpcURL | quote }}
@@ -79,6 +80,7 @@ data:
     DefaultPageLimit = 25
     MaxPageLimit = 100
     BridgeVersion = "v1"
+    
     [BridgeServer.DB]
     Database = "postgres"
     User = {{ $dbUser | quote }}
@@ -86,6 +88,7 @@ data:
     Name = {{ $bridgeDbName | quote }}
     Host = {{ $dbHost | quote }}
     Port = {{ $dbPort | quote }}
+    MaxConns = 200
 
     [NetworkConfig]
     GenBlockNumber = {{ .Values.config.network.genBlockNumber | int64 }}
