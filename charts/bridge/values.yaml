@@ -4,7 +4,7 @@ replicaCount: 1
 image:
   repository: hermeznetwork/zkevm-bridge-service
   pullPolicy: IfNotPresent
-  tag: "v0.6.0-RC7"
+  tag: "v0.6.0-RC8"
   command: ["/app/zkevm-bridge"]
   args: ["run", "--cfg", "/etc/bridge/bridge-config.toml"]
 
