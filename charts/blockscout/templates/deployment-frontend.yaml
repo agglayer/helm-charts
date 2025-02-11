@@ -1,25 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "blockscout.componentName" (dict "componentNameKey" "frontend" "Values" .Values "Release" .Release "Chart" .Chart) }}
-  namespace: {{ .Values.namespace }}
+  name: {{ .Release.Name }}-frontend
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "blockscout.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Release.Name }}-frontend
+    app.kubernetes.io/instance: {{ .Release.Name }}-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "blockscout.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/name: {{ .Release.Name }}-frontend
+      app.kubernetes.io/instance: {{ .Release.Name }}-frontend
   template:
     metadata:
       labels:
-        {{- include "blockscout.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/name: {{ .Release.Name }}-frontend
+        app.kubernetes.io/instance: {{ .Release.Name }}-frontend
     spec:
       containers:
         - name: frontend
-          image: {{ .Values.blockscout.frontend.image }}
+          image: {{ .Values.frontend.image }}
           ports:
-            - containerPort: {{ .Values.blockscout.frontend.port }}
+            - name: app
+              containerPort: {{ .Values.frontend.ports.app }}
+              protocol: TCP
           envFrom:
             - configMapRef:
-                name: frontend-config
+                name: {{ .Release.Name }}-frontend-config

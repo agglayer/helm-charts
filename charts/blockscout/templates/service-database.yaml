@@ -1,17 +1,17 @@
+{{- if .Values.database.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "blockscout.componentName" (dict "componentNameKey" "postgres" "Values" .Values "Release" .Release "Chart" .Chart) }}-service
-  namespace: {{ .Values.namespace }}
+  name: {{ .Release.Name }}-database
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "blockscout.labels" . | nindent 4 }}
 spec:
   selector:
-    app.kubernetes.io/name: {{ include "blockscout.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Release.Name }}-database
+    app.kubernetes.io/instance: {{ .Release.Name }}-database
   ports:
-    - port: 5432
-      targetPort: 5432
+    - name: app
+      port: {{ .Values.database.ports.app }}
       protocol: TCP
-  selector:
-    {{- include "blockscout.selectorLabels" . | nindent 4 }}
+{{- end }}

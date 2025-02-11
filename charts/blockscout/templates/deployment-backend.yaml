@@ -1,31 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "blockscout.componentName" (dict "componentNameKey" "backend" "Values" .Values "Release" .Release "Chart" .Chart) }}
-  namespace: {{ .Values.namespace }}
+  name: {{ .Release.Name }}-backend
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "blockscout.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Release.Name }}-backend
+    app.kubernetes.io/instance: {{ .Release.Name }}-backend
 spec:
-  replicas: {{ .Values.blockscout.backend.replicas | default 1 }}
+  replicas: {{ .Values.backend.replicas | default 1 }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "blockscout.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/name: {{ .Release.Name }}-backend
+      app.kubernetes.io/instance: {{ .Release.Name }}-backend
   template:
     metadata:
       labels:
-        {{- include "blockscout.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/name: {{ .Release.Name }}-backend
+        app.kubernetes.io/instance: {{ .Release.Name }}-backend
     spec:
       containers:
         - name: backend
-          image: {{ .Values.blockscout.backend.image }}
+          image: {{ .Values.backend.image }}
           ports:
-            - containerPort: {{ .Values.blockscout.backend.port }}
+            - name: app
+              containerPort: {{ .Values.backend.ports.app }}
+              protocol: TCP
           envFrom:
             - configMapRef:
-                name: backend-config
+                name: {{ .Release.Name }}-backend-config
           command: ["/bin/sh", "-c"]
           args: ['bin/blockscout eval "Elixir.Explorer.ReleaseTasks.create_and_migrate()" && bin/blockscout start']
+          resources:
+            limits:
+              cpu: 2
+              memory: 4Gi
+            requests:
+              cpu: 1
+              memory: 2Gi
           lifecycle:
             postStart:
               exec:

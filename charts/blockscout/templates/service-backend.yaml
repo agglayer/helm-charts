@@ -1,20 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "blockscout.componentName" (dict "componentNameKey" "backend" "Values" .Values "Release" .Release "Chart" .Chart) }}-service
-  namespace: {{ .Values.namespace }}
+  name: {{ .Release.Name }}-backend
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "blockscout.labels" . | nindent 4 }}
 spec:
   selector:
-    app.kubernetes.io/name: {{ include "blockscout.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Release.Name }}-backend
+    app.kubernetes.io/instance: {{ .Release.Name }}-backend
   ports:
-    - name: internal
-      port: {{ .Values.blockscout.backend.port }}
-      targetPort: {{ .Values.blockscout.backend.port }}
-    - name: external
-      port: {{ .Values.blockscout.backend.publicPort }}
-      targetPort: {{ .Values.blockscout.backend.port }}
-  selector:
-    {{- include "blockscout.selectorLabels" . | nindent 4 }}
+    - name: app
+      port: {{ .Values.backend.ports.app }}
+      protocol: TCP

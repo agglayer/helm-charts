@@ -1,14 +1,16 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: visualize-config
-  namespace: {{ .Values.namespace }}
+  name: {{ .Release.Name }}-visualize-config
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "blockscout.labels" . | nindent 4 }}
 data:
-  DB_NAME: {{ .Values.blockscout.backend.dbName }}
-  DB_USER: {{ .Values.blockscout.backend.dbUser }}
-  DATABASE_URL: "postgresql://{{ .Values.blockscout.backend.dbUser }}:$(DB_PASSWORD)@postgres:{{ .Values.blockscout.postgres.port }}/{{ .Values.blockscout.backend.dbName }}"
+  # DB_NAME: {{ .Values.database.name }}
+  # DB_USER: {{ .Values.database.user }}
+  DATABASE_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.database.name }}"
   ECTO_USE_SSL: "false"
   MIX_ENV: "prod"
   LOGO: "/images/blockscout_logo.svg"

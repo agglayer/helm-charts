@@ -1,15 +1,17 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: stats-config
-  namespace: {{ .Values.namespace }}
+  name: {{ .Release.Name }}-stats-config
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "blockscout.labels" . | nindent 4 }}
 data:
-  DB_NAME: {{ .Values.blockscout.backend.dbName }}
-  DB_USER: {{ .Values.blockscout.backend.dbUser }}
-  DB_PASSWORD: {{ .Values.blockscout.backend.dbPassword }}
-  DATABASE_URL: "postgresql://{{ .Values.blockscout.backend.dbUser }}:{{ .Values.blockscout.backend.dbPassword }}@postgres:{{ .Values.blockscout.postgres.port }}/{{ .Values.blockscout.backend.dbName }}"
+  # DB_NAME: {{ .Values.database.name }}
+  # DB_USER: {{ .Values.database.user }}
+  # DB_PASSWORD: {{ .Values.database.password }}
+  # DATABASE_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.database.name }}"
   ECTO_USE_SSL: "false"
   MIX_ENV: "prod"
   LOGO: "/images/blockscout_logo.svg"
@@ -22,8 +24,8 @@ data:
   BLOCKSCOUT_PROTOCOL: "http"
   INDEXER_POLYGON_ZKEVM_BATCHES_ENABLED: "true"
   BRIDGED_TOKENS_ENABLED: "true"
-  STATS__DB_URL: "postgresql://{{ .Values.blockscout.backend.dbUser }}:{{ .Values.blockscout.backend.dbPassword }}@postgres:{{ .Values.blockscout.postgres.port }}/{{ .Values.blockscout.backend.dbName }}"
-  STATS__BLOCKSCOUT_DB_URL: "postgresql://{{ .Values.blockscout.backend.dbUser }}:{{ .Values.blockscout.backend.dbPassword }}@postgres:{{ .Values.blockscout.postgres.port }}/{{ .Values.blockscout.backend.dbName }}"
-  STATS__CREATE_DATABASE: "false"
+  STATS__DB_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.database.name }}_stats"
+  STATS__BLOCKSCOUT_DB_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.database.name }}"
+  STATS__CREATE_DATABASE: "true"
   STATS__RUN_MIGRATIONS: "true"
-  STATS__SERVER__HTTP__CORS__ENABLED: "false"
+  # STATS__SERVER__HTTP__CORS__ENABLED: "false"

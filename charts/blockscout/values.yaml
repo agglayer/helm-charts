@@ -1,63 +1,61 @@
-namespace: blockscout
+networkName: Polygon CDK
+networkChainId: 1
+existingSecret: op-secrets
 
-blockscout:
-  postgres:
-    componentName: postgres
-    image: postgres:17.0
-    replicas: 1
-    storage: 1Gi
-    dbPassword: dbPassword
-    users:
-      - user: app_user1
-        password: password123
-        db: app_db1
-      - user: reporting_user
-        password: securepass456
-        db: reporting_db
+database:
+  name: blockscout_db
 
-  backend:
-    componentName: backend
-    image: blockscout/blockscout-zkevm:6.8.1
-    port: 4004
-    publicPort: 80
-    dbName: app_db1
-    dbUser: app_user1
-    dbPassword: password123
-    title: "Polygon CDK"
-    chain_id: "1"
-    l1_explorer: "https://etherscan.io/"
-    backend_exposed: "false"
-    l1_rpc_url: "https://rpc2.sepolia.org/"
-    rpc_url: "https://rpc.zkevm-rpc.com"
-    trace_url: "https://trace.zkevm-rpc.com"
-    ws_url: "wss://ws.zkevm-rpc.com"
-    bridge_info:
-      l1_start_block: '16896721'
-      l1_contract: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
-      l1_network_id: '0'
-      l1_rollup_index: '0'
-      l2_start_block: '0'
-      l2_contract: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
-      l2_network_id: '1'
-      l2_rollup_index: '0'
+backend:
+  image: blockscout/blockscout-zkevm:6.8.1
+  ports: 
+    app: 4004
+  l1ExplorerUrl: https://etherscan.io/
+  # backendExposed: false
+  rpcUrl: http://localhost:8545
+  rpcInsecure: true
+  trace_url: ""
+  ws_url: ws://localhost:8546
+  coin: ETH
+  bridgeInfo:
+    l1StartBlock: 16896721
+    l1Contract: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
+    l1NetworkId: 0
+    l1RollupIndex: 0
+    l2StartBlock: 0
+    l2Contract: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
+    l2NetworkId: 1
+    l2RollupIndex: 0
+  ingress:
+    enabled: true
+    hostname: backend.example.com
+    annotations: {}
 
-  stats:
-    componentName: stats
-    image: ghcr.io/blockscout/stats:v2.1.1
-    port: 8050
+stats:
+  image: ghcr.io/blockscout/stats:v2.1.1
+  ports: 
+    app: 8050
+  ingress:
+    enabled: true
+    hostname: stats.example.com
+    annotations: {}
 
-  visualize:
-    componentName: visualize
-    image: ghcr.io/blockscout/visualizer:v0.2.1
-    port: 8050
+visualize:
+  image: ghcr.io/blockscout/visualizer:v0.2.1
+  ports: 
+    app: 8050
+  ingress:
+    enabled: true
+    hostname: visualize.example.com
+    annotations: {}
 
-  frontend:
-    componentName: frontend
-    image: ghcr.io/blockscout/frontend:v1.35.0
-    port: 8000
-    publicPort: 80
-    title: "Polygon CDK"
-    chain_id: "1"
-    l1_explorer: "https://etherscan.io/"
-    swap_url: "https://app.uniswap.org/#/swap"
-    backend_exposed: "false"
+frontend:
+  image: ghcr.io/blockscout/frontend:v1.35.0
+  ports: 
+    app: 8000
+  l1ExplorerUrl: https://etherscan.io/
+  swap_url: https://app.uniswap.org/#/swap
+  # backendExposed: false
+  ingress:
+    enabled: true
+    hostname: example.com
+    annotations: {}

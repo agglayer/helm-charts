@@ -1,27 +1,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "blockscout.componentName" (dict "componentNameKey" "visualize" "Values" .Values "Release" .Release "Chart" .Chart) }}
-  namespace: {{ .Values.namespace }}
+  name: {{ .Release.Name }}-visualize
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "blockscout.labels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ .Release.Name }}-visualize
+    app.kubernetes.io/instance: {{ .Release.Name }}-visualize
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "blockscout.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/name: {{ .Release.Name }}-visualize
+      app.kubernetes.io/instance: {{ .Release.Name }}-visualize
   template:
     metadata:
       labels:
-        {{- include "blockscout.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/name: {{ .Release.Name }}-visualize
+        app.kubernetes.io/instance: {{ .Release.Name }}-visualize
     spec:
       containers:
         - name: visualize
-          image: {{ .Values.blockscout.visualize.image }}
+          image: {{ .Values.visualize.image }}
           ports:
-            - containerPort: {{ .Values.blockscout.visualize.port }}
+            - containerPort: {{ .Values.visualize.ports.app }}
           envFrom:
             - configMapRef:
-                name: visualize-config
-            - secretRef:
-                name: secret-visualize
+                name: {{ .Release.Name }}-visualize-config

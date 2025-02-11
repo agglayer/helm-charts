@@ -1,15 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "blockscout.componentName" (dict "componentNameKey" "stats" "Values" .Values "Release" .Release "Chart" .Chart) }}-service
-  namespace: {{ .Values.namespace }}
+  name: {{ .Release.Name }}-stats
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "blockscout.labels" . | nindent 4 }}
 spec:
   selector:
-    app.kubernetes.io/name: {{ include "blockscout.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Release.Name }}-stats
+    app.kubernetes.io/instance: {{ .Release.Name }}-stats
   ports:
-    - port: {{ .Values.blockscout.stats.port }}
-  selector:
-    {{- include "blockscout.selectorLabels" . | nindent 4 }}
+    - port: {{ .Values.stats.ports.app }}

@@ -1,44 +1,37 @@
 {{/*
-Generate the name of the chart.
+Expand the name of the chart.
 */}}
 {{- define "blockscout.name" -}}
-{{- default (.Chart.Name | default "blockscout") .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
 
 {{/*
-Generate the full name of the release.
+Create a default fully qualified app name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
 */}}
 {{- define "blockscout.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
 {{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if hasPrefix .Release.Name $name }}
+{{- if contains $name .Release.Name }}
 {{- .Release.Name | trunc 63 | trimSuffix "-" }}
 {{- else }}
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
-{{- end -}}
-
-{{/*
-Generate a name for a component of the release.
-*/}}
-{{- define "blockscout.componentName" -}}
-{{- $releaseName := default "default-release" $.Release.Name }}
-{{- $chartName := default "blockscout" ($.Chart.Name | default "blockscout") }}
-
-{{- if hasKey .Values.blockscout (.componentNameKey | toString) }}
-  {{- $component := index .Values.blockscout (.componentNameKey | toString) }}
-  {{- $componentName := default "default" $component.componentName }}
-  {{- printf "%s-%s-%s" $releaseName $chartName $componentName | trunc 63 | trimSuffix "-" -}}
-{{- else }}
-  {{- printf "%s-%s-unknown" $releaseName $chartName | trunc 63 | trimSuffix "-" -}}
 {{- end }}
-{{- end -}}
 
 {{/*
-Generate labels for resources.
+Create chart name and version as used by the chart label.
+*/}}
+{{- define "blockscout.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Common labels
 */}}
 {{- define "blockscout.labels" -}}
 helm.sh/chart: {{ include "blockscout.chart" . }}
@@ -47,19 +40,23 @@ helm.sh/chart: {{ include "blockscout.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end -}}
+{{- end }}
 
 {{/*
-Generate selector labels for resources.
+Selector labels
 */}}
 {{- define "blockscout.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "blockscout.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end -}}
+{{- end }}
 
 {{/*
-Generate chart name and version as used by the chart label.
+Create the name of the service account to use
 */}}
-{{- define "blockscout.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end -}}
+{{- define "blockscout.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "blockscout.fullname" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}

@@ -1,26 +1,26 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: frontend-config
-  namespace: {{ .Values.namespace }}
+  name: {{ .Release.Name }}-frontend-config
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "blockscout.labels" . | nindent 4 }}
 data:
   NEXT_PUBLIC_AD_BANNER_PROVIDER: "none"
   NEXT_PUBLIC_AD_TEXT_PROVIDER: "none"
-  NEXT_PUBLIC_API_HOST: "api-host"
-  NEXT_PUBLIC_API_PORT: "{{ .Values.blockscout.backend.port }}"
-  NEXT_PUBLIC_API_PROTOCOL: "http"
+  NEXT_PUBLIC_API_HOST: "{{ .Values.backend.ingress.hostname }}"
+  # NEXT_PUBLIC_API_PORT: "{{ .Values.backend.port }}"
+  NEXT_PUBLIC_API_PROTOCOL: "https"
   NEXT_PUBLIC_API_WEBSOCKET_PROTOCOL: "ws"
-  NEXT_PUBLIC_APP_HOST: "127.0.0.1"
-  NEXT_PUBLIC_APP_PORT: "{{ .Values.blockscout.frontend.port }}"
-  NEXT_PUBLIC_APP_PROTOCOL: "http"
-  NEXT_PUBLIC_DEFI_DROPDOWN_ITEMS: '[{"text": "Polygon zkEVM Bridge", "icon": "swap", "url": "{{ .Values.blockscout.frontend.swap_url }}" }]'
-  NEXT_PUBLIC_NETWORK_ID: "{{ .Values.blockscout.frontend.chain_id }}"
-  NEXT_PUBLIC_NETWORK_NAME: "{{ .Values.blockscout.frontend.title }}"
-  NEXT_PUBLIC_ROLLUP_L1_BASE_URL: "{{ .Values.blockscout.frontend.l1_explorer }}"
+  NEXT_PUBLIC_APP_HOST: "{{ .Values.frontend.ingress.hostname }}"
+  # NEXT_PUBLIC_APP_PORT: "80"
+  NEXT_PUBLIC_APP_PROTOCOL: "https"
+  NEXT_PUBLIC_DEFI_DROPDOWN_ITEMS: '[{"text": "Polygon zkEVM Bridge", "icon": "swap", "url": "{{ .Values.frontend.swap_url }}" }]'
+  NEXT_PUBLIC_NETWORK_ID: "{{ .Values.networkChainId }}"
+  NEXT_PUBLIC_NETWORK_NAME: "{{ .Values.networkName }}"
+  NEXT_PUBLIC_ROLLUP_L1_BASE_URL: "{{ .Values.frontend.l1ExplorerUrl }}"
   NEXT_PUBLIC_ROLLUP_TYPE: "zkEvm"
-  NEXT_PUBLIC_STATS_API_HOST: "http://stats-host:{{ .Values.blockscout.stats.port }}"
+  NEXT_PUBLIC_STATS_API_HOST: "https://{{ .Values.stats.ingress.hostname }}"
   NEXT_PUBLIC_TRANSACTION_INTERPRETATION_PROVIDER: "blockscout"
-  NEXT_PUBLIC_USE_NEXT_JS_PROXY: "{{ .Values.blockscout.frontend.backend_exposed }}"
-  NEXT_PUBLIC_VISUALIZE_API_HOST: "http://visualize-host:{{ .Values.blockscout.visualize.port }}"
+  # NEXT_PUBLIC_USE_NEXT_JS_PROXY: "{{ .Values.frontend.backendExposed }}"
+  NEXT_PUBLIC_VISUALIZE_API_HOST: "https://{{ .Values.visualize.ingress.hostname }}"
