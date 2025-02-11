@@ -39,6 +39,12 @@ genesisFileGCP:
 config:
   nodeType: archive # "archive" or "full"
 
+  http:
+    api: admin,engine,net,eth,web3,debug,miner
+
+  ws:
+    api: admin,engine,net,eth,web3,debug,miner
+
   l1:
     blockTime: 12
     chainId: 123

@@ -57,12 +57,12 @@ spec:
                 --http.vhosts="*" \
                 --http.addr=0.0.0.0 \
                 --http.port={{ .Values.service.http.port }} \
-                --http.api=admin,engine,net,eth,web3,debug,miner \
+                --http.api={{ .Values.config.http.api }} \
                 --ws \
                 --ws.addr=0.0.0.0 \
                 --ws.port={{ .Values.service.ws.port }} \
                 --ws.origins="*" \
-                --ws.api=admin,engine,net,eth,web3,debug,miner \
+                --ws.api={{ .Values.config.ws.api }} \
                 --log.format=json \
                 --syncmode="full" \
                 --gcmode={{ .Values.config.nodeType }} \
