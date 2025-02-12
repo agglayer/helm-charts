@@ -29,7 +29,7 @@ data:
   ETHEREUM_JSONRPC_TRACE_URL: {{ .Values.backend.traceUrl | quote }}
   ETHEREUM_JSONRPC_VARIANT: "geth"
   ETHEREUM_JSONRPC_WS_URL: {{ .Values.backend.wsUrl | quote }}
-  INDEXER_POLYGON_ZKEVM_BATCHES_ENABLED: "false"
+  INDEXER_POLYGON_ZKEVM_BATCHES_ENABLED: {{ .Values.backend.polygonZkevmBatchesEnabled | quote }}
   INDEXER_POLYGON_ZKEVM_L1_BRIDGE_CONTRACT: {{ .Values.backend.bridgeInfo.l1Contract | quote }}
   INDEXER_POLYGON_ZKEVM_L1_BRIDGE_NETWORK_ID: {{ .Values.backend.bridgeInfo.l1NetworkId | quote }}
   INDEXER_POLYGON_ZKEVM_L1_BRIDGE_ROLLUP_INDEX: {{ .Values.backend.bridgeInfo.l1RollupIndex | quote }}

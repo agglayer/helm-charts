@@ -23,6 +23,7 @@ backend:
   traceUrl: http://localhost:8546
   wsUrl: ws://localhost:8546
   coin: ETH
+  polygonZkevmBatchesEnabled: true
   bridgeInfo:
     l1StartBlock: 16896721
     l1Contract: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
