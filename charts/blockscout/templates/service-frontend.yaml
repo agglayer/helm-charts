@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-frontend
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "blockscout.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ .Release.Name }}-frontend
+    app.kubernetes.io/instance: {{ .Release.Name }}-frontend
+  ports:
+    - name: app
+      port: {{ .Values.frontend.ports.app }}
+      protocol: TCP

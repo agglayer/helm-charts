@@ -1,0 +1,14 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-stats-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "blockscout.labels" . | nindent 4 }}
+data:
+  STATS__DB_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.databases.stats.name }}"
+  STATS__BLOCKSCOUT_DB_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.databases.blockscout.name }}"
+  STATS__CREATE_DATABASE: "true"
+  STATS__RUN_MIGRATIONS: "true"

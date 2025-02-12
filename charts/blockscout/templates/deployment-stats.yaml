@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-stats
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/name: {{ .Release.Name }}-stats
+    app.kubernetes.io/instance: {{ .Release.Name }}-stats
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Release.Name }}-stats
+      app.kubernetes.io/instance: {{ .Release.Name }}-stats
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-stats.yaml") . | sha256sum }}
+      labels:
+        app.kubernetes.io/name: {{ .Release.Name }}-stats
+        app.kubernetes.io/instance: {{ .Release.Name }}-stats
+    spec:
+      containers:
+        - name: stats
+          image: {{ .Values.stats.image }}
+          ports:
+            - name: app
+              containerPort: {{ .Values.stats.ports.app }}
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-stats-config
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: 250m
+            requests:
+              memory: 512Mi
+              cpu: 250m

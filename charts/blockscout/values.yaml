@@ -1,0 +1,52 @@
+networkName: Polygon CDK
+networkChainId: 1
+existingSecret: op-secrets
+
+databases:
+  blockscout: 
+    name: blockscout_db
+  stats: 
+    name: stats_db
+
+ingress:
+  enabled: true
+  hostname: example.com
+  annotations: {}
+
+backend:
+  image: blockscout/blockscout-zkevm:6.8.1
+  ports: 
+    app: 4000
+  l1ExplorerUrl: https://etherscan.io/
+  rpcUrl: http://localhost:8545
+  rpcInsecure: true
+  traceUrl: http://localhost:8546
+  wsUrl: ws://localhost:8546
+  coin: ETH
+  polygonZkevmBatchesEnabled: true
+  bridgeInfo:
+    l1StartBlock: 16896721
+    l1Contract: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
+    l1NetworkId: 0
+    l1RollupIndex: 0
+    l2StartBlock: 0
+    l2Contract: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
+    l2NetworkId: 1
+    l2RollupIndex: 0
+
+stats:
+  image: ghcr.io/blockscout/stats:v2.1.1
+  ports: 
+    app: 8050
+
+visualize:
+  image: ghcr.io/blockscout/visualizer:v0.2.1
+  ports: 
+    app: 8050
+
+frontend:
+  image: ghcr.io/blockscout/frontend:v1.35.0
+  ports: 
+    app: 3000
+  l1ExplorerUrl: https://etherscan.io/
+  swapUrl: https://bridge.example.com/
