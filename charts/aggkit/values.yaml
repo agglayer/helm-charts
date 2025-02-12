@@ -32,6 +32,7 @@ config:
     globalExitRootAddress: "0x123"
     polTokenAddress: "0x123"
     rollupAddress: "0x123"
+    rollupBlockNumber: "0x123"
     rollupManagerAddress: "0x123"
     rollupManagerBlockNumber: 123
     syncBlockChunkSize: 1000

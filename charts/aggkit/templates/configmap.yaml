@@ -28,7 +28,7 @@ data:
     RPCURL = {{ .Values.config.l2.rpcURL | quote }}
     WitnessURL = ""
 
-    rollupCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
+    rollupCreationBlockNumber = {{ .Values.config.l1.rollupBlockNumber | int }}
     rollupManagerCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
     genesisBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
 
