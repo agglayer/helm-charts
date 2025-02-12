@@ -14,6 +14,8 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}-stats
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-stats.yaml") . | sha256sum }}
       labels:
         app.kubernetes.io/name: {{ .Release.Name }}-stats
         app.kubernetes.io/instance: {{ .Release.Name }}-stats
@@ -22,7 +24,9 @@ spec:
         - name: stats
           image: {{ .Values.stats.image }}
           ports:
-            - containerPort: {{ .Values.stats.ports.app }}
+            - name: app
+              containerPort: {{ .Values.stats.ports.app }}
+              protocol: TCP
           envFrom:
             - configMapRef:
                 name: {{ .Release.Name }}-stats-config

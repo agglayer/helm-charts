@@ -14,6 +14,8 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}-frontend
   template:
     metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-frontend.yaml") . | sha256sum }}
       labels:
         app.kubernetes.io/name: {{ .Release.Name }}-frontend
         app.kubernetes.io/instance: {{ .Release.Name }}-frontend

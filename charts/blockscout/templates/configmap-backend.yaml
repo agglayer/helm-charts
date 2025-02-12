@@ -16,38 +16,34 @@ metadata:
     {{- include "blockscout.labels" . | nindent 4 }}
 data:
   API_V2_ENABLED: "true"
-  # BACKEND_EXPOSED: "{{ .Values.backend.backendExposed | toString }}"
-  BLOCKSCOUT_PROTOCOL: "http"
+  BLOCKSCOUT_PROTOCOL: "https"
   BRIDGED_TOKENS_ENABLED: "true"
-  CHAIN_ID: "{{ .Values.chainId }}"
+  CHAIN_ID: {{ .Values.networkChainId | quote }}
   CHAIN_TYPE: "polygon_zkevm"
   COIN: {{ .Values.backend.coin | quote }}
-  DATABASE_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.database.name }}"
-  # DB_NAME: "{{ .Values.database.name }}"
-  # DB_PASSWORD: "{{ .Values.database.password }}"
-  # DB_USER: "{{ .Values.database.user }}"
+  DATABASE_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.databases.blockscout.name }}"
   DISABLE_INDEXER: "false"
   ECTO_USE_SSL: "false"
-  ETHEREUM_JSONRPC_HTTP_INSECURE: "{{ .Values.backend.rpc }}"
-  ETHEREUM_JSONRPC_HTTP_URL: "{{ .Values.backend.rpcUrl }}"
-  ETHEREUM_JSONRPC_TRACE_URL: "{{ .Values.backend.trace_url }}"
+  ETHEREUM_JSONRPC_HTTP_INSECURE: {{ .Values.backend.rpcInsecure | quote }}
+  ETHEREUM_JSONRPC_HTTP_URL: {{ .Values.backend.rpcUrl | quote }}
+  ETHEREUM_JSONRPC_TRACE_URL: {{ .Values.backend.traceUrl | quote }}
   ETHEREUM_JSONRPC_VARIANT: "geth"
-  ETHEREUM_JSONRPC_WS_URL: "{{ .Values.backend.ws_url }}"
-  INDEXER_POLYGON_ZKEVM_BATCHES_ENABLED: "true"
-  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_CONTRACT: "{{ .Values.backend.bridgeInfo.l1Contract }}"
-  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_NETWORK_ID: "{{ .Values.backend.bridgeInfo.l1NetworkId | int }}"
-  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_ROLLUP_INDEX: "{{ .Values.backend.bridgeInfo.l1RollupIndex | int }}"
-  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_START_BLOCK: "{{ .Values.backend.bridgeInfo.l1StartBlock | int }}"
-  INDEXER_POLYGON_ZKEVM_L1_RPC: "{{ $l1RpcURL }}"
-  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_CONTRACT: "{{ .Values.backend.bridgeInfo.l2Contract }}"
-  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_NETWORK_ID: "{{ .Values.backend.bridgeInfo.l2NetworkId | int }}"
-  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_ROLLUP_INDEX: "{{ .Values.backend.bridgeInfo.l2RollupIndex | int }}"
-  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_START_BLOCK: "{{ .Values.backend.bridgeInfo.l2StartBlock | int }}"
+  ETHEREUM_JSONRPC_WS_URL: {{ .Values.backend.wsUrl | quote }}
+  INDEXER_POLYGON_ZKEVM_BATCHES_ENABLED: "false"
+  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_CONTRACT: {{ .Values.backend.bridgeInfo.l1Contract | quote }}
+  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_NETWORK_ID: {{ .Values.backend.bridgeInfo.l1NetworkId | quote }}
+  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_ROLLUP_INDEX: {{ .Values.backend.bridgeInfo.l1RollupIndex | quote }}
+  INDEXER_POLYGON_ZKEVM_L1_BRIDGE_START_BLOCK: {{ .Values.backend.bridgeInfo.l1StartBlock | int | quote }}
+  INDEXER_POLYGON_ZKEVM_L1_RPC: {{ $l1RpcURL | quote }}
+  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_CONTRACT: {{ .Values.backend.bridgeInfo.l2Contract | quote }}
+  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_NETWORK_ID: {{ .Values.backend.bridgeInfo.l2NetworkId | quote }}
+  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_ROLLUP_INDEX: {{ .Values.backend.bridgeInfo.l2RollupIndex | quote }}
+  INDEXER_POLYGON_ZKEVM_L2_BRIDGE_START_BLOCK: {{ .Values.backend.bridgeInfo.l2StartBlock | quote }}
   LOGO: "/images/blockscout_logo.svg"
   LOGO_FOOTER: "/images/blockscout_logo.svg"
   MIX_ENV: "prod"
   NETWORK: "POE"
   SHOW_OUTDATED_NETWORK_MODAL: "false"
-  SUBNETWORK: "{{ .Values.networkName }}"
+  SUBNETWORK: {{ .Values.networkName | quote }}
   SUPPORTED_CHAINS: "[]"
-  TITLE: "{{ .Values.networkName }}"
+  TITLE: {{ .Values.networkName | quote }}

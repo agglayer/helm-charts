@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-stats
   namespace: {{ .Release.Namespace }}
+  annotations:
+    beta.cloud.google.com/backend-config: '{"default": "{{ .Release.Name }}-stats-backendconfig" }'
   labels:
     {{- include "blockscout.labels" . | nindent 4 }}
 spec:
@@ -10,4 +12,20 @@ spec:
     app.kubernetes.io/name: {{ .Release.Name }}-stats
     app.kubernetes.io/instance: {{ .Release.Name }}-stats
   ports:
-    - port: {{ .Values.stats.ports.app }}
+    - name: app
+      port: {{ .Values.stats.ports.app }}
+      protocol: TCP
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ .Release.Name }}-stats-backendconfig
+  namespace: {{ .Release.Namespace }}
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    timeoutSec: 10
+    healthyThreshold: 1
+    unhealthyThreshold: 10
+    type: HTTP
+    requestPath: /health

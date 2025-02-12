@@ -8,24 +8,7 @@ metadata:
   labels:
     {{- include "blockscout.labels" . | nindent 4 }}
 data:
-  # DB_NAME: {{ .Values.database.name }}
-  # DB_USER: {{ .Values.database.user }}
-  # DB_PASSWORD: {{ .Values.database.password }}
-  # DATABASE_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.database.name }}"
-  ECTO_USE_SSL: "false"
-  MIX_ENV: "prod"
-  LOGO: "/images/blockscout_logo.svg"
-  LOGO_FOOTER: "/images/blockscout_logo.svg"
-  SUPPORTED_CHAINS: "[]"
-  SHOW_OUTDATED_NETWORK_MODAL: "false"
-  DISABLE_INDEXER: "false"
-  INDEXER_ZKEVM_BATCHES_ENABLED: "true"
-  API_V2_ENABLED: "true"
-  BLOCKSCOUT_PROTOCOL: "http"
-  INDEXER_POLYGON_ZKEVM_BATCHES_ENABLED: "true"
-  BRIDGED_TOKENS_ENABLED: "true"
-  STATS__DB_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.database.name }}_stats"
-  STATS__BLOCKSCOUT_DB_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.database.name }}"
+  STATS__DB_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.databases.stats.name }}"
+  STATS__BLOCKSCOUT_DB_URL: "postgresql://{{ index $opSecrets.data "dbUser" | b64dec }}:{{ index $opSecrets.data "dbUserPassword" | b64dec }}@{{ index $opSecrets.data "dbHost" | b64dec }}:{{ index $opSecrets.data "dbPort" | b64dec }}/{{ .Values.databases.blockscout.name }}"
   STATS__CREATE_DATABASE: "true"
   STATS__RUN_MIGRATIONS: "true"
-  # STATS__SERVER__HTTP__CORS__ENABLED: "false"

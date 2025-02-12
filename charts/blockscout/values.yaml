@@ -2,19 +2,26 @@ networkName: Polygon CDK
 networkChainId: 1
 existingSecret: op-secrets
 
-database:
-  name: blockscout_db
+databases:
+  blockscout: 
+    name: blockscout_db
+  stats: 
+    name: stats_db
+
+ingress:
+  enabled: true
+  hostname: example.com
+  annotations: {}
 
 backend:
   image: blockscout/blockscout-zkevm:6.8.1
   ports: 
-    app: 4004
+    app: 4000
   l1ExplorerUrl: https://etherscan.io/
-  # backendExposed: false
   rpcUrl: http://localhost:8545
   rpcInsecure: true
-  trace_url: ""
-  ws_url: ws://localhost:8546
+  traceUrl: http://localhost:8546
+  wsUrl: ws://localhost:8546
   coin: ETH
   bridgeInfo:
     l1StartBlock: 16896721
@@ -25,37 +32,20 @@ backend:
     l2Contract: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
     l2NetworkId: 1
     l2RollupIndex: 0
-  ingress:
-    enabled: true
-    hostname: backend.example.com
-    annotations: {}
 
 stats:
   image: ghcr.io/blockscout/stats:v2.1.1
   ports: 
     app: 8050
-  ingress:
-    enabled: true
-    hostname: stats.example.com
-    annotations: {}
 
 visualize:
   image: ghcr.io/blockscout/visualizer:v0.2.1
   ports: 
     app: 8050
-  ingress:
-    enabled: true
-    hostname: visualize.example.com
-    annotations: {}
 
 frontend:
   image: ghcr.io/blockscout/frontend:v1.35.0
   ports: 
-    app: 8000
+    app: 3000
   l1ExplorerUrl: https://etherscan.io/
-  swap_url: https://app.uniswap.org/#/swap
-  # backendExposed: false
-  ingress:
-    enabled: true
-    hostname: example.com
-    annotations: {}
+  swapUrl: https://bridge.example.com/
