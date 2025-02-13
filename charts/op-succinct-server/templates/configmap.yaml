@@ -1,5 +1,7 @@
 {{- $l1RpcURL := "" }}
 {{- $adminPrivateKey := "" }}
+{{- $sp1NetworkPrivateKey := "" }}
+{{- $sp1NetworkRpcURL := "" }}
 
 {{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
 {{- if $opSecrets.data }}
@@ -8,6 +10,12 @@
     {{- end }}
     {{- if (index $opSecrets.data "adminPrivateKey") }}
         {{- $adminPrivateKey = index $opSecrets.data "adminPrivateKey" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "sp1NetworkPrivateKey") }}
+        {{- $sp1NetworkPrivateKey = index $opSecrets.data "sp1NetworkPrivateKey" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "sp1NetworkRpcURL") }}
+        {{- $sp1NetworkRpcURL = index $opSecrets.data "sp1NetworkRpcURL" | b64dec }}
     {{- end }}
 {{- end }}
 
@@ -24,5 +32,7 @@ data:
   L2_RPC: {{ .Values.config.l2RpcURL | quote }}
   L2_NODE_RPC: {{ .Values.config.l2NodeRpcURL | quote }}
   L2OO_ADDRESS: {{ .Values.config.l2OOAddress | quote }}
+  NETWORK_PRIVATE_KEY: {{ $sp1NetworkPrivateKey | quote }}
+  NETWORK_RPC_URL: {{ $sp1NetworkRpcURL | quote }}
   OP_SUCCINCT_MOCK: {{ .Values.config.opSuccinctMock | quote }}
   PRIVATE_KEY: {{ $adminPrivateKey | quote }}
