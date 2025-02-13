@@ -37,7 +37,7 @@ config:
   maxConcurrentWitnessGen: 5
   metricsEnabled: true
   opSuccinctMock: true
-  opSuccinctServerURL: http://op-succinct-server:8080
+  opSuccinctServerURL: http://op-succinct-server:3000
   pollInterval: 20s
   useCachedDB: false
   witnessGenTimeout: 1200
