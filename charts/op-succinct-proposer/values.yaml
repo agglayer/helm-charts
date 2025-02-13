@@ -1,0 +1,50 @@
+replicas: 1
+
+container:
+  image:
+    pullPolicy: IfNotPresent
+    repository: ghcr.io/succinctlabs/op-succinct/op-proposer
+    tag: main
+
+ports:
+  metrics: 7300
+
+storage:
+  path: /data
+  size: 500Gi
+
+service:
+  type: ClusterIP
+  clusterIP: None
+  annotations: {}
+
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+existingSecret: "secretName"
+
+config:
+  # [Probably optional] Address of the DisputeGameFactory proxy contract
+  # https://succinctlabs.github.io/op-succinct/experimental/optimism-portal-v2.html?highlight=dgf#optimismportalv2
+  dgfAddress: ""
+  # See https://succinctlabs.github.io/op-succinct/quick-start/mock.html#4-set-op-succinct-service-environment-variables
+  l2NodeRpcURL: http://op-node:8545
+  # Address of the OPSuccinctL2OutputOracle proxy contract
+  l2OOAddress: "0x123"
+  maxBlockRangePerSpanProof: 300
+  maxConcurrentProofRequests: 10
+  maxConcurrentWitnessGen: 5
+  metricsEnabled: true
+  opSuccinctMock: true
+  opSuccinctServerURL: http://op-succinct-server:8080
+  pollInterval: 20s
+  useCachedDB: false
+  witnessGenTimeout: 1200
+
+resources:
+  limits:
+    memory: 10Gi
+  requests:
+    cpu: 1
+    memory: 2Gi

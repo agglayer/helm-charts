@@ -1,0 +1,28 @@
+{{- $l1RpcURL := "" }}
+{{- $adminPrivateKey := "" }}
+
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+{{- if $opSecrets.data }}
+    {{- if (index $opSecrets.data "l1RpcURL") }}
+        {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "adminPrivateKey") }}
+        {{- $adminPrivateKey = index $opSecrets.data "adminPrivateKey" | b64dec }}
+    {{- end }}
+{{- end }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "op-succinct-server.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "op-succinct-server.labels" . | nindent 4 }}
+data:
+  L1_RPC: {{ $l1RpcURL | quote }}
+  L1_BEACON_RPC: {{ $l1RpcURL | quote }}
+  L2_RPC: {{ .Values.config.l2RpcURL | quote }}
+  L2_NODE_RPC: {{ .Values.config.l2NodeRpcURL | quote }}
+  L2OO_ADDRESS: {{ .Values.config.l2OOAddress | quote }}
+  OP_SUCCINCT_MOCK: {{ .Values.config.opSuccinctMock | quote }}
+  PRIVATE_KEY: {{ $adminPrivateKey | quote }}
