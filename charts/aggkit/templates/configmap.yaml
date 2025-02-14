@@ -56,6 +56,7 @@ data:
     CheckSettledInterval = {{ .Values.config.aggSender.checkSettledInterval | quote }}
     MaxCertSize = {{ .Values.config.aggSender.maxCertSize | int }}
     SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
+    BlockFinality="FinalizedBlock"
 
     [AggOracle.EVMSender]
     GlobalExitRootL2 = {{ .Values.config.l2.globalExitRootAddress | quote }}
