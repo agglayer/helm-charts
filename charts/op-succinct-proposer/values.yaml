@@ -29,7 +29,7 @@ config:
   # https://succinctlabs.github.io/op-succinct/experimental/optimism-portal-v2.html?highlight=dgf#optimismportalv2
   dgfAddress: ""
   # See https://succinctlabs.github.io/op-succinct/quick-start/mock.html#4-set-op-succinct-service-environment-variables
-  l2NodeRpcURL: http://op-node:8545
+  l2NodeRpcURL: http://op-node:9545
   # Address of the OPSuccinctL2OutputOracle proxy contract
   l2OOAddress: "0x123"
   maxBlockRangePerSpanProof: 300
