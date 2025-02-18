@@ -1,5 +1,4 @@
 {{- $l1RpcURL := "" }}
-{{- $adminPrivateKey := "" }}
 {{- $sp1NetworkPrivateKey := "" }}
 {{- $sp1NetworkRpcURL := "" }}
 
@@ -7,9 +6,6 @@
 {{- if $opSecrets.data }}
     {{- if (index $opSecrets.data "l1RpcURL") }}
         {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "adminPrivateKey") }}
-        {{- $adminPrivateKey = index $opSecrets.data "adminPrivateKey" | b64dec }}
     {{- end }}
     {{- if (index $opSecrets.data "sp1NetworkPrivateKey") }}
         {{- $sp1NetworkPrivateKey = index $opSecrets.data "sp1NetworkPrivateKey" | b64dec }}
@@ -35,4 +31,3 @@ data:
   NETWORK_PRIVATE_KEY: {{ $sp1NetworkPrivateKey | quote }}
   NETWORK_RPC_URL: {{ $sp1NetworkRpcURL | quote }}
   OP_SUCCINCT_MOCK: {{ .Values.config.opSuccinctMock | quote }}
-  PRIVATE_KEY: {{ $adminPrivateKey | quote }}
