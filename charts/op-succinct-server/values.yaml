@@ -1,0 +1,36 @@
+replicas: 1
+
+container:
+  image:
+    pullPolicy: IfNotPresent
+    repository: ghcr.io/succinctlabs/op-succinct/succinct-proposer
+    tag: main
+
+ports:
+  app: 3000
+
+service:
+  type: ClusterIP
+  clusterIP: None
+  annotations: {}
+
+podLabels: {}
+podSecurityContext: {}
+securityContext: {}
+
+existingSecret: "secretName"
+
+config:
+  l2RpcURL: "http://op-geth:8545"
+  # See https://succinctlabs.github.io/op-succinct/quick-start/mock.html#4-set-op-succinct-service-environment-variables
+  l2NodeRpcURL: http://op-node:9545
+  # # Address of the OPSuccinctL2OutputOracle proxy contract
+  l2OOAddress: "0x123"
+  opSuccinctMock: true
+
+resources:
+  limits:
+    memory: 10Gi
+  requests:
+    cpu: 1
+    memory: 2Gi

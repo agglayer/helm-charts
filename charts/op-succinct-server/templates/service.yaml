@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "op-succinct-server.fullname" . }}
+  labels:
+    {{- include "op-succinct-server.labels" . | nindent 4 }}
+  annotations:
+    {{ toYaml .Values.service.annotations | indent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.ports.app }}
+      targetPort: app
+      protocol: TCP
+      name: app
+  # StatefulSets require headless services
+  # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
+  clusterIP: {{ .Values.service.clusterIP }}
+  selector:
+    {{- include "op-succinct-server.selectorLabels" . | nindent 4 }}
