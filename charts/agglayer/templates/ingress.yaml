@@ -1,3 +1,4 @@
+# App and metrics
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -16,7 +17,8 @@ spec:
       - {{ .Values.domain }}
       secretName: {{ include "agglayer.fullname" . }}-cloudflare-origin-cert
   rules:
-    - http:
+    - host: {{ .Values.domain }}
+      http:
         paths:
           - path: /metrics
             pathType: ImplementationSpecific
@@ -30,3 +32,33 @@ spec:
       name: {{ include "agglayer.fullname" . }}
       port:
         number: {{ .Values.ports.app }}
+---
+# Admin
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "agglayer.name" . }}-admin-ingress
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    ingressClassName: "gce"
+spec:
+  tls:
+    - hosts:
+      - admin-{{ .Values.domain }}
+      secretName: {{ include "agglayer.fullname" . }}-cloudflare-origin-cert
+  rules:
+    - host: admin-{{ .Values.domain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "agglayer.fullname" . }}
+                port:
+                  number: {{ .Values.ports.admin }}
+
