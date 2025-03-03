@@ -19,6 +19,8 @@ service:
     port: 8545
   ws:
     port: 8546
+  metrics:
+    port: 6060
   annotations: {}
 
 ingress:

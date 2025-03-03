@@ -19,6 +19,20 @@ spec:
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
+      annotations:
+        ad.datadoghq.com/{{ .Chart.Name }}.checks: |
+           {
+             "openmetrics": {
+               "instances": [
+                 {
+                   "openmetrics_endpoint": "http://%%host%%:{{ .Values.ports.metrics }}/metrics",
+                   "metrics": [
+                       "op_succinct_proposer.*"
+                     ]
+                 }
+               ]
+             }
+           }
     spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}

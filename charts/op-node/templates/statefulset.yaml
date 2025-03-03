@@ -44,6 +44,9 @@ spec:
                 --rollup.config=/chainconfig/rollup.json \
                 --rpc.addr=0.0.0.0 \
                 --rpc.enable-admin \
+                --metrics.enabled \
+                --metrics.addr=0.0.0.0 \
+                --metrics.port={{ .Values.service.metrics.port }} \
                 --p2p.disable \
                 --p2p.sequencer.key={{ index $opSecrets.data "sequencer_private_key" | b64dec }} \
                 --l1={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
@@ -52,6 +55,9 @@ spec:
           ports:
             - name: rpc
               containerPort: {{ .Values.service.rpc.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.service.metrics.port }}
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

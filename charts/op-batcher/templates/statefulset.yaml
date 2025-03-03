@@ -44,6 +44,9 @@ spec:
                 --rpc.addr=0.0.0.0 \
                 --rpc.port=8548 \
                 --rpc.enable-admin \
+                --metrics.enabled \
+                --metrics.addr=0.0.0.0 \
+                --metrics.port={{ .Values.service.metrics.port }} \
                 --max-channel-duration=25 \
                 --l1-eth-rpc={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
                 --private-key={{ index $opSecrets.data "batcher_private_key" | b64dec }} \
@@ -52,6 +55,9 @@ spec:
           ports:
             - name: rpc
               containerPort: {{ .Values.service.rpc.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.service.metrics.port }}
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

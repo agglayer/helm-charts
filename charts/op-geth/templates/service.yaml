@@ -21,6 +21,10 @@ spec:
       targetPort: ws
       protocol: TCP
       name: ws
+    - port: {{ .Values.service.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
   # StatefulSets require headless services
   # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
   clusterIP: {{ .Values.service.clusterIP }}

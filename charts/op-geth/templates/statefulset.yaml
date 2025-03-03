@@ -29,7 +29,9 @@ spec:
           command: ["sh", "-c"]
           args:
           - |
-            gsutil cp gs://{{ .Values.genesisFileGCP.bucket }}/{{ .Values.genesisFileGCP.object }} /genesis/genesis.json
+            if [ ! -f /genesis/genesis.json ]; then
+              gsutil cp gs://{{ .Values.genesisFileGCP.bucket }}/{{ .Values.genesisFileGCP.object }} /genesis/genesis.json
+            fi
           volumeMounts:
             - mountPath: "/genesis"
               name: genesis
@@ -68,6 +70,10 @@ spec:
                 --gcmode={{ .Values.config.nodeType }} \
                 --nodiscover \
                 --maxpeers=0 \
+                --metrics \
+                --metrics.addr=0.0.0.0 \
+                --metrics.port={{ .Values.service.metrics.port }} \
+                --metrics.expensive \
                 --networkid={{ .Values.config.l2.chainId }} \
                 --authrpc.vhosts="*" \
                 --authrpc.addr=0.0.0.0 \
@@ -86,6 +92,9 @@ spec:
               protocol: TCP
             - name: ws
               containerPort: {{ .Values.service.ws.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.service.metrics.port }}
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
