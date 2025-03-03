@@ -36,7 +36,7 @@ spec:
           args:
             - run 
             - --cfg=/etc/aggkit/config.toml
-            - --components={{ .Values.config.components }}
+            - --components={{ .Values.config.components | join "," }} 
           ports:
             - name: app
               containerPort: {{ .Values.container.ports.app }}
@@ -63,7 +63,7 @@ spec:
                 items:
                   - key: sequencer.keystore
                     path: sequencer.keystore
-                  {{- if .Values.components | toString | regexMatch ".*\baggoracle\b.*" }}
+                  {{- if has "aggoracle" .Values.config.components }}
                   - key: aggoracle.keystore
                     path: aggoracle.keystore
                   {{- end }}
