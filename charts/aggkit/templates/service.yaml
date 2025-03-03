@@ -4,8 +4,6 @@ metadata:
   name: {{ include "aggkit.fullname" . }}
   labels:
     {{- include "aggkit.labels" . | nindent 4 }}
-  annotations:
-    beta.cloud.google.com/backend-config: '{"default": "{{ include "aggkit.fullname" . }}-healthcheck"}'
 spec:
   type: ClusterIP
   ports:
@@ -15,14 +13,3 @@ spec:
       name: app
   selector:
     {{- include "aggkit.selectorLabels" . | nindent 4 }}
----
-apiVersion: cloud.google.com/v1
-kind: BackendConfig
-metadata:
-  name: {{ include "aggkit.fullname" . }}-healthcheck
-spec:
-  healthCheck:
-    timeoutSec: 1
-    type: HTTP
-    requestPath: /
-    port: {{ .Values.container.ports.app }}

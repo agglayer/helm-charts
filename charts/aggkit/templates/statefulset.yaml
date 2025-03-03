@@ -32,13 +32,15 @@ spec:
           image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.container.image.pullPolicy }}
           command:
-            # - /bin/sh
-            # - -c
             - aggkit
           args:
             - run 
             - --cfg=/etc/aggkit/config.toml
             - --components={{ .Values.config.components }}
+          ports:
+            - name: app
+              containerPort: {{ .Values.container.ports.app }}
+              protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
