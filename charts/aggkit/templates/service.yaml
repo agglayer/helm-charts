@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "aggkit.fullname" . }}
+  labels:
+    {{- include "aggkit.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.container.ports.app }}
+      targetPort: app
+      protocol: TCP
+      name: app
+  selector:
+    {{- include "aggkit.selectorLabels" . | nindent 4 }}

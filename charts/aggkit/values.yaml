@@ -1,3 +1,5 @@
+env: dev
+
 replicas: 1
 
 container:
@@ -5,6 +7,12 @@ container:
     pullPolicy: IfNotPresent
     repository: ghcr.io/agglayer/aggkit
     tag: latest
+
+  ports:
+    app: 5576
+
+ingress:
+  hostname: something.dev.polygon
 
 storage:
   path: /data
@@ -17,6 +25,7 @@ securityContext: {}
 config:
   agglayerURL: http://agglayer:4444
   bridgeAddress: "0x123"
+  components: aggsender,aggoracle
   contractsVersion: banana
   forkId: 12
   isValidium: true
@@ -46,9 +55,14 @@ config:
     rpcURL: http://localhost:8545
     sequencerAddress: "0x123"
 
-  rpc:
-    port: 5576
-
   log:
     environment: development # "production" or "development"
     level: info
+
+resources:
+  limits:
+    cpu: 2
+    memory: 8Gi
+  requests:
+    cpu: 1
+    memory: 4Gi

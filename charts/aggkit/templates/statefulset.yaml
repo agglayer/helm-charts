@@ -31,14 +31,16 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.container.image.pullPolicy }}
-          entrypoint:
-            - /bin/sh
-            - -c
           command:
             - aggkit
-            - run
+          args:
+            - run 
             - --cfg=/etc/aggkit/config.toml
-            - --components=aggsender,aggoracle
+            - --components={{ .Values.config.components }}
+          ports:
+            - name: app
+              containerPort: {{ .Values.container.ports.app }}
+              protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -61,8 +63,10 @@ spec:
                 items:
                   - key: sequencer.keystore
                     path: sequencer.keystore
+                  {{- if .Values.components | toString | regexMatch ".*\baggoracle\b.*" }}
                   - key: aggoracle.keystore
                     path: aggoracle.keystore
+                  {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: data

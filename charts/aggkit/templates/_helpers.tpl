@@ -40,6 +40,17 @@ helm.sh/chart: {{ include "aggkit.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+name: {{ include "aggkit.fullname" . }}
+host: gcp
+location: {{ default "unspecified" .Values.region }}
+env: {{ .Values.env }}
+role: application
+team: aggkit
+p_service: aggkit
+tag: v3
+tags.datadoghq.com/env: {{ .Values.env }}
+tags.datadoghq.com/name: {{ include "aggkit.fullname" . }}
+deployment: {{ htmlDateInZone (now) "UTC" }}
 {{- end }}
 
 {{/*
