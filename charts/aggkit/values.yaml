@@ -25,7 +25,9 @@ securityContext: {}
 config:
   agglayerURL: http://agglayer:4444
   bridgeAddress: "0x123"
-  components: aggsender,aggoracle
+  components: 
+    - aggsender
+    - aggoracle
   contractsVersion: banana
   forkId: 12
   isValidium: true

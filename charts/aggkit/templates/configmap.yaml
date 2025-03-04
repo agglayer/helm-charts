@@ -50,7 +50,8 @@ data:
     [RPC]
     Port = {{ .Values.container.ports.app | int }}
 
-    {{- if .Values.components | toString | regexMatch ".*\baggsender\b.*" }}
+    {{- if has "aggsender" .Values.config.components }}
+
     [AggSender]
     AggsenderPrivateKey = {Path = "/etc/aggkit/sequencer.keystore", Password = {{ index $opSecrets.data "sequencerPrivateKeyPassword" | b64dec | quote }}}
     CertificateSendInterval = {{ .Values.config.aggSender.certificateSendInterval | quote }}
@@ -58,9 +59,11 @@ data:
     MaxCertSize = {{ .Values.config.aggSender.maxCertSize | int }}
     SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
     BlockFinality="FinalizedBlock"
+
     {{- end }}
 
-    {{- if .Values.components | toString | regexMatch ".*\baggoracle\b.*" }}
+    {{- if has "aggoracle" .Values.config.components }}
+
     [AggOracle.EVMSender]
     GlobalExitRootL2 = {{ .Values.config.l2.globalExitRootAddress | quote }}
 
@@ -69,6 +72,7 @@ data:
 
     [AggOracle.EVMSender.EthTxManager.Etherman]
     L1ChainID = {{ .Values.config.l2.chainId | int }}
+    
     {{- end }}
 
     [BridgeL2Sync]
