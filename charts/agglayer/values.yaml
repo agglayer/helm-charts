@@ -15,6 +15,8 @@ ports:
   telemetry: 2223
   admin: 9091
 
+existingSecret: op-secrets
+
 domain: agglayer-test.polygon.technology
 
 tls:

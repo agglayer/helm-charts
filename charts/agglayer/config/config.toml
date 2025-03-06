@@ -14,7 +14,8 @@
 {{- $keyVersion := "" }}
 {{- $fullNodeRPCs := "" }}
 {{- $proofSigners := "" }}
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
 {{- if $opSecrets.data }}
     {{- if (index $opSecrets.data "DATA_NODE_RPC_HOST") }}
         {{- $rpcHost = index $opSecrets.data "DATA_NODE_RPC_HOST" | b64dec }}
