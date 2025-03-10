@@ -18,7 +18,7 @@ spec:
         spec:
           containers:
             - name: script-runner
-              image: ghcr.io/foundry-rs/foundry:latest
+              image: ghcr.io/foundry-rs/foundry:stable
               command: ["/bin/bash"]
               args:
                 - -c
