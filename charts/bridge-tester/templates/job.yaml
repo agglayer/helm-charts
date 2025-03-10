@@ -18,7 +18,7 @@ spec:
         spec:
           containers:
             - name: script-runner
-              image: ghcr.io/foundry-rs/foundry:stable
+              image: ghcr.io/foundry-rs/foundry:cross-tag-env-var
               command: ["/bin/bash"]
               args:
                 - -c
