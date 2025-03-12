@@ -50,6 +50,7 @@ p_service: agglayer-prover
 tag: v3
 tags.datadoghq.com/env: {{ .Values.env }}
 tags.datadoghq.com/name: {{ include "agglayerProver.fullname" . }}
+tags.datadoghq.com/service: {{ include "agglayerProver.fullname" . }}
 deployment: {{ htmlDateInZone (now) "UTC" }}
 {{- end }}
 
