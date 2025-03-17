@@ -47,7 +47,6 @@ spec:
                 --max-channel-duration=25 \
                 --l1-eth-rpc={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
                 --private-key={{ index $opSecrets.data "batcher_private_key" | b64dec }} \
-                --throttle-interval=0 \
                 --data-availability-type=blobs
           ports:
             - name: rpc
