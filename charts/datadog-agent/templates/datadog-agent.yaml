@@ -1,0 +1,54 @@
+apiVersion: datadoghq.com/v2alpha1
+kind: DatadogAgent
+metadata:
+  name: {{ include "datadogAgent.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  global:
+    clusterName: {{ .Values.clusterName }}
+    credentials:
+      apiKey: {{ .Values.apiKey }}
+      appKey: {{ .Values.appKey }}
+    site: {{ .Values.site }}
+  # List of features: https://github.com/DataDog/datadog-operator/blob/main/docs/configuration.v2alpha1.md
+  features:
+    apm:
+      enabled: false
+    dogstatsd:
+      nonLocalTraffic: true  # Allow DogStatsD over UDP
+      socket:
+        enabled: false  # Disable Unix socket to avoid write-access issues
+    kubeStateMetricsCore:
+      enabled: true
+    logCollection:
+      enabled: true
+      containerCollectAll: true
+    orchestratorExplorer:
+      enabled: true
+  override:
+    {{- with .Values.resources }}
+    clusterAgent:
+      containers:
+        clusterAgent:
+          resources:
+          {{- toYaml . | nindent 12 }}
+    {{- end }}
+    nodeAgent:
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.resources }}
+      containers:
+        nodeAgent:
+          resources:
+          {{- toYaml . | nindent 12 }}
+      {{- end }}
+      volumeMounts:
+        - name: tmp-dir
+          mountPath: /tmp
+    volumes:
+      - name: tmp-dir
+        emptyDir: {}  # Required for temporary storage instead of hostPath
+  agents:
+    useConfigMap: false  # Avoids issues with restricted RBAC in Autopilot
