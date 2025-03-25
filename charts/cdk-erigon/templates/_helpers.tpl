@@ -45,8 +45,8 @@ env: {{ .Values.tags.env }}
 team: {{ .Values.tags.team }}
 partner: {{ .Values.tags.partner }}
 tags.datadoghq.com/env: {{ .Values.tags.env }}
-tags.datadoghq.com/name: {{ include "agglayer.fullname" . }}
-tags.datadoghq.com/service: {{ include "agglayer.fullname" . }}
+tags.datadoghq.com/name: {{ include "cdk-erigon.fullname" . }}
+tags.datadoghq.com/service: {{ include "cdk-erigon.fullname" . }}
 {{- end }}
 
 {{/*
