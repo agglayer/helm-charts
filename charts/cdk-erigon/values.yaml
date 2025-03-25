@@ -1,3 +1,10 @@
+# Tags for identifying/tracking resources
+tags:
+  name: bali-XX
+  env: bali
+  team: cdk
+  partner: polygon # polygon or network name
+
 # General config
 replicaCount: 1
 
