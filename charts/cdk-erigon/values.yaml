@@ -2,6 +2,7 @@
 tags:
   name: bali-XX
   env: bali
+  role: rpc
   team: cdk
   partner: polygon # polygon or network name
 
