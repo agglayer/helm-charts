@@ -40,6 +40,13 @@ helm.sh/chart: {{ include "cdk-erigon.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+name: {{ .Values.tags.name }}
+env: {{ .Values.tags.env }}
+team: {{ .Values.tags.team }}
+partner: {{ .Values.tags.partner }}
+tags.datadoghq.com/env: {{ .Values.tags.env }}
+tags.datadoghq.com/name: {{ include "agglayer.fullname" . }}
+tags.datadoghq.com/service: {{ include "agglayer.fullname" . }}
 {{- end }}
 
 {{/*
