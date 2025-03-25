@@ -41,6 +41,7 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 name: {{ .Values.tags.name }}
+role: {{ .Values.tags.role }}
 env: {{ .Values.tags.env }}
 team: {{ .Values.tags.team }}
 partner: {{ .Values.tags.partner }}
