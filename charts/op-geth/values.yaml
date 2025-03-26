@@ -39,6 +39,15 @@ genesisFileGCP:
 config:
   nodeType: archive # "archive" or "full"
 
+  miner:
+    gasLimit: 60000000
+
+  txpool:
+    accountqueue: 64
+    accountslots: 16
+    globalqueue: 1024
+    globalslots: 5120
+
   http:
     api: admin,engine,net,eth,web3,debug,miner
 
