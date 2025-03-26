@@ -1,11 +1,12 @@
 env: bali
 
 podAnnotations:
-  # name: Internal name of the network (e.g., bali-01)
+  # name: internal name of the network (e.g., bali-01)
+  # project: agglayer
   # role: permissionless node, rpc, sequencer
   # partner: polygon or IP (Implementation Provider)
   # network: network name (e.g., katana)
-  ad.datadoghq.com/tags: '{"name": "myname","role": "myrole","partner": "polygon","network": "mynetwork"}'
+  ad.datadoghq.com/tags: '{"name": "myname","project": "agglayer", "role": "myrole","partner": "polygon","network": "mynetwork"}'
 
 # General config
 replicaCount: 1

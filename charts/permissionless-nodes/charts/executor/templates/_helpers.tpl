@@ -49,6 +49,9 @@ team: {{ .Values.global.team }}
 p_service: {{ .Values.global.p_service }}
 partner: {{ .Values.global.partner }}
 tag: {{ .Values.global.tag }}
+tags.datadoghq.com/env: {{ .Values.global.env }}
+tags.datadoghq.com/service: zkevm-prover
+tags.datadoghq.com/version: {{ .Values.image.tag }}
 {{- end }}
 
 {{/*
