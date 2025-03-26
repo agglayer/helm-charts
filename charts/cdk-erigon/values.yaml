@@ -1,10 +1,11 @@
-# Tags for identifying/tracking resources
-tags:
-  name: bali-XX
-  env: bali
-  role: rpc
-  team: cdk
-  partner: polygon # polygon or network name
+env: bali
+
+podAnnotations:
+  # name: Internal name of the network (e.g., bali-01)
+  # role: permissionless node, rpc, sequencer
+  # partner: polygon or IP (Implementation Provider)
+  # network: network name (e.g., katana)
+  ad.datadoghq.com/tags: '{"name": "myname","role": "myrole","partner": "polygon","network": "mynetwork"}'
 
 # General config
 replicaCount: 1

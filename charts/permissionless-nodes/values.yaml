@@ -9,6 +9,13 @@ global:
   p_service: cdk
   partner: polygon
   tag: v3
+  podAnnotations:
+    # name: Internal name of the network (e.g., bali-01)
+    # role: permissionless node, rpc, sequencer
+    # partner: polygon or IP (Implementation Provider)
+    # network: network name (e.g., katana)
+    ad.datadoghq.com/tags: '{"name": "myname","role": "myrole","partner": "polygon","network": "mynetwork"}'
+
 
 jumphost:
   # We only enable this in non-production environments, right? RIGHT?!?!?

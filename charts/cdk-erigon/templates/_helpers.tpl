@@ -40,14 +40,9 @@ helm.sh/chart: {{ include "cdk-erigon.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-name: {{ .Values.tags.name }}
-role: {{ .Values.tags.role }}
-env: {{ .Values.tags.env }}
-team: {{ .Values.tags.team }}
-partner: {{ .Values.tags.partner }}
-tags.datadoghq.com/env: {{ .Values.tags.env }}
-tags.datadoghq.com/name: {{ include "cdk-erigon.fullname" . }}
-tags.datadoghq.com/service: {{ include "cdk-erigon.fullname" . }}
+tags.datadoghq.com/env: {{ .Values.env }}
+tags.datadoghq.com/service: cdk-erigon
+tags.datadoghq.com/version: {{ .Values.image.tag }}
 {{- end }}
 
 {{/*

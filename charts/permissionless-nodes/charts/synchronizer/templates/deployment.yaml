@@ -28,6 +28,9 @@ spec:
               ]
             }
           ]
+        {{- with .Values.global.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       labels:
         {{- include "synchronizer.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
