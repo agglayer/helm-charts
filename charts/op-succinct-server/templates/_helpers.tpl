@@ -40,6 +40,9 @@ helm.sh/chart: {{ include "op-succinct-server.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+tags.datadoghq.com/env: {{ .Values.env }}
+tags.datadoghq.com/service: op-succinct-server
+tags.datadoghq.com/version: {{ .Values.container.image.tag }}
 {{- end }}
 
 {{/*
