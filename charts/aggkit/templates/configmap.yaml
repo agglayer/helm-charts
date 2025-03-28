@@ -7,6 +7,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   config.toml: |
+    NetworkID = {{ .Values.config.l2.rollupId | int }}
     PathRWData = {{ .Values.storage.path | quote }}
     L1URL = {{ index $opSecrets.data "l1RpcURL" | b64dec | quote }}
     L2URL = {{ .Values.config.l2.rpcURL | quote }}
