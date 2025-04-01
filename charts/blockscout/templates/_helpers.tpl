@@ -40,6 +40,8 @@ helm.sh/chart: {{ include "blockscout.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+tags.datadoghq.com/env: {{ .Values.env }}
+tags.datadoghq.com/service: blockscout
 {{- end }}
 
 {{/*

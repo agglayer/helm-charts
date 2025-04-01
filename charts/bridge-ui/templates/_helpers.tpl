@@ -40,16 +40,9 @@ helm.sh/chart: {{ include "bridgeUI.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-name: {{ include "bridgeUI.fullname" . }}
-host: gcp
-location: {{ default "unspecified" .Values.region }}
-env: {{ .Values.env }}
-role: application
-team: cdk
-p_service: bridgeUI
-tag: v3
 tags.datadoghq.com/env: {{ .Values.env }}
-tags.datadoghq.com/name: {{ include "bridgeUI.fullname" . }}
+tags.datadoghq.com/service: bridge-ui
+tags.datadoghq.com/version: {{ .Values.container.image.tag }}
 deployment: {{ htmlDateInZone (now) "UTC" }}
 {{- end }}
 

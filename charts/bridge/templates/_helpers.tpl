@@ -40,6 +40,9 @@ helm.sh/chart: {{ include "bridge.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+tags.datadoghq.com/env: {{ .Values.env }}
+tags.datadoghq.com/service: zkevm-bridge
+tags.datadoghq.com/version: {{ .Values.image.tag }}
 {{- end }}
 
 {{/*

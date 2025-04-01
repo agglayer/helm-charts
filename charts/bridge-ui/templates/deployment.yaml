@@ -22,6 +22,10 @@ spec:
       {{- include "bridgeUI.selectorLabels" . | nindent 6 }}
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         {{- include "bridgeUI.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
