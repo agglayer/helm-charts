@@ -1,9 +1,12 @@
-# Default values for bridgeUI.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+env: bali
 
-env: "dev"
-region: "europe-west2"
+podAnnotations:
+  # name: internal name of the network (e.g., bali-01)
+  # product: agglayer
+  # role: permissionless node, rpc, sequencer
+  # partner: polygon or IP (Implementation Provider)
+  # network: network name (e.g., katana)
+  ad.datadoghq.com/tags: '{"name": "myname","product": "agglayer", "role": "bridge-ui","partner": "polygon","network": "mynetwork"}'
 
 container:
   image:
