@@ -80,7 +80,7 @@ spec:
                 --rollup.disabletxpoolgossip=true \
                 --rpc.allow-unprotected-txs \
                 --db.engine=pebble \
-                --state.scheme=hash
+                --state.scheme=hash \
                 --miner.gaslimit={{ .Values.config.miner.gasLimit | int64 }} \
                 --txpool.accountqueue={{ .Values.config.txpool.accountqueue }} \
                 --txpool.accountslots={{ .Values.config.txpool.accountslots }} \
