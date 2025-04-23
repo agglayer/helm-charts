@@ -15,6 +15,9 @@ spec:
         metadata:
           labels:
             {{- include "bridgeTester.labels" . | nindent 12 }}
+            {{- with .Values.podLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         spec:
           containers:
             - name: script-runner

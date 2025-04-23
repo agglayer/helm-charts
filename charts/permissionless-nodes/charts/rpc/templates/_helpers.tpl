@@ -40,15 +40,6 @@ helm.sh/chart: {{ include "rpc.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-name: {{ .Values.global.name }}
-host: {{ .Values.global.host }}
-location: {{ .Values.global.location }}
-env: {{ .Values.global.env }}
-role: {{ .Values.global.role }}
-team: {{ .Values.global.team }}
-p_service: {{ .Values.global.p_service }}
-partner: {{ .Values.global.partner }}
-tag: {{ .Values.global.tag }}
 tags.datadoghq.com/env: {{ .Values.global.env }}
 tags.datadoghq.com/service: cdk-validium-node
 tags.datadoghq.com/version: {{ .Values.image.tag }}

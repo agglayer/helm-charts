@@ -40,17 +40,9 @@ helm.sh/chart: {{ include "agglayerProver.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-name: {{ include "agglayerProver.fullname" . }}
-host: gcp
-location: {{ default "unspecified" .Values.region }}
-env: {{ .Values.env }}
-role: application
-team: agglayer
-p_service: agglayer-prover
-tag: v3
 tags.datadoghq.com/env: {{ .Values.env }}
-tags.datadoghq.com/name: {{ include "agglayerProver.fullname" . }}
-tags.datadoghq.com/service: {{ include "agglayerProver.fullname" . }}
+tags.datadoghq.com/service: agglayer-prover
+tags.datadoghq.com/version: {{ .Values.container.image.tag }}
 deployment: {{ htmlDateInZone (now) "UTC" }}
 {{- end }}
 

@@ -1,3 +1,12 @@
+env: bali
+
+podLabels:
+  name: myname
+  business_unit: agglayer
+  role: myrole
+  partner: Polygon
+  network: mynetwork
+
 replicas: 1
 
 container:
@@ -21,6 +30,5 @@ ingress:
 
 existingSecret: secretName
 
-podLabels: {}
 podSecurityContext: {}
 securityContext: {}
