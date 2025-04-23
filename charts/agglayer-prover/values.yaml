@@ -1,5 +1,11 @@
-env: dev
-region: europe-west2
+env: bali
+
+podLabels:
+  name: myname
+  business_unit: agglayer
+  role: myrole
+  partner: polygon
+  network: mynetwork
 
 container:
   image:
@@ -47,8 +53,6 @@ config:
     # same for `max-encoding-message-size`
     # default value is equal to 4MB
     maxDecodingMessageSize: 104857600
-
-podLabels: {}
 
 podSecurityContext: {}
 

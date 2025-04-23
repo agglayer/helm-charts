@@ -40,16 +40,13 @@ helm.sh/chart: {{ include "bridgeTester.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-name: {{ include "bridgeTester.fullname" . }}
-host: gcp
-env: {{ .Values.env }}
-role: script
-team: spec
-p_service: bridge-tester
-tag: v3
+{{- if .Values.podLabels }}
+{{- range $key, $value := .Values.podLabels }}
+{{ $key }}: {{ $value | quote }}
+{{- end }}
+{{- end }}
 tags.datadoghq.com/env: {{ .Values.env }}
-tags.datadoghq.com/name: {{ include "bridgeTester.fullname" . }}
-tags.datadoghq.com/service: {{ include "bridgeTester.fullname" . }}
+tags.datadoghq.com/service: bridge-tester
 deployment: {{ htmlDateInZone (now) "UTC" }}
 {{- end }}
 

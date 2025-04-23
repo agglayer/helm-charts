@@ -1,4 +1,11 @@
-env: "pp1-pp2"
+env: bali
+
+podLabels:
+  name: myname
+  business_unit: agglayer
+  role: myrole
+  partner: polygon
+  network: mynetwork
 
 existingSecret: op-secrets
 

@@ -33,7 +33,7 @@ spec:
         {{- end }}
       labels:
         {{- include "synchronizer.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
+        {{- with .Values.global.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:

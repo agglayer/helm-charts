@@ -1,9 +1,11 @@
-# Default values for agglayer.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+env: bali
 
-env: "dev"
-region: "europe-west2"
+podLabels:
+  name: myname
+  business_unit: agglayer
+  role: myrole
+  partner: polygon
+  network: mynetwork
 
 image:
   repository: ghcr.io/agglayer/agglayer
@@ -72,8 +74,6 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
-
-podLabels: {}
 
 podSecurityContext: {}
   # fsGroup: 2000

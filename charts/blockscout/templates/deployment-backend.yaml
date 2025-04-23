@@ -22,6 +22,12 @@ spec:
       labels:
         app.kubernetes.io/name: {{ .Release.Name }}-backend
         app.kubernetes.io/instance: {{ .Release.Name }}-backend
+        tags.datadoghq.com/service: blockscout-backend
+        tags.datadoghq.com/version: {{ .Values.backend.image }}
+        {{- include "blockscout.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       containers:
         - name: backend
