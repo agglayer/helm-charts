@@ -4,7 +4,7 @@ podLabels:
   name: myname
   business_unit: agglayer
   role: myrole
-  partner: polygon
+  partner: Polygon
   network: mynetwork
 
 networkName: Polygon CDK

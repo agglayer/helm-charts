@@ -4,7 +4,7 @@ global:
     name: myname
     business_unit: agglayer
     role: myrole
-    partner: polygon
+    partner: Polygon
     network: mynetwork
 
 jumphost:

@@ -1,11 +1,10 @@
 env: bali
 
 podLabels:
-  name: myname
+  name: agglayer-prover
   business_unit: agglayer
-  role: myrole
-  partner: polygon
-  network: mynetwork
+  role: agglayer-node
+  partner: Polygon
 
 container:
   image:

@@ -1,11 +1,10 @@
 env: bali
 
 podLabels:
-  name: myname
+  name: agglayer
   business_unit: agglayer
-  role: myrole
-  partner: polygon
-  network: mynetwork
+  role: agglayer-node
+  partner: Polygon
 
 image:
   repository: ghcr.io/agglayer/agglayer
