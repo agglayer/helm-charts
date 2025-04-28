@@ -23,7 +23,7 @@ spec:
         app.kubernetes.io/name: {{ .Release.Name }}-stats
         app.kubernetes.io/instance: {{ .Release.Name }}-stats
         tags.datadoghq.com/service: blockscout-stats
-        tags.datadoghq.com/version: {{ .Values.stats.image }}
+        tags.datadoghq.com/version: {{ .Values.stats.tag }}
         {{- include "blockscout.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: stats
-          image: {{ .Values.stats.image }}
+          image: {{ .Values.stats.image }}:{{ .Values.stats.tag }}
           ports:
             - name: app
               containerPort: {{ .Values.stats.ports.app }}
