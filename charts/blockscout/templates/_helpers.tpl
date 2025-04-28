@@ -35,20 +35,11 @@ Common labels
 */}}
 {{- define "blockscout.labels" -}}
 helm.sh/chart: {{ include "blockscout.chart" . }}
-{{ include "blockscout.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 tags.datadoghq.com/env: {{ .Values.env }}
-{{- end }}
-
-{{/*
-Selector labels
-*/}}
-{{- define "blockscout.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "blockscout.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
