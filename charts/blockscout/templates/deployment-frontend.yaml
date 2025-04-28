@@ -23,7 +23,7 @@ spec:
         app.kubernetes.io/name: {{ .Release.Name }}-frontend
         app.kubernetes.io/instance: {{ .Release.Name }}-frontend
         tags.datadoghq.com/service: blockscout-frontend
-        tags.datadoghq.com/version: {{ .Values.frontend.image }}
+        tags.datadoghq.com/version: {{ .Values.frontend.tag }}
         {{- include "blockscout.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}

@@ -23,7 +23,8 @@ ingress:
   annotations: {}
 
 backend:
-  image: blockscout/blockscout-zkevm:6.8.1
+  image: blockscout/blockscout-zkevm
+  tag: 6.8.1
   ports: 
     app: 4000
   l1ExplorerUrl: https://etherscan.io/
@@ -44,17 +45,20 @@ backend:
     l2RollupIndex: 0
 
 stats:
-  image: ghcr.io/blockscout/stats:v2.1.1
+  image: ghcr.io/blockscout/stats
+  tag: v2.1.1
   ports: 
     app: 8050
 
 visualize:
-  image: ghcr.io/blockscout/visualizer:v0.2.1
+  image: ghcr.io/blockscout/visualizer
+  tag: v0.2.1
   ports: 
     app: 8050
 
 frontend:
-  image: ghcr.io/blockscout/frontend:v1.35.0
+  image: ghcr.io/blockscout/frontend
+  tag: v1.35.0
   ports: 
     app: 3000
   l1ExplorerUrl: https://etherscan.io/
