@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: {{ .Values.frontend.image }}
+          image: {{ .Values.frontend.image }}:{{ .Values.frontend.tag }}
           ports:
             - name: app
               containerPort: {{ .Values.frontend.ports.app }}

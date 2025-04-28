@@ -31,7 +31,7 @@ spec:
     spec:
       containers:
         - name: stats
-          image: {{ .Values.stats.image }}
+          image: {{ .Values.stats.image }}:{{ .Values.stats.tag }}
           ports:
             - name: app
               containerPort: {{ .Values.stats.ports.app }}
