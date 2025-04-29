@@ -53,12 +53,13 @@ data:
 
     [SyncDB]
     Database = "postgres"
-    User = {{ $dbUser | quote }}
-    Password = {{ $dbUserPassword | quote }}
-    Name = {{ $bridgeDbName | quote }}
-    Host = {{ $dbHost | quote }}
-    Port = {{ $dbPort | quote }}
-    MaxConns = 200
+      [SyncDB.PgStorage]
+      User = {{ $dbUser | quote }}
+      Password = {{ $dbUserPassword | quote }}
+      Name = {{ $bridgeDbName | quote }}
+      Host = {{ $dbHost | quote }}
+      Port = {{ $dbPort | quote }}
+      MaxConns = 200
 
     [Etherman]
     l1URL = {{ $l1RpcURL | quote }}
@@ -83,12 +84,13 @@ data:
     
     [BridgeServer.DB]
     Database = "postgres"
-    User = {{ $dbUser | quote }}
-    Password = {{ $dbUserPassword | quote }}
-    Name = {{ $bridgeDbName | quote }}
-    Host = {{ $dbHost | quote }}
-    Port = {{ $dbPort | quote }}
-    MaxConns = 200
+      [BridgeServer.DB.PgStorage]
+      User = {{ $dbUser | quote }}
+      Password = {{ $dbUserPassword | quote }}
+      Name = {{ $bridgeDbName | quote }}
+      Host = {{ $dbHost | quote }}
+      Port = {{ $dbPort | quote }}
+      MaxConns = 200
 
     [NetworkConfig]
     GenBlockNumber = {{ .Values.config.network.genBlockNumber | int64 }}
