@@ -82,7 +82,8 @@ prover-entrypoint = {{ .Values.config.agglayerProverEndpoint | quote }}
 
 [rpc]
 host = "0.0.0.0"
-port = 4444
+grpc-port = {{ .Values.ports.grpc }}
+readrpc-port = {{ .Values.ports.readrpc }}
 read-timeout = "60s"
 write-timeout = "60s"
 max-requests-per-ip-and-second = 5000

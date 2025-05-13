@@ -12,9 +12,10 @@ image:
   tag: 0.1.2
 
 ports:
-  app: 4444
-  telemetry: 2223
+  grpc: 9089
+  readrpc: 9090
   admin: 9091
+  telemetry: 2223
 
 existingSecret: op-secrets
 

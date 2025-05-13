@@ -31,7 +31,7 @@ spec:
     service:
       name: {{ include "agglayer.fullname" . }}
       port:
-        number: {{ .Values.ports.app }}
+        number: {{ .Values.ports.grpc }}
 ---
 # Admin
 apiVersion: networking.k8s.io/v1
