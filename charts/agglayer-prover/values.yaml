@@ -10,7 +10,7 @@ container:
   image:
     repository: ghcr.io/agglayer/agglayer
     pullPolicy: IfNotPresent
-    tag: 0.2.0-rc.20
+    tag: 0.3.0-rc.22
   
   ports:
     app: 4445
@@ -38,14 +38,10 @@ config:
     environment: development # "production" or "development"
     level: debug
 
-  cpuProver:
-    enabled: false
-    maxConcurrencyLimit: 300
-    provingTimeout: 300
-
   networkProver:
     enabled: true
-    provingTimeout: 300
+    provingTimeout: "30m"
+    provingRequestTimeout: "10m"
   
   grpc:
     # size is define in bytes e.g. 100 * 1024 * 1024
