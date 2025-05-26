@@ -88,6 +88,7 @@ admin-port = {{ .Values.ports.admin }}
 read-timeout = "60s"
 write-timeout = "60s"
 max-requests-per-ip-and-second = 5000
+request-timeout = "3m"
 # size is define in bytes e.g. 100 * 1024 * 1024
 # same for `max_response_body_size`
 # default value is equal to 10MB
@@ -101,9 +102,9 @@ max-decoding-message-size = {{ .Values.config.prover.grpc.maxDecodingMessageSize
 
 [outbound.rpc.settle]
 max-retries = 3
-retry-interval = 7
+retry-interval = "7s"
 confirmations = 1
-settlement-timeout = 1200
+settlement-timeout = "20m"
 gas-multiplier-factor = {{ .Values.config.outbound.rpc.settle.gasMultiplierFactor | int }}
 
 [log]
@@ -126,10 +127,10 @@ ws-node-url = {{ $l1NodeURLWS | quote }}
 max-reconnection-elapsed-time = {{ .Values.config.l1.maxReconnectionElapsedTime | quote }}
 rollup-manager-contract = {{ $l1RollupManagerContract | quote }}
 polygon-zkevm-global-exit-root-v2-contract = {{ $l1GlobalExitRootContract | quote }}
-rpc-timeout = 45
+rpc-timeout = "45s"
 
 [l2]
-rpc-timeout = 45
+rpc-timeout = "45s"
 
 [telemetry]
 prometheus-addr = "0.0.0.0:2223"
@@ -144,7 +145,7 @@ epoch-duration = {{ .Values.config.epoch.blockClock.epochDuration | int }}
 genesis-block = {{ .Values.config.epoch.blockClock.genesisBlock | int }}
 
 [shutdown]
-runtime-timeout = 5
+runtime-timeout = "5s"
 
 [certificate-orchestrator]
 input-backpressure-buffer-size = 1000
