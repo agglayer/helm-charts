@@ -9,7 +9,7 @@ podLabels:
 image:
   repository: ghcr.io/agglayer/agglayer
   pullPolicy: IfNotPresent
-  tag: 0.1.2
+  tag: 0.3.0-rc.22
 
 ports:
   grpc: 9089
