@@ -38,7 +38,6 @@ metadata:
       "grpc": "readrpc-backendconfig"
     }}'
     cloud.google.com/neg: '{"ingress": true}'
-    # cloud.google.com/app-protocols: '{"grpc":"h2c"}'
 spec:
   ports:
     - name: grpc
