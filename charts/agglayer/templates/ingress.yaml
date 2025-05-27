@@ -62,7 +62,7 @@ spec:
                 port:
                   number: {{ .Values.ports.admin }}
 ---
-# App and metrics
+# gRPC API
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
