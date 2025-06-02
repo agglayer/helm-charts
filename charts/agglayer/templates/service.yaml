@@ -9,7 +9,7 @@ metadata:
     cloud.google.com/backend-config: '{ "ports": {
       "readrpc-port": "readrpc-backendconfig",
       "metrics-port": "metrics-backendconfig",
-      "admin-port": "readrpc-backendconfig"
+      "admin-port": "admin-backendconfig"
     }}'
 spec:
   ports:
@@ -75,3 +75,21 @@ spec:
     type: HTTP
     requestPath: /metrics
     port: {{ .Values.ports.telemetry }}
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: admin-backendconfig
+spec:
+  iap:
+    enabled: true
+    oauthclientCredentials:
+      secretName: {{ include "agglayer.name" . }}-admin-oauth
+  healthCheck:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 5
+    type: HTTP
+    requestPath: /health
+    port: {{ .Values.ports.grpc }}
