@@ -49,7 +49,7 @@ data:
     Outputs = ["stderr"]
 
     [RPC]
-    Port = {{ .Values.container.ports.app | int }}
+    Port = {{ .Values.container.ports.aggsender | int }}
 
     {{- if has "aggsender" .Values.config.components }}
 
@@ -60,6 +60,9 @@ data:
     MaxCertSize = {{ .Values.config.aggSender.maxCertSize | int }}
     SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
     BlockFinality="FinalizedBlock"
+
+    [AggSender.AgglayerClient]
+    UseTLS = {{ .Values.config.aggSender.agglayerClient.useTLS | quote }}
 
     {{- end }}
 
@@ -83,3 +86,6 @@ data:
     BlockFinality="FinalizedBlock"
     SyncBlockChunkSize=1000
     InitialBlock = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
+
+    [REST]
+    Port = {{ .Values.container.ports.bridge | quote }}

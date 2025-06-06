@@ -7,9 +7,13 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: {{ .Values.container.ports.app }}
-      targetPort: app
+    - port: {{ .Values.container.ports.aggsender }}
+      targetPort: aggsender
       protocol: TCP
-      name: app
+      name: aggsender
+    - port: {{ .Values.container.ports.bridge }}
+      targetPort: bridge
+      protocol: TCP
+      name: bridge
   selector:
     {{- include "aggkit.selectorLabels" . | nindent 4 }}

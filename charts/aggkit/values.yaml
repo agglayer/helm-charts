@@ -16,10 +16,13 @@ container:
     tag: latest
 
   ports:
-    app: 5576
+    aggsender: 5576
+    bridge: 5577
 
-ingress:
-  hostname: something.dev.polygon
+ingresses:
+  hostnames:
+    aggkit: something.dev.polygon
+    bridge: something-else.dev.polygon
 
 storage:
   path: /data
@@ -43,6 +46,8 @@ config:
     checkSettledInterval: 5s
     maxCertSize: 8388608
     saveCertificatesToFilesPath: /tmp
+    agglayerClient:
+      useTLS: true
   
   l1:
     chainId: 123
