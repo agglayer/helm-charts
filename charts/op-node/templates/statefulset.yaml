@@ -51,7 +51,8 @@ spec:
                 --p2p.sequencer.key={{ index $opSecrets.data "sequencer_private_key" | b64dec }} \
                 --l1={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
                 --l1.beacon={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
-                --rollup.config=/chainconfig/rollup.json
+                --rollup.config=/chainconfig/rollup.json \
+                --safedb.path=/data
           ports:
             - name: rpc
               containerPort: {{ .Values.service.rpc.port }}
@@ -62,6 +63,8 @@ spec:
             - name: config
               mountPath: "/chainconfig"
               readOnly: true
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
       volumes:
         - name: config
           projected:
@@ -76,3 +79,11 @@ spec:
                   items:
                     - key: "jwt"
                       path: "jwt.txt"
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
