@@ -18,14 +18,9 @@ data:
     [telemetry]
     prometheus-addr = "0.0.0.0:{{ .Values.container.ports.telemetry }}"
 
-    [cpu-prover]
-    enabled = {{ .Values.config.cpuProver.enabled }}
-    max-concurrency-limit = {{ .Values.config.cpuProver.maxConcurrencyLimit | int }}
-    proving-timeout = {{ .Values.config.cpuProver.provingTimeout | int }}
-
-    [network-prover]
-    enabled = {{ .Values.config.networkProver.enabled }}
-    proving-timeout = {{ .Values.config.networkProver.provingTimeout | int }}
+    [primary-prover.network-prover]
+    proving-request-timeout = {{ .Values.config.networkProver.provingRequestTimeout | quote }}
+    proving-timeout = {{ .Values.config.networkProver.provingTimeout | quote }}
 
     [grpc]
     max-decoding-message-size = {{ .Values.config.grpc.maxDecodingMessageSize | int }}

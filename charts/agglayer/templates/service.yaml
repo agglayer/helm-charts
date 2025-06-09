@@ -7,15 +7,15 @@ metadata:
     {{- include "agglayer.labels" . | nindent 4 }}
   annotations:
     cloud.google.com/backend-config: '{ "ports": {
-      "app-port": "app-backendconfig",
+      "readrpc-port": "readrpc-backendconfig",
       "metrics-port": "metrics-backendconfig",
       "admin-port": "admin-backendconfig"
     }}'
 spec:
   ports:
-    - name: app-port
+    - name: readrpc-port
       protocol: TCP
-      port: {{ .Values.ports.app }}
+      port: {{ .Values.ports.readrpc }}
     - name: metrics-port
       protocol: TCP
       port: {{ .Values.ports.telemetry }}
@@ -26,10 +26,31 @@ spec:
     {{- include "agglayer.selectorLabels" . | nindent 4 }}
 
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "agglayer.fullname" . }}-grpc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agglayer.labels" . | nindent 4 }}
+  annotations:
+    cloud.google.com/backend-config: '{ "ports": {
+      "grpc": "readrpc-backendconfig"
+    }}'
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: 443
+      targetPort: {{ .Values.ports.grpc }}
+  selector:
+    {{- include "agglayer.selectorLabels" . | nindent 4 }}
+---
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
-  name: app-backendconfig
+  name: readrpc-backendconfig
 spec:
   healthCheck:
     checkIntervalSec: 30
@@ -38,7 +59,7 @@ spec:
     unhealthyThreshold: 5
     type: HTTP
     requestPath: /health
-    port: {{ .Values.ports.app }}
+    port: {{ .Values.ports.readrpc }}
 
 ---
 apiVersion: cloud.google.com/v1
@@ -71,4 +92,4 @@ spec:
     unhealthyThreshold: 5
     type: HTTP
     requestPath: /health
-    port: {{ .Values.ports.app }}
+    port: {{ .Values.ports.grpc }}

@@ -66,17 +66,19 @@ spec:
             - "--cfg"
             - "/etc/agglayer/config.toml"
           ports:
-            - containerPort: {{ .Values.ports.app }}
+            - containerPort: {{ .Values.ports.grpc }}
+            - containerPort: {{ .Values.ports.readrpc }}
+            - containerPort: {{ .Values.ports.admin }}
             - containerPort: {{ .Values.ports.telemetry }}
           # TMP: disabling probes for now as the new version doesn't expose API until it's synced with l1
           # livenessProbe:
           #   httpGet:
           #     path: /health
-          #     port: {{ .Values.ports.app }}
+          #     port: {{ .Values.ports.grpc }}
           # readinessProbe:
           #   httpGet:
           #     path: /health
-          #     port: {{ .Values.ports.app }}
+          #     port: {{ .Values.ports.grpc }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
