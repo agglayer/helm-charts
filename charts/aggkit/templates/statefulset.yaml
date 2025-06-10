@@ -41,8 +41,11 @@ spec:
             - --cfg=/etc/aggkit/config.toml
             - --components={{ .Values.config.components | join "," }} 
           ports:
-            - name: app
-              containerPort: {{ .Values.container.ports.app }}
+            - name: aggsender
+              containerPort: {{ .Values.container.ports.aggsender }}
+              protocol: TCP
+            - name: bridge
+              containerPort: {{ .Values.container.ports.bridge }}
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
