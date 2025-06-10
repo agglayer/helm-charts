@@ -48,7 +48,7 @@ spec:
                 --rpc.addr=0.0.0.0 \
                 --rpc.port=8548 \
                 --rpc.enable-admin \
-                --max-channel-duration=25 \
+                --max-channel-duration=50 \
                 --throttle-threshold=0 \
                 --l1-eth-rpc={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
                 --private-key={{ index $opSecrets.data "batcher_private_key" | b64dec }} \
