@@ -15,9 +15,9 @@ container:
     repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node
     tag: v1.9.5
 
-# storage:
-#   path: /data
-#   size: 500Gi
+storage:
+  path: /data
+  size: 500Gi
 
 service:
   type: ClusterIP
@@ -25,6 +25,10 @@ service:
   rpc:
     port: 9545
   annotations: {}
+
+ingress:
+  create: true
+  hostname: domain.com
 
 podSecurityContext: {}
 securityContext: {}
