@@ -92,4 +92,4 @@ spec:
     unhealthyThreshold: 5
     type: HTTP
     requestPath: /health
-    port: {{ .Values.ports.grpc }}
+    port: {{ .Values.ports.readrpc }}
