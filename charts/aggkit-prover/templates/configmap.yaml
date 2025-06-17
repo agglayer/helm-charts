@@ -1,0 +1,72 @@
+{{- $l1RpcURL := "" }}
+{{- $sp1NetworkRpcURL := "" }}
+
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+{{- if $opSecrets.data }}
+    {{- if (index $opSecrets.data "l1RpcURL") }}
+        {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "sp1NetworkRpcURL") }}
+        {{- $sp1NetworkRpcURL = index $opSecrets.data "sp1NetworkRpcURL" | b64dec }}
+    {{- end }}
+{{- end }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "aggkit-prover.fullname" . }}-genesis
+  namespace: {{ .Release.Namespace }}
+data:
+  genesis.json: |-
+{{ .Values.config.genesis | indent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "aggkit-prover.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+data:
+  aggkit-prover-config.toml: |
+    grpc-endpoint = "0.0.0.0:4446"
+
+    [log]
+    level = "debug"
+    outputs = []
+    format = "json"
+
+    [telemetry]
+    prometheus-addr = "0.0.0.0:9090"
+
+    [shutdown]
+    runtime-timeout = "5s"
+
+    [aggchain-proof-service.aggchain-proof-builder]
+    network-id = {{ .Values.config.networkId | int }}
+
+    [aggchain-proof-service.aggchain-proof-builder.primary-prover.network-prover]
+    proving-timeout = "1h"
+
+    [aggchain-proof-service.aggchain-proof-builder.proving-timeout]
+    secs = 3600
+    nanos = 0
+
+    [aggchain-proof-service.aggchain-proof-builder.contracts]
+    l1-rpc-endpoint = {{ $l1RpcURL | quote }}
+    l2-execution-layer-rpc-endpoint = {{ .Values.config.l2ExecutionLayerRpcEndpoint | quote }}
+    l2-consensus-layer-rpc-endpoint = {{ .Values.config.l2ConsensusLayerRpcEndpoint | quote }}
+    polygon-rollup-manager = {{ .Values.config.polygonRollupManager | quote }}
+    global-exit-root-manager-v2-sovereign-chain = {{ .Values.config.globalExitRootManagerV2SovereignChain | quote }}
+    evm-sketch-genesis="/etc/aggkit/genesis.json"
+
+    [aggchain-proof-service.proposer-service]
+    l1-rpc-endpoint = {{ $l1RpcURL | quote }}
+    mock = {{ .Values.config.mock }}
+
+    [aggchain-proof-service.proposer-service.client]
+    proposer-endpoint = {{ .Values.config.proposerEndpoint | quote }}
+    sp1-cluster-endpoint = {{ $sp1NetworkRpcURL | quote }}
+    request-timeout = 3600
+    proving-timeout = 3600
+
+    [primary-prover.network-prover]
+    proving-timeout = "1h"

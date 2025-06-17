@@ -1,0 +1,121 @@
+{{- $sp1NetworkPrivateKey := "" }}
+
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+{{- if $opSecrets.data }}
+    {{- if (index $opSecrets.data "sp1NetworkPrivateKey") }}
+        {{- $sp1NetworkPrivateKey = index $opSecrets.data "sp1NetworkPrivateKey" | b64dec }}
+    {{- end }}
+{{- end }}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "aggkit-prover.fullname" . }}
+  labels:
+    {{- include "aggkit-prover.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "aggkit-prover.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "aggkit-prover.fullname" . }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "aggkit-prover.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "aggkit-prover.serviceAccountName" . }}
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 0
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: NETWORK_PRIVATE_KEY
+              value:  {{ $sp1NetworkPrivateKey | quote }}
+          {{ if .Values.image.command }}
+          command: {{- range .Values.image.command }}
+            - {{ . }} {{- end}}
+          {{- end}}
+          {{ if .Values.image.args }}
+          args: {{- range .Values.image.args }}
+            - {{ . }} {{- end}}
+          {{- end}}
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: datadir
+              mountPath: {{ .Values.datadir.path }}
+              readOnly: false
+            - name: aggkit-prover-config
+              mountPath: /etc/aggkit/
+              readOnly: true
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: aggkit-prover-config
+          projected:
+            sources:
+            - configMap:
+                name: {{ include "aggkit-prover.fullname" . }}
+                items:
+                  - key: "aggkit-prover-config.toml"
+                    path: "aggkit-prover-config.toml"
+            - configMap:
+                name: {{ include "aggkit-prover.fullname" . }}-genesis
+                items:
+                  - key: "genesis.json"
+                    path: "genesis.json"
+  volumeClaimTemplates:
+    - metadata:
+        name: datadir
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.datadir.size }}

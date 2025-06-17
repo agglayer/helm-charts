@@ -1,0 +1,53 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/agglayer/aggkit-prover
+  pullPolicy: IfNotPresent
+  tag: "feat-rust-proposer"
+  command: ["/usr/local/bin/aggkit-prover"]
+  args: ["run", "--config-path", "/etc/aggkit/aggkit-prover-config.toml"]
+
+existingSecret: op-secrets
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+datadir:
+  path: /data
+  size: 500Gi
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+config:
+  networkId: 0
+  l2ExecutionLayerRpcEndpoint: "http://op-geth:8545"
+  l2ConsensusLayerRpcEndpoint: "http://op-node:9545"
+  mock: false
+  polygonRollupManager: "0x0000000000000000000000000000000000000000"
+  globalExitRootManagerV2SovereignChain: "0x0000000000000000000000000000000000000000"
+  proposerEndpoint: "http://op-succinct-proposer:50001"
+  genesis: |
+    {}
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 4446
+
+resources:
+  limits:
+    cpu: 2
+    memory: 8Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
