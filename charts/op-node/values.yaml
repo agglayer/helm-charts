@@ -36,6 +36,8 @@ securityContext: {}
 existingSecret: "secretName"
 
 config:
+  extraOptions: {}
+
   l2:
     opGethAuthUrl: http://op-geth:8551
 

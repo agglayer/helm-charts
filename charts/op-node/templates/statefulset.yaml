@@ -52,6 +52,9 @@ spec:
                 --l1={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
                 --l1.beacon={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
                 --rollup.config=/chainconfig/rollup.json \
+                {{- range .Values.config.extraOptions }}
+                --{{ . }} \
+                {{- end}}
                 --safedb.path=/data
           ports:
             - name: rpc

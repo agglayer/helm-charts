@@ -45,6 +45,8 @@ genesisFileGCP:
   serviceAccount: "service-account"
 
 config:
+  extraOptions: {}
+
   nodeType: archive # "archive" or "full"
 
   miner:
