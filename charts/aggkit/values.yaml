@@ -20,9 +20,14 @@ container:
     bridge: 5577
 
 ingresses:
+  create: true
   hostnames:
     aggkit: something.dev.polygon
     bridge: something-else.dev.polygon
+
+serviceAccount:
+  create: false
+  annotations: {}
 
 storage:
   path: /data
@@ -46,8 +51,17 @@ config:
     checkSettledInterval: 5s
     maxCertSize: 8388608
     saveCertificatesToFilesPath: /tmp
+    mode: "AggchainProof" # PessimisticProof (PP) or AggchainProof (FEP)
+    aggchainProofURL: "http://aggkit-prover:4446"
     agglayerClient:
       useTLS: true
+    privateKey:
+      keyName: "" # if this string is not empty, aggSender will try to use KMS
+    optimisticModeEnabled: false
+
+  aggOracle:
+    privateKey:
+      keyName: "" # if this string is not empty, aggOracle will try to use KMS
   
   l1:
     chainId: 123

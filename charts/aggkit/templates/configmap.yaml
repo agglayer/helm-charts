@@ -54,12 +54,34 @@ data:
     {{- if has "aggsender" .Values.config.components }}
 
     [AggSender]
+    {{ if .Values.config.aggSender.privateKey.keyName }}
+    AggsenderPrivateKey = {Method ="GCP", KeyName={{ .Values.config.aggSender.privateKey.keyName | quote }}}
+    {{ else }}
     AggsenderPrivateKey = {Path = "/etc/aggkit/sequencer.keystore", Password = {{ index $opSecrets.data "sequencerPrivateKeyPassword" | b64dec | quote }}}
+    {{ end }}
+
     CertificateSendInterval = {{ .Values.config.aggSender.certificateSendInterval | quote }}
     CheckSettledInterval = {{ .Values.config.aggSender.checkSettledInterval | quote }}
     MaxCertSize = {{ .Values.config.aggSender.maxCertSize | int }}
     SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
     BlockFinality="FinalizedBlock"
+    Mode={{ .Values.config.aggSender.mode | quote }}
+    AggchainProofURL={{ .Values.config.aggSender.aggchainProofURL | quote }}
+    RequireNoFEPBlockGap = true
+    UseAgglayerTLS = true
+
+    {{ if .Values.config.aggSender.optimisticModeEnabled }}
+    [AggSender.OptimisticModeConfig]
+    SovereignRollupAddr = {{ .Values.config.l1.rollupAddress | quote }}
+    # By default use the same key that aggsender  sign certs
+    {{ if .Values.config.aggSender.privateKey.keyName }}
+    TrustedSequencerKey = {Method ="GCP", KeyName={{ .Values.config.aggSender.privateKey.keyName | quote }}}
+    {{ else }}
+    TrustedSequencerKey = {Path = "/etc/aggkit/sequencer.keystore", Password = {{ index $opSecrets.data "sequencerPrivateKeyPassword" | b64dec | quote }}}
+    {{ end }}
+    OpNodeURL = "http://op-node:9545"
+    RequireKeyMatchTrustedSequencer = true
+    {{ end }}
 
     [AggSender.AgglayerClient]
     UseTLS = {{ .Values.config.aggSender.agglayerClient.useTLS | quote }}
@@ -72,7 +94,11 @@ data:
     GlobalExitRootL2 = {{ .Values.config.l2.globalExitRootAddress | quote }}
 
     [AggOracle.EVMSender.EthTxManager]
+    {{ if .Values.config.aggOracle.privateKey.keyName }}
+    PrivateKeys = [{Method ="GCP", KeyName={{ .Values.config.aggOracle.privateKey.keyName | quote }}}]
+    {{ else }}
     PrivateKeys = [{Path = "/etc/aggkit/aggoracle.keystore", Password = {{ index $opSecrets.data "aggoraclePrivateKeyPassword" | b64dec | quote }}}]
+    {{ end }}
 
     [AggOracle.EVMSender.EthTxManager.Etherman]
     L1ChainID = {{ .Values.config.l2.chainId | int }}
