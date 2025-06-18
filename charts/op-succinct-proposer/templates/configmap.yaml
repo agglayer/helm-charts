@@ -1,13 +1,21 @@
 {{- $l1RpcURL := "" }}
-{{- $proposerPrivateKey := "" }}
+{{- $sp1NetworkRpcURL := "" }}
+{{- $sp1NetworkPrivateKey := "" }}
+{{- $databaseUrl := "" }}
 
 {{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
 {{- if $opSecrets.data }}
     {{- if (index $opSecrets.data "l1RpcURL") }}
         {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
     {{- end }}
-    {{- if (index $opSecrets.data "proposerPrivateKey") }}
-        {{- $proposerPrivateKey = index $opSecrets.data "proposerPrivateKey" | b64dec }}
+    {{- if (index $opSecrets.data "sp1NetworkPrivateKey") }}
+        {{- $sp1NetworkPrivateKey = index $opSecrets.data "sp1NetworkPrivateKey" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "sp1NetworkRpcURL") }}
+        {{- $sp1NetworkRpcURL = index $opSecrets.data "sp1NetworkRpcURL" | b64dec }}
+    {{- end }}
+    {{- if (index $opSecrets.data "databaseUrl") }}
+        {{- $databaseUrl = index $opSecrets.data "databaseUrl" | b64dec }}
     {{- end }}
 {{- end }}
 
@@ -19,20 +27,27 @@ metadata:
   labels:
     {{- include "op-succinct-proposer.labels" . | nindent 4 }}
 data:
+  AGG_PROOF_MODE: {{ .Values.config.aggProofMode | quote }}
+  AGGLAYER: {{ .Values.config.agglayer | quote }}
+  DATABASE_URL: {{ $databaseUrl | quote }}
   DB_PATH: {{ .Values.storage.path | quote }}
-  DGF_ADDRESS: {{ .Values.config.dgfAddress | quote }}
-  L1_RPC: {{ $l1RpcURL | quote }}
+  GRPC_ADDRESS: {{ .Values.config.grpcAddress | quote }}
   L1_BEACON_RPC: {{ $l1RpcURL | quote }}
+  L1_RPC: {{ $l1RpcURL | quote }}
   L2_NODE_RPC: {{ .Values.config.l2NodeRpcURL | quote }}
+  L2_RPC: {{ .Values.config.l2RpcURL | quote }}
   L2OO_ADDRESS: {{ .Values.config.l2OOAddress | quote }}
-  MAX_BLOCK_RANGE_PER_SPAN_PROOF: {{ .Values.config.maxBlockRangePerSpanProof | quote }}
   MAX_CONCURRENT_PROOF_REQUESTS: {{ .Values.config.maxConcurrentProofRequests | quote }}
   MAX_CONCURRENT_WITNESS_GEN: {{ .Values.config.maxConcurrentWitnessGen | quote }}
   METRICS_ENABLED: {{ .Values.config.metricsEnabled | quote }}
   METRICS_PORT: {{ .Values.ports.metrics | quote }}
+  NETWORK_PRIVATE_KEY: {{ $sp1NetworkPrivateKey | quote }}
   OP_SUCCINCT_MOCK: {{ .Values.config.opSuccinctMock | quote }}
-  OP_SUCCINCT_SERVER_URL: {{ .Values.config.opSuccinctServerURL | quote }}
   POLL_INTERVAL: {{ .Values.config.pollInterval | quote }}
-  PRIVATE_KEY: {{ $proposerPrivateKey | quote }}
+  PRIVATE_KEY: 0xc797616a567ffd3f7d80f110f4c19900e55258ac2aa96d96ded790e0bd727458
+  PROVER_ADDRESS: {{ .Values.config.proverAddress | quote }}
+  RANGE_PROOF_INTERVAL: {{ .Values.config.rangeProofInterval | quote }}
+  RUST_LOG: {{ .Values.config.rustLog | quote }}
   USE_CACHED_DB: {{ .Values.config.useCachedDB | quote }}
   WITNESS_GEN_TIMEOUT: {{ .Values.config.witnessGenTimeout | quote }}
+  NETWORK_RPC_URL: {{ $sp1NetworkRpcURL | quote }}

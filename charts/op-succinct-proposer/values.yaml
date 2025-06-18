@@ -33,26 +33,27 @@ securityContext: {}
 existingSecret: "secretName"
 
 config:
-  # [Probably optional] Address of the DisputeGameFactory proxy contract
-  # https://succinctlabs.github.io/op-succinct/experimental/optimism-portal-v2.html?highlight=dgf#optimismportalv2
-  dgfAddress: ""
-  # See https://succinctlabs.github.io/op-succinct/quick-start/mock.html#4-set-op-succinct-service-environment-variables
+  agglayer: true
+  aggProofMode: "compressed"
+  databaseUrl: postgres://user:password@op-succinct-proposer-db-postgresql:5432/op_succinct_db
+  grpcAddress: 0.0.0.0:50001
   l2NodeRpcURL: http://op-node:9545
-  # Address of the OPSuccinctL2OutputOracle proxy contract
-  l2OOAddress: "0x123"
-  maxBlockRangePerSpanProof: 300
-  maxConcurrentProofRequests: 10
-  maxConcurrentWitnessGen: 5
+  l2RpcURL: http://op-geth:9545
+  l2OOAddress: "0x0000000000000000000000000000000000000000"
+  maxConcurrentProofRequests: 1
+  maxConcurrentWitnessGen: 1
   metricsEnabled: true
-  opSuccinctMock: true
+  opSuccinctMock: false
   opSuccinctServerURL: http://op-succinct-server:3000
   pollInterval: 20s
+  proverAddress: "0x0000000000000000000000000000000000000000"
+  rangeProofInterval: "1800"
+  rustLog: "info"
   useCachedDB: false
-  witnessGenTimeout: 1200
+  witnessGenTimeout: "1200"
 
 resources:
-  limits:
-    memory: 10Gi
   requests:
     cpu: 1
-    memory: 2Gi
+    memory: 32Gi
+    ephemeral-storage: 10Gi
