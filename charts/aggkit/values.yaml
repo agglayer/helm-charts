@@ -19,6 +19,10 @@ container:
     aggsender: 5576
     bridge: 5577
 
+service:
+  type: ClusterIP
+  clusterIP: None
+
 ingresses:
   create: true
   hostnames:

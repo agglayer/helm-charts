@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "aggkit.labels" . | nindent 4 }}
 spec:
-  type: ClusterIP
+  type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.container.ports.aggsender }}
       targetPort: aggsender
@@ -15,5 +15,8 @@ spec:
       targetPort: bridge
       protocol: TCP
       name: bridge
+  # StatefulSets require headless services
+  # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
+  clusterIP: {{ .Values.service.clusterIP }}
   selector:
     {{- include "aggkit.selectorLabels" . | nindent 4 }}
