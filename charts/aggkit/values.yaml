@@ -55,7 +55,7 @@ config:
     checkSettledInterval: 5s
     maxCertSize: 8388608
     saveCertificatesToFilesPath: /tmp
-    mode: "AggchainProof" # PessimisticProof (PP) or AggchainProof (FEP)
+    mode: "PessimisticProof" # PessimisticProof (PP) or AggchainProof (FEP)
     aggchainProofURL: "http://aggkit-prover:4446"
     agglayerClient:
       useTLS: true
