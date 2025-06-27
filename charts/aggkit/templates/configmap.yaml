@@ -68,7 +68,6 @@ data:
     Mode={{ .Values.config.aggSender.mode | quote }}
     AggchainProofURL={{ .Values.config.aggSender.aggchainProofURL | quote }}
     RequireNoFEPBlockGap = true
-    UseAgglayerTLS = true
 
     {{ if .Values.config.aggSender.optimisticModeEnabled }}
     [AggSender.OptimisticModeConfig]
