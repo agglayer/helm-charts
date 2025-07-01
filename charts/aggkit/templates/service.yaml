@@ -4,8 +4,6 @@ metadata:
   name: {{ include "aggkit.fullname" . }}
   labels:
     {{- include "aggkit.labels" . | nindent 4 }}
-  annotations:
-    {{ toYaml .Values.service.annotations | indent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:

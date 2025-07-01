@@ -22,7 +22,6 @@ container:
 service:
   type: ClusterIP
   clusterIP: None
-  annotations: {}
 
 ingresses:
   create: true
@@ -42,7 +41,6 @@ podSecurityContext: {}
 securityContext: {}
 
 config:
-  agglayerURL: http://agglayer:4444
   bridgeAddress: "0x123"
   components: 
     - aggsender
@@ -57,9 +55,16 @@ config:
     maxCertSize: 8388608
     saveCertificatesToFilesPath: /tmp
     mode: "PessimisticProof" # PessimisticProof (PP) or AggchainProof (FEP)
-    aggchainProofURL: "http://aggkit-prover:4446"
+
+    # Set this if aggSender.mode is AggchainProof
+    # aggkitProverClient:
+    #   url: "http://aggkit-prover:4446"
+    #   useTLS: true
+
     agglayerClient:
+      url: "http://agglayer:4444"
       useTLS: true
+
     privateKey:
       keyName: "" # if this string is not empty, aggSender will try to use KMS
     optimisticModeEnabled: false
