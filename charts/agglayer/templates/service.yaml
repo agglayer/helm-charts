@@ -26,6 +26,7 @@ spec:
     {{- include "agglayer.selectorLabels" . | nindent 4 }}
 
 ---
+# this will be replaced by *-gateway soon
 apiVersion: v1
 kind: Service
 metadata:
@@ -44,6 +45,29 @@ spec:
       protocol: TCP
       port: 443
       targetPort: {{ .Values.ports.grpc }}
+  selector:
+    {{- include "agglayer.selectorLabels" . | nindent 4 }}
+---
+# this will replace *-grpc soon
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "agglayer.fullname" . }}-gateway
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agglayer.labels" . | nindent 4 }}
+  annotations:
+    cloud.google.com/backend-config: '{ "ports": {
+      "grpc": "gateway-backendconfig"
+    }}'
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: {{ .Values.ports.grpc }}
+      targetPort: {{ .Values.ports.grpc }}
+      appProtocol: kubernetes.io/h2c
   selector:
     {{- include "agglayer.selectorLabels" . | nindent 4 }}
 ---
@@ -93,3 +117,19 @@ spec:
     type: HTTP
     requestPath: /health
     port: {{ .Values.ports.readrpc }}
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: gateway-backendconfig
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 5
+    type: HTTP
+    requestPath: /health
+    port: {{ .Values.ports.readrpc }}
+  securityPolicy:
+    name: {{ .Values.securityPolicy }}
