@@ -11,7 +11,6 @@ data:
     PathRWData = {{ .Values.storage.path | quote }}
     L1URL = {{ index $opSecrets.data "l1RpcURL" | b64dec | quote }}
     L2URL = {{ .Values.config.l2.rpcURL | quote }}
-    AggLayerURL = {{ .Values.config.agglayerURL | quote }}
 
     ForkId = {{ .Values.config.forkId | quote }}
     ContractVersions = {{ .Values.config.contractsVersion | quote }}
@@ -66,9 +65,7 @@ data:
     SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
     BlockFinality="FinalizedBlock"
     Mode={{ .Values.config.aggSender.mode | quote }}
-    AggchainProofURL={{ .Values.config.aggSender.aggchainProofURL | quote }}
     RequireNoFEPBlockGap = true
-    UseAgglayerTLS = true
 
     {{ if .Values.config.aggSender.optimisticModeEnabled }}
     [AggSender.OptimisticModeConfig]
@@ -83,7 +80,14 @@ data:
     RequireKeyMatchTrustedSequencer = true
     {{ end }}
 
+    {{ if .Values.config.aggSender.mode | eq "AggchainProof" }}
+    [AggSender.AggkitProverClient]
+    URL = {{ .Values.config.aggSender.aggkitProverClient.url | quote }}
+    UseTLS = {{ .Values.config.aggSender.aggkitProverClient.useTLS | quote }}
+    {{ end }}
+
     [AggSender.AgglayerClient]
+    URL = {{ .Values.config.aggSender.agglayerClient.url | quote }}
     UseTLS = {{ .Values.config.aggSender.agglayerClient.useTLS | quote }}
 
     {{- end }}
