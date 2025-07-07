@@ -44,6 +44,10 @@ spec:
       protocol: TCP
       port: 443
       targetPort: {{ .Values.ports.grpc }}
+    - name: proxy
+      protocol: TCP
+      port: {{ .Values.ports.proxy }}
+      targetPort: {{ .Values.ports.proxy }}
   selector:
     {{- include "agglayer.selectorLabels" . | nindent 4 }}
 ---
