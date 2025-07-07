@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "agg-certificate-proxy.fullname" . }}
+  labels:
+    {{- include "agg-certificate-proxy.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "agg-certificate-proxy.selectorLabels" . | nindent 6 }}
+  serviceName: {{ include "agg-certificate-proxy.fullname" . }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "agg-certificate-proxy.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "agg-certificate-proxy.serviceAccountName" . }}
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 0
+            runAsNonRoot: true
+            runAsUser: 1001
+            seccompProfile:
+              type: RuntimeDefault
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: CDK_ERIGON_SEQUENCER
+              value:  "{{ .Values.is_sequencer }}"
+          {{ if .Values.image.command }}
+          command: {{- range .Values.image.command }}
+            - {{ . }} {{- end}}
+          {{- end}}
+          args:
+           - --grpc=:{{ .Values.service.grpc.port }}
+           - --http=:{{ .Values.service.http.port }}
+           - --db={{ .Values.datadir.path }}/certificates.db
+           - --kill-switch-api-key={{ .Values.config.killSwitchApiKey }}
+           - --kill-restart-api-key={{ .Values.config.killRestartApiKey }}
+           - --data-key={{ .Values.config.dataKey }}
+           - --aggsender-addr={{ .Values.config.aggSenderAddr }}
+           - --delayed-chains={{ .Values.config.delayedChains }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.http.port }}
+              protocol: TCP
+            - name: grpc
+              containerPort: {{ .Values.service.grpc.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: datadir
+              mountPath: {{ .Values.datadir.path }}
+              readOnly: false
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: datadir
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.datadir.size }}

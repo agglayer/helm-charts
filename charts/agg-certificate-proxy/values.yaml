@@ -1,0 +1,61 @@
+env: bali
+replicaCount: 1
+
+image:
+  repository: ghcr.io/gateway-fm/agg-certificate-proxy
+  pullPolicy: IfNotPresent
+  tag: "main-b63c85f"
+  command: ["/proxy"]
+
+domain: "agglayer-proxy-dev.polygon.technology"
+
+config:
+ aggSenderAddr:  "agglayer-grpc.agglayer:443" #  Address of the backend agglayer to forward all requests to 
+ delayedChains: "1,2,3"
+ killSwitchApiKey: "demo-key"
+ killRestartApiKey: "demo-key"
+ dataKey: "demo-key"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podLabels:
+  name: agglayer
+  business_unit: agglayer
+  role: agglayer-node
+  partner: Polygon
+
+service:
+  http:
+    type: ClusterIP
+    clusterIP: None
+    port: 8080
+  grpc:
+    type: ClusterIP
+    clusterIP: None
+    port: 50051
+  annotations: {}
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+
+datadir:
+  path: /data/
+  size: 750Gi
+
+tls:
+  base64Cert: ""
+  base64Key: ""
+
+resources: {}
