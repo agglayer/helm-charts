@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "agg-certificate-proxy.fullname" . }}-http
+  labels:
+    {{- include "agg-certificate-proxy.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.http.type }}
+  clusterIP: {{ .Values.service.http.clusterIP }}
+  ports:
+    - port: {{ .Values.service.http.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "agg-certificate-proxy.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "agg-certificate-proxy.fullname" . }}-grpc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agg-certificate-proxy.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.grpc.type }}
+  clusterIP: {{ .Values.service.grpc.clusterIP }}
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: {{ .Values.service.grpc.port }}
+      targetPort: {{ .Values.service.grpc.port }}
+  selector:
+    {{- include "agg-certificate-proxy.selectorLabels" . | nindent 4 }}
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ include "agg-certificate-proxy.fullname" . }}-http
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 5
+    type: HTTP
+    requestPath: /health
+    port: {{ .Values.service.http.port }}
