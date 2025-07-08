@@ -159,3 +159,8 @@ db-path = {{ .Values.storage.path | quote }}
 path = {{ .Values.backup.path | quote }}
 state_max_backup_count = 100
 pending_max_backup_count = 100
+
+[proxied-networks]
+networks = [{{ join "," .Values.config.proxiedNetworks }}]
+grpc-port = {{ .Values.ports.proxy }}
+host = "0.0.0.0"

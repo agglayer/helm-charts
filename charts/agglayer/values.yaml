@@ -9,12 +9,13 @@ podLabels:
 image:
   repository: ghcr.io/agglayer/agglayer
   pullPolicy: IfNotPresent
-  tag: 0.3.0-rc.22
+  tag: 0.3.3-post.2
 
 ports:
   grpc: 9089
   readrpc: 9090
   admin: 9091
+  proxy: 9092
   telemetry: 2223
 
 existingSecret: op-secrets
@@ -33,6 +34,9 @@ config:
     blockClock:
       epochDuration: 50
       genesisBlock: 1
+
+  proxiedNetworks:
+    #- 1 # Commented out to avoid having it prepended to the list
 
   fullNodeRPCs:
     # 1: "http://localhost:8123" # Commented out to avoid having it prepended to the list
