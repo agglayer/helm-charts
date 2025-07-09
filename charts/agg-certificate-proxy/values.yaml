@@ -10,11 +10,14 @@ image:
 domain: "agglayer-proxy-dev.polygon.technology"
 
 config:
- aggSenderAddr:  "agglayer-grpc.agglayer:443" #  Address of the backend agglayer to forward all requests to 
+ aggSenderAddr: "agglayer-grpc.agglayer:443" #  Address of the backend agglayer to forward all requests to 
  delayedChains: "1,2,3"
  killSwitchApiKey: "demo-key"
  killRestartApiKey: "demo-key"
  dataKey: "demo-key"
+ certificateOverrideKey: "demo-key"
+ suspiciousValue: ""
+ tokenValues: ""
 
 serviceAccount:
   create: true

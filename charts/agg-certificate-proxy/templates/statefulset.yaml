@@ -64,6 +64,9 @@ spec:
            - --data-key={{ .Values.config.dataKey }}
            - --aggsender-addr={{ .Values.config.aggSenderAddr }}
            - --delayed-chains={{ .Values.config.delayedChains }}
+           - --certificate-override-key={{ .Values.config.certificateOverrideKey }}
+           - --suspicious-value={{ .Values.config.suspiciousValue }}
+           - --token-values={{ .Values.config.tokenValues }}
           ports:
             - name: http
               containerPort: {{ .Values.service.http.port }}
