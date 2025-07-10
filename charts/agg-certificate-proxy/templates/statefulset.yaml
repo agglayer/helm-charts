@@ -1,3 +1,5 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -59,12 +61,12 @@ spec:
            - --grpc=:{{ .Values.service.grpc.port }}
            - --http=:{{ .Values.service.http.port }}
            - --db={{ .Values.datadir.path }}/certificates.db
-           - --kill-switch-api-key={{ .Values.config.killSwitchApiKey }}
-           - --kill-restart-api-key={{ .Values.config.killRestartApiKey }}
-           - --data-key={{ .Values.config.dataKey }}
+           - --kill-switch-api-key={{ index $opSecrets.data "killSwitchApiKey" | b64dec }}
+           - --kill-restart-api-key={{ index $opSecrets.data "killRestartApiKey" | b64dec }}
+           - --certificate-override-key={{ index $opSecrets.data "certificateOverrideKey" | b64dec }}
+           - --data-key={{ index $opSecrets.data "dataKey" | b64dec }}
            - --aggsender-addr={{ .Values.config.aggSenderAddr }}
            - --delayed-chains={{ .Values.config.delayedChains }}
-           - --certificate-override-key={{ .Values.config.certificateOverrideKey }}
            - --suspicious-value={{ .Values.config.suspiciousValue }}
            - --token-values={{ .Values.config.tokenValues }}
           ports:
