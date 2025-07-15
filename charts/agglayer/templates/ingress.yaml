@@ -74,7 +74,7 @@ metadata:
     {{- end }}
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "GRPC"
-    nginx.ingress.kubernetes.io/proxy-body-size: 10m
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
 spec:
   ingressClassName: nginx
   tls:
