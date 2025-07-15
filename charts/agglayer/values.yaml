@@ -56,6 +56,9 @@ config:
   rpc:
     maxRequestBodySize: 10485760 # 10MB
 
+  grpc:
+    maxDecodingMessageSize: 10485760 # 10MB
+
   prover:
     grpc:
       maxDecodingMessageSize: 10485760 # 10MB
