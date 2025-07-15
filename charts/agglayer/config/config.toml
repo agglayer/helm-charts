@@ -94,6 +94,12 @@ request-timeout = "3m"
 # default value is equal to 10MB
 max-request-body-size = {{ .Values.config.rpc.maxRequestBodySize | int }}
 
+[grpc]
+# size is define in bytes e.g. 100 * 1024 * 1024
+# same for `max-encoding-message-size`
+# default value is equal to 4MB
+max-decoding-message-size = {{ .Values.config.grpc.maxDecodingMessageSize | int }}
+
 [prover.grpc]
 # size is define in bytes e.g. 100 * 1024 * 1024
 # same for `max-encoding-message-size`
