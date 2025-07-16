@@ -26,6 +26,9 @@ tls:
   base64Cert: ""
   base64Key: ""
 
+ingress:
+  nginxProxyBodySize: 10m
+
 config:
   agglayerProverEndpoint: http://localhost:4445
   debugMode: false
@@ -55,6 +58,9 @@ config:
 
   rpc:
     maxRequestBodySize: 10485760 # 10MB
+
+  grpc:
+    maxDecodingMessageSize: 10485760 # 10MB
 
   prover:
     grpc:
