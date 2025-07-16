@@ -26,6 +26,9 @@ tls:
   base64Cert: ""
   base64Key: ""
 
+ingress:
+  body-size: 100m
+
 config:
   agglayerProverEndpoint: http://localhost:4445
   debugMode: false
