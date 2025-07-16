@@ -27,7 +27,7 @@ tls:
   base64Key: ""
 
 ingress:
-  body-size: 100m
+  nginxProxyBodySize: 100m
 
 config:
   agglayerProverEndpoint: http://localhost:4445
