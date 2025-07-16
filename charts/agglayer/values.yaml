@@ -27,7 +27,7 @@ tls:
   base64Key: ""
 
 ingress:
-  nginxProxyBodySize: 100m
+  nginxProxyBodySize: 10m
 
 config:
   agglayerProverEndpoint: http://localhost:4445
@@ -57,14 +57,14 @@ config:
         gasMultiplierFactor: 130
 
   rpc:
-    maxRequestBodySize: 104857600 # 100MB
+    maxRequestBodySize: 10485760 # 10MB
 
   grpc:
-    maxDecodingMessageSize: 104857600 # 100MB
+    maxDecodingMessageSize: 10485760 # 10MB
 
   prover:
     grpc:
-      maxDecodingMessageSize: 104857600 # 100MB
+      maxDecodingMessageSize: 10485760 # 10MB
 
 command: agglayer run --cfg /etc/agglayer/config.toml
 
