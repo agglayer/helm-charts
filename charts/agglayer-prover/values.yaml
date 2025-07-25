@@ -21,6 +21,8 @@ container:
   env:
     networkRpcUrl: https://rpc.succinct.xyz/
 
+podAnnotations: {}
+
 resources:
   limits:
     cpu: 4
