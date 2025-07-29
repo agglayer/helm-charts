@@ -99,12 +99,14 @@ max-request-body-size = {{ .Values.config.rpc.maxRequestBodySize | int }}
 # same for `max-encoding-message-size`
 # default value is equal to 4MB
 max-decoding-message-size = {{ .Values.config.grpc.maxDecodingMessageSize | int }}
+max-encoding-message-size = {{ .Values.config.grpc.maxEncodingMessageSize | int }}
 
 [prover.grpc]
 # size is define in bytes e.g. 100 * 1024 * 1024
 # same for `max-encoding-message-size`
 # default value is equal to 4MB
 max-decoding-message-size = {{ .Values.config.prover.grpc.maxDecodingMessageSize | int }}
+max-encoding-message-size = {{ .Values.config.prover.grpc.maxEncodingMessageSize | int }}
 
 [outbound.rpc.settle]
 max-retries = 3
