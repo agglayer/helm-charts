@@ -169,7 +169,7 @@ state_max_backup_count = 100
 pending_max_backup_count = 100
 
 
-{{- if eq (len .Values.config.proxiedNetworks) 0 }}
+{{- if not .Values.config.proxiedNetworks }}
 [proxied-networks]
 networks = [{{ join "," .Values.config.proxiedNetworks }}]
 grpc-port = {{ .Values.ports.proxy }}
