@@ -29,6 +29,28 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ include "agglayer.fullname" . }}-grpc-migration
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agglayer.labels" . | nindent 4 }}
+  annotations:
+    cloud.google.com/backend-config: '{ "ports": {
+      "grpc": "readrpc-backendconfig"
+    }}'
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: 443
+      targetPort: {{ .Values.ports.grpc }}
+  type: LoadBalancer
+  selector:
+    {{- include "agglayer.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: {{ include "agglayer.fullname" . }}-grpc
   namespace: {{ .Release.Namespace }}
   labels:
