@@ -42,7 +42,7 @@ spec:
   ports:
     - name: grpc
       protocol: TCP
-      port: 443
+      port: {{ .Values.ports.grpc }}
       targetPort: {{ .Values.ports.grpc }}
   type: LoadBalancer
   selector:
