@@ -21,6 +21,7 @@ ports:
 existingSecret: op-secrets
 
 domain: agglayer-test.polygon.technology
+createMigrationService: true
 
 tls:
   base64Cert: ""
