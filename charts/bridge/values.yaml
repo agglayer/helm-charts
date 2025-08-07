@@ -53,6 +53,8 @@ config:
     l2PolygonBridgeAddress: "0x0000000000000000000000000000000000000000"
     l2PolygonZkEVMGlobalExitRootAddress: "0x0000000000000000000000000000000000000000"
     requireSovereignChainSmcs: true
+  synchronizer:
+    forceL2SyncChunk: false
 
 existingSecret: "secretName"
 secretItem:
