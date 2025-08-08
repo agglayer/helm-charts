@@ -22,6 +22,10 @@ container:
 service:
   type: ClusterIP
   clusterIP: None
+  aggsender:
+    port: 5576
+  bridge:
+    port: 5577
 
 ingresses:
   aggsender:

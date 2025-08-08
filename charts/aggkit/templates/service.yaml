@@ -7,11 +7,11 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.container.ports.aggsender }}
+    - port: {{ .Values.service.aggsender.port }}
       targetPort: aggsender
       protocol: TCP
       name: aggsender
-    - port: {{ .Values.container.ports.bridge }}
+    - port: {{ .Values.service.bridge.port  }}
       targetPort: bridge
       protocol: TCP
       name: bridge
