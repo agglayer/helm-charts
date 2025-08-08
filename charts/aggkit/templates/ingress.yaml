@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "aggkit.fullname" . }}
+  name: {{ include "aggkit.fullname" . }}-aggsender
   annotations:
     cert-manager.io/issuer: gcp-cas-issuer
     cert-manager.io/issuer-kind: GoogleCASClusterIssuer
