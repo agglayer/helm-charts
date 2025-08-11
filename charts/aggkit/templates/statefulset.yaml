@@ -68,8 +68,10 @@ spec:
             - secret:
                 name: op-secrets
                 items:
+                  {{- if has "aggsender" .Values.config.components }}
                   - key: sequencer.keystore
                     path: sequencer.keystore
+                  {{- end }}
                   {{- if has "aggoracle" .Values.config.components }}
                   - key: aggoracle.keystore
                     path: aggoracle.keystore

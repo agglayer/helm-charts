@@ -24,10 +24,12 @@ service:
   clusterIP: None
 
 ingresses:
-  create: true
-  hostnames:
-    aggkit: something.dev.polygon
-    bridge: something-else.dev.polygon
+  aggsender:
+    create: false
+    hostname: "something.dev.polygon"
+  bridge:
+    create: false
+    hostname: "something-else.dev.polygon"
 
 serviceAccount:
   create: false
