@@ -45,6 +45,7 @@ genesisFileGCP:
 
 serviceAccount:
   create: false
+  automount: true
   annotations: {}
 
 config:
