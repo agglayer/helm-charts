@@ -44,7 +44,7 @@ genesisFileGCP:
   object: "bucket-object"
 
 serviceAccount:
-  create: false
+  create: true
   automount: true
   annotations: {}
 
