@@ -26,7 +26,7 @@ spec:
     spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      serviceAccountName: download-genesis
+      serviceAccountName: {{ include "op-geth.serviceAccountName" . }}
       initContainers:
         - name: download-genesis
           image: google/cloud-sdk:latest

@@ -42,7 +42,11 @@ existingSecret: "secretName"
 genesisFileGCP:
   bucket: "bucket-name"
   object: "bucket-object"
-  serviceAccount: "service-account"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
 
 config:
   extraOptions: {}
