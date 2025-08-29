@@ -54,7 +54,7 @@ config:
     l2PolygonZkEVMGlobalExitRootAddress: "0x0000000000000000000000000000000000000000"
     requireSovereignChainSmcs: true
   synchronizer:
-    forceL2SyncChunk: false
+    forceL2SyncChunk: true
 
 existingSecret: "secretName"
 secretItem:
