@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "op-batcher.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "op-batcher.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "op-batcher.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "op-batcher.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{ include "op-batcher.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          command:
+            - op-batcher
+          args:
+            {{ if .Values.config.key.useKms }}
+            - --signer.tls.enabled=false
+            - --signer.endpoint=http://localhost:2222
+            - --signer.address={{ .Values.config.key.address }}
+            {{ end }}
+            - --l2-eth-rpc={{ .Values.config.l2.opGethUrl }}
+            - --rollup-rpc={{ .Values.config.l2.opNodeUrl }}
+            - --poll-interval=1s
+            - --sub-safety-margin=6
+            - --num-confirmations=1
+            - --safe-abort-nonce-too-low-count=3
+            - --resubmission-timeout=30s
+            - --rpc.addr=0.0.0.0
+            - --rpc.port=8548
+            - --rpc.enable-admin
+            - --max-channel-duration=50
+            - --throttle-threshold=0
+            - --l1-eth-rpc={{ .Values.config.l1.rpc }}
+            - --data-availability-type=blobs
+            - --metrics.enabled={{ .Values.config.metrics }}
+            - --metrics.port={{ .Values.service.metrics.port }}
+            - --metrics.addr=0.0.0.0
+          ports:
+            - name: rpc
+              containerPort: {{ .Values.service.rpc.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.service.metrics.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+        {{ if .Values.config.key.useKms }}
+        - name: {{ .Chart.Name }}-signer
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: ghcr.io/tnobayashi/infra/op-signer:op-signer-v0.0.2
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          args:
+            - --tls.enabled=false
+            - --config=/etc/op-signer/config.yaml
+            - --rpc.port=2222
+          volumeMounts:
+            - name: op-signer
+              mountPath: "/etc/op-signer/"
+              readOnly: true
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: op-signer
+          projected:
+            sources:
+              - configMap:
+                  name: {{ include "op-batcher.fullname" . }}-op-signer
+                  items:
+                    - key: "config.yaml"
+                      path: "config.yaml"
+        {{ end }}
+

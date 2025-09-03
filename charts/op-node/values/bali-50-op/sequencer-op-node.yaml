@@ -1,11 +1,11 @@
 env: bali
 
 podLabels:
-  name: myname
+  name: bali-50-op
   business_unit: agglayer
-  role: myrole
+  role: integration-network
   partner: Polygon
-  network: mynetwork
+  network: bali-50-op
 
 replicas: 1
 sequencer: true
@@ -13,7 +13,7 @@ sequencer: true
 initContainer:
   image:
     pullPolicy: IfNotPresent
-    repository: google/cloud-sdk
+    repository: gcr.io/google.com/cloudsdktool/google-cloud-cli
     tag: 537.0.0-slim
 
 container:
@@ -25,43 +25,28 @@ container:
 storage:
   path: /safedb
   size: 50Gi
-  storageClassName: standard
-
-service:
-  rpc:
-    port: 9545
-  metrics:
-    port: 7300
-  annotations: {}
+  storageClassName: balanced-ha-storage
 
 serviceAccount:
   create: true
-  automount: true
-  annotations: {}
 
 config:
   extraOptions: {}
 
-  bucket: gs://path/to/bucket/files/*
+  bucket: gs://integration-networks-bali-genesis/bali-50-op/*
   path: /etc/op-node
 
-  chainID: 1
+  chainID: 505050
 
   key:
     useKms: true
-    address: 0x0000000000000000000000000000000000000000
-    path: path/to/key
+    address: 0x715D8da98FFAC83271690Bd77c40c6fDE6D7b79A
+    path: projects/prj-polygonlabs-shared-dev/locations/europe-west2/keyRings/integration-networks-bali/cryptoKeys/bali-50-op-op-node/cryptoKeyVersions/1
 
   syncMode: consensus-layer # consensus-layer or execution-layer; execution-layer for snap
 
-  l1:
-    rpc: "http://"
-    beacon: "http://"
-
   l2:
-    opGethReleaseName: op-geth
-
-  metrics: true
+    opGethReleaseName: sequencer-op-geth
 
   log:
     environment: development # "production" or "development"
@@ -74,21 +59,8 @@ resources:
     cpu: 1000m
     memory: 2Gi
 
-livenessProbe:
-  httpGet:
-    path: /healthz
-    port: rpc
-readinessProbe:
-  httpGet:
-    path: /healthz
-    port: rpc
-
-podSecurityContext: {}
-
-securityContext: {}
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+tolerations:
+  - key: "kubernetes.io/arch"
+    operator: "Equal"
+    value: "arm64"
+    effect: "NoSchedule"

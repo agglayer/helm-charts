@@ -1,0 +1,59 @@
+env: bali
+
+podLabels:
+  name: bali-50-op
+  business_unit: agglayer
+  role: integration-network
+  partner: Polygon
+  network: bali-50-op
+
+replicas: 1
+sequencer: true
+
+initContainer:
+  image:
+    pullPolicy: IfNotPresent
+    repository: gcr.io/google.com/cloudsdktool/google-cloud-cli
+    tag: 537.0.0-slim
+
+container:
+  image:
+    pullPolicy: IfNotPresent
+    repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth
+    tag: v1.101503.1
+
+storage:
+  path: /data
+  size: 500Gi
+  storageClassName: balanced-ha-storage
+
+serviceAccount:
+  create: true
+
+config:
+  syncmode: full
+  gcmode: archive
+
+  bucket: gs://integration-networks-bali-genesis/bali-50-op/*
+  path: /etc/op-geth
+
+  extraOptions: {}
+
+  http:
+    api: admin,engine,net,eth,web3,debug,miner,trace,txpool
+
+  # --networkid: chainId
+  networkid: 505050
+
+resources:
+  limits:
+    memory: 2Gi
+  requests:
+    cpu: 1000m
+    memory: 2Gi
+
+tolerations:
+  - key: "kubernetes.io/arch"
+    operator: "Equal"
+    value: "arm64"
+    effect: "NoSchedule"

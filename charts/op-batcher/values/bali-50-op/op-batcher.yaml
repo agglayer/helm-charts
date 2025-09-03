@@ -1,0 +1,44 @@
+env: bali
+
+podLabels:
+  name: bali-50-op
+  business_unit: agglayer
+  role: integration-network
+  partner: Polygon
+  network: bali-50-op
+
+container:
+  image:
+    pullPolicy: IfNotPresent
+    repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-batcher
+    tag: v1.11.5
+
+serviceAccount:
+  create: true
+
+config:
+  key:
+    useKms: true
+    address: 0xbfDc491f5722Ca015CF6D64D0a63dDF40Cd44372
+    path: projects/prj-polygonlabs-shared-dev/locations/europe-west2/keyRings/integration-networks-bali/cryptoKeys/bali-50-op-op-batcher/cryptoKeyVersions/1
+
+  l2:
+    opGethUrl: http://sequencer-op-geth-0.sequencer-op-geth:8545
+    opNodeUrl: http://sequencer-op-node-0.sequencer-op-node:9545
+
+  log:
+    environment: development # "production" or "development"
+    level: info
+
+resources:
+  limits:
+    memory: 2Gi
+  requests:
+    cpu: 1000m
+    memory: 2Gi
+
+tolerations:
+  - key: "kubernetes.io/arch"
+    operator: "Equal"
+    value: "arm64"
+    effect: "NoSchedule"

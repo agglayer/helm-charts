@@ -7,14 +7,18 @@ metadata:
   annotations:
     {{ toYaml .Values.service.annotations | indent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
   ports:
     - port: {{ .Values.service.rpc.port }}
       targetPort: rpc
       protocol: TCP
       name: rpc
+    - port: {{ .Values.service.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
   # StatefulSets require headless services
   # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
-  clusterIP: {{ .Values.service.clusterIP }}
+  clusterIP: None
   selector:
     {{- include "op-node.selectorLabels" . | nindent 4 }}
