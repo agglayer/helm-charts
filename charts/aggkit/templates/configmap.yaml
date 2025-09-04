@@ -12,17 +12,9 @@ data:
     L1URL = {{ index $opSecrets.data "l1RpcURL" | b64dec | quote }}
     L2URL = {{ .Values.config.l2.rpcURL | quote }}
 
-    ForkId = {{ .Values.config.forkId | quote }}
-    ContractVersions = {{ .Values.config.contractsVersion | quote }}
-    IsValidiumMode = {{ eq .Values.config.isValidium true }}
-
-    L2Coinbase = {{ .Values.config.l2.sequencerAddress | quote }}
     SequencerPrivateKeyPath = ""
     SequencerPrivateKeyPassword = ""
 
-    AggregatorPrivateKeyPath = ""
-    AggregatorPrivateKeyPassword  = ""
-    SenderProofToL1Addr = ""
     polygonBridgeAddr = {{ .Values.config.bridgeAddress | quote }}
 
     RPCURL = {{ .Values.config.l2.rpcURL | quote }}
@@ -106,7 +98,7 @@ data:
 
     [AggOracle.EVMSender.EthTxManager.Etherman]
     L1ChainID = {{ .Values.config.l2.chainId | int }}
-    
+
     {{- end }}
 
     [BridgeL2Sync]
