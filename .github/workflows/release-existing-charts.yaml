@@ -49,6 +49,10 @@ jobs:
           CR_CHARTS_DIR: charts
           CR_SKIP_EXISTING: true
         run: |
+          # Add required Helm repositories
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
+
           # Create .cr-release-packages directory
           mkdir -p .cr-release-packages
 
