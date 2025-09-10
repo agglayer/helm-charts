@@ -85,9 +85,6 @@ jobs:
           else
             echo "Creating GitHub releases for packaged charts..."
             cr upload --skip-existing
-
-            echo "Updating repository index..."
-            cr index --push
           fi
 
       - name: Summary
