@@ -210,7 +210,10 @@ helm install my-aggkit agglayer/aggkit
 
     <div class="footer">
         <div class="container">
-            <p>© 2024 PT Services DMCC - Licensed under Apache + MIT License</p>
+            <p>© <span id="current-year"></span> PT Services DMCC - Licensed under Apache + MIT License</p>
+            <script>
+                document.getElementById('current-year').textContent = new Date().getFullYear();
+            </script>
             <p>
                 <a href="https://github.com/agglayer/helm-charts" target="_blank">GitHub</a> |
                 <a href="https://polygon.technology" target="_blank">Polygon</a>

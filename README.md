@@ -1,4 +1,4 @@
-# The Polygon Library for Kubernetes
+# The Agglayer Helm Repository
 
 Common applications, ready to launch on Kubernetes using [Helm](https://github.com/helm/helm). See the [charts](./charts)
 directory for available packages.
@@ -6,21 +6,21 @@ directory for available packages.
 ## TL;DR
 
 ```shell
-# Add the Polygon Helm repository
-helm repo add polygon https://polygon-labs.github.io/helm-charts
+# Add the Agglayer Helm repository
+helm repo add agglayer https://agglayer.github.io/helm-charts
 
 # Update your local Helm chart repository cache
 helm repo update
 
 # Install a chart
-helm install my-release polygon/<chart>
+helm install my-release agglayer/<chart>
 ```
 
 ### Installing from source
 
 ```shell
 # Clone the repository
-git clone https://github.com/polygon-labs/helm-charts.git
+git clone https://github.com/agglayer/helm-charts.git
 cd helm-charts
 
 # Install a chart from source
@@ -85,7 +85,7 @@ application for specific details.
 
 ## License
 
-Copyright (c) 2024 PT Services DMCC
+Copyright (c) 2025 PT Services DMCC
 
 Licensed under the Apache + MIT License (the "License"); you may not use this file except in compliance with the License.
 
