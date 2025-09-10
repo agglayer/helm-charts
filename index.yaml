@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  producers:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-09-10T11:16:46.386032145Z"
+    description: A Helm chart for Kubernetes
+    digest: febfba52eaf2214d536acb4d3bc900ecf5e0ae0862ce80877f2ef864e09f32d9
+    name: producers
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/producers-0.1.1/producers-0.1.1.tgz
+    version: 0.1.1
+generated: "2025-09-10T11:16:46.386037154Z"
