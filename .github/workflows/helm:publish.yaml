@@ -1,57 +1,46 @@
-name: Publish helm chart
+name: Release Charts
 
 on:
   push:
     branches:
       - main
 
-env:
-  ARTIFACT_REGISTRY: oci://europe-west2-docker.pkg.dev/prj-polygonlabs-shared-prod/polygonlabs-docker-prod
-  OIDC_PROVIDER: projects/23849419004/locations/global/workloadIdentityPools/polygonlabs-shared-prod/providers/oidc-shared-prod
-  OIDC_SERVICE_ACCOUNT: shared-prod-oidc-sa@prj-polygonlabs-shared-prod.iam.gserviceaccount.com
-
 permissions:
-  contents: write
+  contents: read
+  pages: write
   id-token: write
 
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
 jobs:
-  publish-chart:
+  release:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Authenticate with GCP via OIDC
-        uses: google-github-actions/auth@v2
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
         with:
-          token_format: access_token
-          workload_identity_provider: ${{ env.OIDC_PROVIDER }}
-          service_account: ${{ env.OIDC_SERVICE_ACCOUNT }}
+          version: v3.14.4
 
-      - name: Configure Artifact Registry authentication
+      - name: Add Helm repositories
         run: |
-          echo '{"credHelpers": {"europe-west2-docker.pkg.dev": "gcloud"}}' > ~/.docker/config.json
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo update
 
-      - name: Get list of modified charts
-        id: get-modified-charts
-        run: |
-          CHARTS=$(git diff --name-only HEAD^ HEAD \
-            | grep 'charts/.*/Chart.yaml' \
-              | xargs -I{} sh -c \
-                'if git diff HEAD^ HEAD {} | grep -q "version:"; then basename $(dirname {}); fi' \
-              | tr '\n' ' ')
-          echo "Modified charts: $CHARTS"
-          echo "charts=$CHARTS" >> $GITHUB_OUTPUT
-
-      - name: Push helm chart
-        if: steps.get-modified-charts.outputs.charts
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.7.0
         env:
-          CHARTS: ${{ steps.get-modified-charts.outputs.charts }}
-        run: |
-          for chart in $CHARTS; do
-            echo "Processing chart $chart"
-            helm dependency update charts/$chart
-            helm package charts/$chart --destination charts/$chart
-            helm push charts/$chart/$chart*.tgz ${{ env.ARTIFACT_REGISTRY }}
-          done
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
