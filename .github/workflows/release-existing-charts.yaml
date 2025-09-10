@@ -100,13 +100,7 @@ jobs:
               echo "⚠️  Some uploads may have failed, but continuing..."
             fi
 
-            echo "Updating repository index..."
-            # Update the index (this will be handled by the regular workflow)
-            if cr index --push; then
-              echo "✅ Successfully updated repository index"
-            else
-              echo "⚠️  Index update may have failed"
-            fi
+            echo "ℹ️  Repository index will be updated by the main workflow when you push to main"
           fi
 
       - name: Summary
@@ -132,5 +126,5 @@ jobs:
               fi
             done
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "Repository index updated at: https://agglayer.github.io/helm-charts/index.yaml" >> $GITHUB_STEP_SUMMARY
+            echo "**Next step**: Push any change to main branch to update the repository index at: https://agglayer.github.io/helm-charts/index.yaml" >> $GITHUB_STEP_SUMMARY
           fi
