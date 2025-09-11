@@ -22,9 +22,6 @@ service:
     port: 7300
   annotations: {}
 
-podSecurityContext: {}
-securityContext: {}
-
 serviceAccount:
   create: true
   automount: true
