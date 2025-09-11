@@ -45,7 +45,7 @@ config:
   bucket: gs://path/to/bucket/files/*
   path: /etc/op-node
 
-  chainID: 1
+  chainId: 1
 
   key:
     useKms: true
