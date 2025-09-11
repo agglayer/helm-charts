@@ -47,7 +47,7 @@ spec:
             - --safe-abort-nonce-too-low-count=3
             - --resubmission-timeout=30s
             - --rpc.addr=0.0.0.0
-            - --rpc.port=8548
+            - --rpc.port={{ .Values.service.rpc.port }}
             - --rpc.enable-admin
             - --max-channel-duration=50
             - --throttle-threshold=0

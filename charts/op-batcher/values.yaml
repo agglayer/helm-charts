@@ -37,6 +37,8 @@ config:
     address: 0x0000000000000000000000000000000000000000
     path: path/to/key
 
+  chainId: 1
+
   l1:
     rpc: "http://"
 
