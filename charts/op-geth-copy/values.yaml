@@ -1,0 +1,97 @@
+env: bali
+
+podLabels:
+  name: myname
+  business_unit: agglayer
+  role: myrole
+  partner: Polygon
+  network: mynetwork
+
+replicas: 1
+
+container:
+  image:
+    pullPolicy: IfNotPresent
+    repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-geth
+    tag: v1.101411.4 # https://github.com/smartcontracts/simple-optimism-node/blob/main/docker-compose.yml#L31
+
+storage:
+  path: /data
+  size: 500Gi
+
+service:
+  type: ClusterIP
+  clusterIP: None
+  authrpc:
+    port: 8551
+  http:
+    port: 8545
+  ws:
+    port: 8546
+  metrics:
+    port: 7300
+  annotations: {}
+
+ingress:
+  create: true
+  hostname: something.dev.polygon
+
+podSecurityContext: {}
+securityContext: {}
+
+existingSecret: "secretName"
+
+genesisFileGCP:
+  bucket: "bucket-name"
+  object: "bucket-object"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+
+config:
+  extraOptions: {}
+
+  nodeType: archive # "archive" or "full"
+
+  miner:
+    gasLimit: 60000000
+
+  txpool:
+    accountqueue: 64
+    accountslots: 16
+    globalqueue: 1024
+    globalslots: 5120
+
+  http:
+    api: admin,engine,net,eth,web3,debug,miner
+
+  ws:
+    api: admin,engine,net,eth,web3,debug,miner
+
+  l2:
+    chainId: 123
+    networkName: op-network
+    sequencerHttp: http://somewhere
+
+  cache:
+    database: 20 # 4GB
+    gc: 12
+    main: 20480 # 20GB
+    snapshot: 24
+    trie: 24
+
+  log:
+    environment: development # "production" or "development"
+    level: info
+
+  rollupJson: |
+    {}
+
+resources:
+  limits:
+    memory: 10Gi
+  requests:
+    cpu: 1
+    memory: 2Gi
