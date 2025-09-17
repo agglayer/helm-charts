@@ -14,6 +14,16 @@ entries:
   aggkit:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-09-17T08:14:34.312110041Z"
+    description: A Helm chart for Aggkit
+    digest: 642a2daf0861fb9b467b5278eef9a0ab3469375c5703b1d2058e164a98cf0edc
+    name: aggkit
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/aggkit-3.1.1/aggkit-3.1.1.tgz
+    version: 3.1.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-09-10T12:01:30.649514034Z"
     description: A Helm chart for Aggkit
     digest: 2fa8cb26db326f759443e2fe6f16255bff827fca95cde588d1bfd54c00d829db
@@ -270,4 +280,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-explorer-0.3.1/zkevm-explorer-0.3.1.tgz
     version: 0.3.1
-generated: "2025-09-10T12:01:34.657665069Z"
+generated: "2025-09-17T08:14:39.625149885Z"
