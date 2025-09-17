@@ -37,29 +37,20 @@ spec:
             - /bin/sh
             - -c
           args:
-            - |
-              op-node \
-                --l2={{ .Values.config.l2.opGethAuthUrl }} \
-                --l2.jwt-secret=/chainconfig/jwt.txt \
-                --sequencer.enabled \
-                --sequencer.l1-confs=5 \
-                --verifier.l1-confs=4 \
-                --rollup.config=/chainconfig/rollup.json \
-                --rpc.addr=0.0.0.0 \
-                --rpc.enable-admin \
-                --p2p.disable \
-                --p2p.sequencer.key={{ index $opSecrets.data "sequencer_private_key" | b64dec }} \
-                --l1={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
-                --l1.beacon={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
-                --rollup.config=/chainconfig/rollup.json \
-                {{- range .Values.config.extraOptions }}
-                --{{ . }} \
-                {{- end}}
-                --safedb.path=/data
+            - op-node
           ports:
             - name: rpc
-              containerPort: {{ .Values.service.rpc.port }}
+              containerPort: {{ .Values.config.rpc.port }}
               protocol: TCP
+            - name: p2p-tcp
+              containerPort: {{ .Values.config.p2p.listenTcpPort }}
+              protocol: TCP
+            - name: p2p-udp
+              containerPort: {{ .Values.config.p2p.listenUdpPort }}
+              protocol: UDP
+          envFrom:
+            - configMapRef:
+                name: {{ include "op-node.fullname" . }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -72,11 +63,6 @@ spec:
         - name: config
           projected:
             sources:
-              - configMap:
-                  name: {{ include "op-node.fullname" . }}
-                  items:
-                    - key: "rollup.json"
-                      path: "rollup.json"
               - secret:
                   name: {{ .Values.existingSecret }}
                   items:

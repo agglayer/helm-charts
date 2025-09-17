@@ -21,6 +21,14 @@ spec:
       targetPort: ws
       protocol: TCP
       name: ws
+    - port: {{ .Values.service.p2pTCP.port }}
+      targetPort: p2p-tcp
+      protocol: TCP
+      name: p2p-tcp
+    - port: {{ .Values.service.p2pUDP.port }}
+      targetPort: p2p-udp
+      protocol: UDP
+      name: p2p-udp
   # StatefulSets require headless services
   # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
   clusterIP: {{ .Values.service.clusterIP }}

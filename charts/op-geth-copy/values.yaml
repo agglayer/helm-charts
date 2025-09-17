@@ -28,6 +28,10 @@ service:
     port: 8545
   ws:
     port: 8546
+  p2pTCP:
+    port: 30303
+  p2pUDP:
+    port: 30303
   metrics:
     port: 7300
   annotations: {}

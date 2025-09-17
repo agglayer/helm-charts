@@ -1,8 +1,52 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ include "op-node.fullname" . }}
   namespace: {{ .Release.Namespace }}
 data:
-  rollup.json: |-
-{{ .Values.config.rollupJson | indent 4 }}
+  # Network configuration
+  OP_NODE_NETWORK: {{ .Values.config.network | quote }}
+
+  # L1 configuration
+  OP_NODE_L1_ETH_RPC: {{ index $opSecrets.data "l1RpcURL" | b64dec | quote }}
+  OP_NODE_L1_BEACON: {{ index $opSecrets.data "l1RpcURL" | b64dec | quote }}
+  OP_NODE_L1_BEACON_ARCHIVER: {{ index $opSecrets.data "l1RpcURL" | b64dec | quote }}
+  OP_NODE_L1_BEACON_FETCH_ALL_SIDECARS: {{ .Values.config.l1.beaconFetchAllSidecars | quote }}
+  OP_NODE_L1_RPC_KIND: {{ .Values.config.l1.rpcKind | quote }}
+  OP_NODE_L1_TRUST_RPC: {{ .Values.config.l1.trustRpc | quote }}
+
+  # L2 Engine configuration
+  OP_NODE_L2_ENGINE_KIND: {{ .Values.config.l2.engineKind | quote }}
+  OP_NODE_L2_ENGINE_RPC: {{ .Values.config.l2.engineRpc | quote }}
+  OP_NODE_L2_ENGINE_AUTH: /chainconfig/jwt.txt
+
+  # Sync configuration
+  OP_NODE_SYNCMODE: {{ .Values.config.sync.mode | quote }}
+  OP_NODE_VERIFIER_L1_CONFS: {{ .Values.config.sync.verifierL1Confs | quote }}
+  OP_NODE_ROLLUP_LOAD_PROTOCOL_VERSIONS: {{ .Values.config.sync.rollupLoadProtocolVersions | quote }}
+
+  # RPC configuration
+  OP_NODE_RPC_ADDR: {{ .Values.config.rpc.addr | quote }}
+  OP_NODE_RPC_PORT: {{ .Values.config.rpc.port | quote }}
+
+  # P2P configuration
+  OP_NODE_P2P_AGENT: {{ .Values.config.p2p.agent | quote }}
+  OP_NODE_P2P_LISTEN_IP: {{ .Values.config.p2p.listenIp | quote }}
+  OP_NODE_P2P_LISTEN_TCP_PORT: {{ .Values.config.p2p.listenTcpPort | quote }}
+  OP_NODE_P2P_LISTEN_UDP_PORT: {{ .Values.config.p2p.listenUdpPort | quote }}
+  OP_NODE_INTERNAL_IP: {{ .Values.config.p2p.internalIp | quote }}
+  OP_NODE_P2P_BOOTNODES: {{ .Values.config.p2p.bootnodes | quote }}
+
+  # Logging configuration
+  OP_NODE_LOG_LEVEL: {{ .Values.config.log.level | quote }}
+  OP_NODE_LOG_FORMAT: {{ .Values.config.log.format | quote }}
+  OP_NODE_SNAPSHOT_LOG: {{ .Values.config.log.snapshotLog | quote }}
+
+  # Metrics configuration
+  {{- if .Values.config.metrics.enabled }}
+  OP_NODE_METRICS_ENABLED: "true"
+  OP_NODE_METRICS_ADDR: {{ .Values.config.metrics.addr | quote }}
+  OP_NODE_METRICS_PORT: {{ .Values.config.metrics.port | quote }}
+  {{- end }}

@@ -72,10 +72,12 @@ spec:
                 --metrics.port="{{ .Values.service.metrics.port }}" \
                 --syncmode="full" \
                 --gcmode="{{ .Values.config.nodeType }}" \
-                --maxpeers=0 \
+                --maxpeers=100 \
                 --rollup.sequencerhttp="{{ .Values.config.l2.sequencerHttp }}" \
                 --rollup.halt=major \
                 --op-network="{{ .Values.config.l2.networkName }}" \
+                --discovery.port="{{ .Values.service.p2pTCP.port }}" \
+                --port="{{ .Values.service.p2pTCP.port }}" \
                 --rollup.disabletxpoolgossip=true \
                 --cache="{{ .Values.config.cache.main }}" \
                 --cache.database="{{ .Values.config.cache.database }}" \
@@ -92,6 +94,12 @@ spec:
             - name: ws
               containerPort: {{ .Values.service.ws.port }}
               protocol: TCP
+            - name: p2p-tcp
+              containerPort: {{ .Values.service.p2pTCP.port }}
+              protocol: TCP
+            - name: p2p-udp
+              containerPort: {{ .Values.service.p2pUDP.port }}
+              protocol: UDP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

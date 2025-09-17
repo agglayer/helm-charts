@@ -9,10 +9,24 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.rpc.port }}
+    - port: {{ .Values.config.rpc.port }}
       targetPort: rpc
       protocol: TCP
       name: rpc
+    - port: {{ .Values.config.p2p.listenTcpPort }}
+      targetPort: p2p-tcp
+      protocol: TCP
+      name: p2p-tcp
+    - port: {{ .Values.config.p2p.listenUdpPort }}
+      targetPort: p2p-udp
+      protocol: UDP
+      name: p2p-udp
+    {{ if .Values.config.metrics.enabled }}
+    - port: {{ .Values.config.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{ end }}
   # StatefulSets require headless services
   # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
   clusterIP: {{ .Values.service.clusterIP }}

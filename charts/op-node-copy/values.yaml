@@ -22,8 +22,6 @@ storage:
 service:
   type: ClusterIP
   clusterIP: None
-  rpc:
-    port: 9545
   annotations: {}
 
 ingress:
@@ -36,17 +34,54 @@ securityContext: {}
 existingSecret: "secretName"
 
 config:
-  extraOptions: {}
+  # Node type (vanilla or base)
+  nodeType: vanilla
 
+  # Network configuration
+  network: some-l2-network-name
+
+  # L1 configuration (required)
+  l1:
+    beaconFetchAllSidecars: true
+    rpcKind: "basic"
+    trustRpc: true
+
+  # L2 Engine configuration
   l2:
-    opGethAuthUrl: http://op-geth:8551
+    engineKind: geth
+    engineRpc: "http://op-geth:8545"
 
+  # Sync configuration
+  sync:
+    mode: execution-layer
+    verifierL1Confs: 4
+    rollupLoadProtocolVersions: true
+
+  # RPC configuration
+  rpc:
+    addr: "0.0.0.0"
+    port: 8545
+
+  # P2P configuration
+  p2p:
+    agent: base
+    listenIp: "0.0.0.0"
+    listenTcpPort: 9222
+    listenUdpPort: 9222
+    internalIp: true
+    bootnodes: ""
+
+  # Logging configuration
   log:
-    environment: development # "production" or "development"
     level: info
+    format: json
+    snapshotLog: "/tmp/op-node-snapshot-log"
 
-  rollupJson: |
-    {}
+  # Metrics configuration
+  metrics:
+    enabled: true
+    addr: "0.0.0.0"
+    port: 7300
 
 resources:
   limits:
