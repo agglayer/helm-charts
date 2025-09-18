@@ -21,7 +21,6 @@ storage:
 
 service:
   type: ClusterIP
-  clusterIP: None
   annotations: {}
 
 ingress:
@@ -34,9 +33,6 @@ securityContext: {}
 existingSecret: "secretName"
 
 config:
-  # Node type (vanilla or base)
-  nodeType: vanilla
-
   # Network configuration
   network: some-l2-network-name
 
@@ -44,12 +40,12 @@ config:
   l1:
     beaconFetchAllSidecars: true
     rpcKind: "basic"
-    trustRpc: true
+    trustRpc: false
 
   # L2 Engine configuration
   l2:
     engineKind: geth
-    engineRpc: "http://op-geth:8545"
+    engineRpc: "http://op-geth:8551"
 
   # Sync configuration
   sync:

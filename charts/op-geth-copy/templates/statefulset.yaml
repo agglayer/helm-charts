@@ -37,6 +37,7 @@ spec:
       #     volumeMounts:
       #       - mountPath: "/genesis"
       #         name: genesis
+      terminationGracePeriodSeconds: 300
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -70,8 +71,8 @@ spec:
                 --metrics \
                 --metrics.addr=0.0.0.0 \
                 --metrics.port="{{ .Values.service.metrics.port }}" \
-                --syncmode="full" \
-                --gcmode="{{ .Values.config.nodeType }}" \
+                --syncmode="{{ .Values.config.syncmode }}" \
+                --gcmode="{{ .Values.config.gcmode }}" \
                 --maxpeers=100 \
                 --rollup.sequencerhttp="{{ .Values.config.l2.sequencerHttp }}" \
                 --rollup.halt=major \

@@ -57,7 +57,8 @@ serviceAccount:
 config:
   extraOptions: {}
 
-  nodeType: archive # "archive" or "full"
+  syncmode: full # "archive" or "full"
+  gcmode: full # "archive" or "full"
 
   miner:
     gasLimit: 60000000
