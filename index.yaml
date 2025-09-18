@@ -189,6 +189,16 @@ entries:
   op-secrets:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2025-09-18T13:47:09.798224225Z"
+    description: A Helm chart for 1Password secrets
+    digest: 19f030c81a073ee8126598cf348d0f1a772efbc5a88ab98f18d5c4e3fe152963
+    name: op-secrets
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-secrets-0.1.6/op-secrets-0.1.6.tgz
+    version: 0.1.6
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2025-09-10T12:01:33.51004008Z"
     description: A Helm chart for 1Password secrets
     digest: ad9999c4c2dd12e8c938b1ef203f04fc24c7ac195270f7417e366d17071cc9b2
@@ -280,4 +290,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-explorer-0.3.1/zkevm-explorer-0.3.1.tgz
     version: 0.3.1
-generated: "2025-09-17T08:14:39.625149885Z"
+generated: "2025-09-18T13:47:09.798256282Z"
