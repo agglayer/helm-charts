@@ -49,7 +49,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: wait-op-secrets
-        image: bitnami/kubectl:latest
+        image: bitnamilegacy/kubectl:latest
         command:
         - /bin/sh
         - -c
