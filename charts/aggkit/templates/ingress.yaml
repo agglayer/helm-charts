@@ -64,7 +64,7 @@ spec:
                   name: bridge
 {{- end }}
 ---
-{{- if .Values.ingresses.bridge.create -}}
+{{- if .Values.ingresses.validator.create -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
