@@ -48,6 +48,9 @@ spec:
             - name: bridge
               containerPort: {{ .Values.container.ports.bridge }}
               protocol: TCP
+            - name: validator
+              containerPort: {{ .Values.container.ports.validator }}
+              protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

@@ -55,7 +55,6 @@ data:
     CheckSettledInterval = {{ .Values.config.aggSender.checkSettledInterval | quote }}
     MaxCertSize = {{ .Values.config.aggSender.maxCertSize | int }}
     SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
-    BlockFinality="FinalizedBlock"
     Mode={{ .Values.config.aggSender.mode | quote }}
     RequireNoFEPBlockGap = true
 
@@ -78,16 +77,26 @@ data:
     UseTLS = {{ .Values.config.aggSender.aggkitProverClient.useTLS | quote }}
     {{ end }}
 
-    [AggSender.AgglayerClient]
+    [AggSender.AgglayerClient.GRPC]
     URL = {{ .Values.config.aggSender.agglayerClient.url | quote }}
     UseTLS = {{ .Values.config.aggSender.agglayerClient.useTLS | quote }}
+
+    [AggSender.ValidatorClient]
+    URL = {{ .Values.config.aggSender.validatorClient.url | quote }}
 
     {{- end }}
 
     {{- if has "aggoracle" .Values.config.components }}
 
+    [AggOracle]
+    EnableAggOracleCommittee = {{ .Values.config.aggOracle.enableAggOracleCommittee }}
+
     [AggOracle.EVMSender]
     GlobalExitRootL2 = {{ .Values.config.l2.globalExitRootAddress | quote }}
+
+    {{ if .Values.config.aggOracle.enableAggOracleCommittee }}
+    AggOracleCommitteeAddr = {{ .Values.config.aggOracle.aggOracleCommitteeAddr | quote }}
+    {{ end }}
 
     [AggOracle.EVMSender.EthTxManager]
     {{ if .Values.config.aggOracle.privateKey.keyName }}
@@ -103,11 +112,42 @@ data:
 
     [BridgeL2Sync]
     BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
+    BlockFinality="FinalizedBlock"
 
     [L1InfoTreeSync]
-    BlockFinality="FinalizedBlock"
     SyncBlockChunkSize=1000
     InitialBlock = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
 
     [REST]
     Port = {{ .Values.container.ports.bridge | quote }}
+
+    [L2GERSync]
+    BlockFinality = "LatestBlock"
+
+    {{- if has "aggsender-validator" .Values.config.components }}
+
+    [Validator]
+    EnableRPC = true
+    Signer = {Method ="GCP", KeyName={{ .Values.config.validator.privateKey.keyName | quote }}}
+    Mode={{ .Values.config.validator.mode | quote }}
+
+    [Validator.ServerConfig]
+    Host = "0.0.0.0"
+    Port = {{ .Values.container.ports.validator }}
+    MaxDecodingMessageSize = 1073741824  # 1GB
+
+    [Validator.LerQuerierConfig]
+    RollupManagerAddr = {{ .Values.config.l1.rollupManagerAddress | quote }}
+    RollupCreationBlockL1 = {{ .Values.config.l1.rollupBlockNumber | int }}
+
+    [Validator.AgglayerClient]
+    Cached = true
+
+    [Validator.AgglayerClient.ConfigurationCache]
+    TTL = "15m"
+    Capacity = 100
+
+    [Validator.AgglayerClient.GRPC]
+    URL = {{ .Values.config.validator.agglayerClient.url | quote }}
+    UseTLS = {{ .Values.config.validator.agglayerClient.useTLS | quote }}
+    {{ end }}

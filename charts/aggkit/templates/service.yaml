@@ -15,6 +15,10 @@ spec:
       targetPort: bridge
       protocol: TCP
       name: bridge
+    - port: {{ .Values.container.ports.validator }}
+      targetPort: validator
+      protocol: TCP
+      name: validator
   # StatefulSets require headless services
   # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
   clusterIP: {{ .Values.service.clusterIP }}
