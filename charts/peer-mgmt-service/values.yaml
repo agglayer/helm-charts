@@ -1,0 +1,86 @@
+env: bali
+
+podLabels:
+  name: myname
+  business_unit: agglayer
+  role: myrole
+  partner: Polygon
+  network: mynetwork
+
+replicaCount: 1
+
+image:
+  repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/peer-mgmt-service
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  clusterIP: None
+  http:
+    port: 8080
+  metrics:
+    port: 7300
+  annotations: {}
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+config:
+  nodes:
+    node-0:
+      rpc_address: http://
+    node-1:
+      rpc_address: http://
+
+  networks:
+    bali-48-op:
+      members:
+        - node-0
+        - node-1
+
+  metrics: true
+
+resources:
+  limits:
+    memory: 250Mi
+  requests:
+    cpu: 100m
+    memory: 250Mi
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: http
+readinessProbe:
+  httpGet:
+    path: /healthz
+    port: http
+
+podSecurityContext:
+  fsGroup: 1001
+  fsGroupChangePolicy: Always
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  privileged: false
+  readOnlyRootFilesystem: false
+  runAsGroup: 0
+  runAsNonRoot: true
+  runAsUser: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
