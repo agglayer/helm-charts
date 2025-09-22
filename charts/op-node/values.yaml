@@ -83,9 +83,24 @@ readinessProbe:
     path: /healthz
     port: rpc
 
-podSecurityContext: {}
+podSecurityContext:
+  fsGroup: 1001
+  fsGroupChangePolicy: Always
+  seccompProfile:
+    type: RuntimeDefault
 
-securityContext: {}
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  privileged: false
+  readOnlyRootFilesystem: false
+  runAsGroup: 0
+  runAsNonRoot: true
+  runAsUser: 1001
+  seccompProfile:
+    type: RuntimeDefault
 
 nodeSelector: {}
 
