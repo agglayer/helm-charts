@@ -7,7 +7,7 @@ podLabels:
   partner: Polygon
   network: mynetwork
 
-replicas: 1
+replicaCount: 1
 
 container:
   image:
@@ -22,18 +22,6 @@ storage:
 service:
   type: ClusterIP
   clusterIP: None
-  authrpc:
-    port: 8551
-  http:
-    port: 8545
-  ws:
-    port: 8546
-  p2pTCP:
-    port: 30303
-  p2pUDP:
-    port: 30303
-  metrics:
-    port: 7300
   annotations: {}
 
 ingress:
@@ -69,26 +57,32 @@ config:
     corsdomains: "*"
     vhosts: "*"
     addr: "0.0.0.0"
+    port: 8545
     api: admin,engine,net,eth,web3,debug,miner
 
   # Auth RPC configuration
   authrpc:
     addr: "0.0.0.0"
+    port: 8551
     vhosts: "*"
 
   # WebSocket configuration
   ws:
     addr: "0.0.0.0"
-    origins: "*"
+    port: 8546
     api: admin,engine,net,eth,web3,debug,miner
+    origins: "*"
 
   # Metrics configuration
   metrics:
+    enabled: true
     addr: "0.0.0.0"
+    port: 7300
 
   # P2P configuration
   p2p:
     maxpeers: "0"
+    port: 30303
 
   # L2 configuration
   l2:

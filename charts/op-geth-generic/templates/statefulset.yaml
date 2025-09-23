@@ -28,17 +28,6 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       serviceAccountName: {{ include "op-geth.serviceAccountName" . }}
-      # initContainers:
-      #   - name: download-genesis
-      #     image: google/cloud-sdk:latest
-      #     command: ["sh", "-c"]
-      #     args:
-      #     - |
-      #       gsutil cp gs://{{ .Values.genesisFileGCP.bucket }}/{{ .Values.genesisFileGCP.object }} /genesis/genesis.json
-      #     volumeMounts:
-      #       - mountPath: "/genesis"
-      #         name: genesis
-      terminationGracePeriodSeconds: 300
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -52,34 +41,29 @@ spec:
                 name: {{ include "op-geth.fullname" . }}
           ports:
             - name: authrpc
-              containerPort: {{ .Values.service.authrpc.port }}
+              containerPort: {{ .Values.config.authrpc.port }}
               protocol: TCP
             - name: http
-              containerPort: {{ .Values.service.http.port }}
+              containerPort: {{ .Values.config.http.port }}
               protocol: TCP
             - name: ws
-              containerPort: {{ .Values.service.ws.port }}
+              containerPort: {{ .Values.config.ws.port }}
               protocol: TCP
             - name: p2p-tcp
-              containerPort: {{ .Values.service.p2pTCP.port }}
+              containerPort: {{ .Values.config.p2p.port }}
               protocol: TCP
             - name: p2p-udp
-              containerPort: {{ .Values.service.p2pUDP.port }}
+              containerPort: {{ .Values.config.p2p.port }}
               protocol: UDP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            # - mountPath: "/genesis"
-            #   name: genesis
-            #   readOnly: true
             - mountPath: "/chainconfig"
               name: config
               readOnly: true
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
       volumes:
-        # - name: genesis
-        #   emptyDir: {}
         - name: config
           projected:
             sources:

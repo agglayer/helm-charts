@@ -7,7 +7,7 @@ podLabels:
   partner: Polygon
   network: mynetwork
 
-replicas: 1
+replicaCount: 1
 
 container:
   image:

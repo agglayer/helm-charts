@@ -18,26 +18,26 @@ data:
   GETH_HTTP_CORSDOMAIN: {{ .Values.config.http.corsdomains | quote }}
   GETH_HTTP_VHOSTS: {{ .Values.config.http.vhosts | quote }}
   GETH_HTTP_ADDR: {{ .Values.config.http.addr | quote }}
-  GETH_HTTP_PORT: {{ .Values.service.http.port | quote }}
+  GETH_HTTP_PORT: {{ .Values.config.http.port | quote }}
   GETH_HTTP_API: {{ .Values.config.http.api | quote }}
 
   # Auth RPC configuration
   GETH_AUTHRPC_ADDR: {{ .Values.config.authrpc.addr | quote }}
-  GETH_AUTHRPC_PORT: {{ .Values.service.authrpc.port | quote }}
+  GETH_AUTHRPC_PORT: {{ .Values.config.authrpc.port | quote }}
   GETH_AUTHRPC_VHOSTS: {{ .Values.config.authrpc.vhosts | quote }}
   GETH_AUTHRPC_JWTSECRET: /chainconfig/jwt.txt
 
   # WebSocket configuration
   GETH_WS: "true"
   GETH_WS_ADDR: {{ .Values.config.ws.addr | quote }}
-  GETH_WS_PORT: {{ .Values.service.ws.port | quote }}
+  GETH_WS_PORT: {{ .Values.config.ws.port | quote }}
   GETH_WS_ORIGINS: {{ .Values.config.ws.origins | quote }}
   GETH_WS_API: {{ .Values.config.ws.api | quote }}
 
   # Metrics configuration
   GETH_METRICS: "true"
   GETH_METRICS_ADDR: {{ .Values.config.metrics.addr | quote }}
-  GETH_METRICS_PORT: {{ .Values.service.metrics.port | quote }}
+  GETH_METRICS_PORT: {{ .Values.config.metrics.port | quote }}
 
   # Sync and GC configuration
   GETH_SYNCMODE: {{ .Values.config.syncmode | quote }}
@@ -45,8 +45,8 @@ data:
 
   # P2P configuration
   GETH_MAXPEERS: {{ .Values.config.p2p.maxpeers | quote }}
-  GETH_DISCOVERY_PORT: {{ .Values.service.p2pTCP.port | quote }}
-  GETH_PORT: {{ .Values.service.p2pTCP.port | quote }}
+  GETH_DISCOVERY_PORT: {{ .Values.config.p2p.port | quote }}
+  GETH_PORT: {{ .Values.config.p2p.port | quote }}
 
   # Rollup configuration
   GETH_ROLLUP_SEQUENCERHTTP: {{ .Values.config.l2.sequencerHttp | quote }}

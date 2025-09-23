@@ -9,23 +9,23 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.authrpc.port }}
+    - port: {{ .Values.config.authrpc.port }}
       targetPort: authrpc
       protocol: TCP
       name: authrpc
-    - port: {{ .Values.service.http.port }}
+    - port: {{ .Values.config.http.port }}
       targetPort: http
       protocol: TCP
       name: http
-    - port: {{ .Values.service.ws.port }}
+    - port: {{ .Values.config.ws.port }}
       targetPort: ws
       protocol: TCP
       name: ws
-    - port: {{ .Values.service.p2pTCP.port }}
+    - port: {{ .Values.config.p2p.port }}
       targetPort: p2p-tcp
       protocol: TCP
       name: p2p-tcp
-    - port: {{ .Values.service.p2pUDP.port }}
+    - port: {{ .Values.config.p2p.port }}
       targetPort: p2p-udp
       protocol: UDP
       name: p2p-udp
