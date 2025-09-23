@@ -49,7 +49,7 @@ config:
 
   # Sync configuration
   sync:
-    mode: execution-layer
+    mode: consensus-layer # "execution-layer" or "consensus-layer"
     verifierL1Confs: 4
     rollupLoadProtocolVersions: true
 

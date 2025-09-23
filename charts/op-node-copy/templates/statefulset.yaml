@@ -35,9 +35,6 @@ spec:
           image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.container.image.pullPolicy }}
           command:
-            - /bin/sh
-            - -c
-          args:
             - op-node
           ports:
             - name: rpc

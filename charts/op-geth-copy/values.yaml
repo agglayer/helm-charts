@@ -55,44 +55,58 @@ serviceAccount:
   annotations: {}
 
 config:
-  extraOptions: {}
+  # Sync and GC configuration
+  syncmode: snap # "full" or "snap"
+  gcmode: full # "full" or "archive"
 
-  syncmode: full # "archive" or "full"
-  gcmode: full # "archive" or "full"
+  # Logging configuration
+  log:
+    verbosity: "3"
+    format: json
 
-  miner:
-    gasLimit: 60000000
-
-  txpool:
-    accountqueue: 64
-    accountslots: 16
-    globalqueue: 1024
-    globalslots: 5120
-
+  # HTTP configuration
   http:
+    corsdomains: "*"
+    vhosts: "*"
+    addr: "0.0.0.0"
     api: admin,engine,net,eth,web3,debug,miner
 
+  # Auth RPC configuration
+  authrpc:
+    addr: "0.0.0.0"
+    vhosts: "*"
+
+  # WebSocket configuration
   ws:
+    addr: "0.0.0.0"
+    origins: "*"
     api: admin,engine,net,eth,web3,debug,miner
 
+  # Metrics configuration
+  metrics:
+    addr: "0.0.0.0"
+
+  # P2P configuration
+  p2p:
+    maxpeers: "0"
+
+  # L2 configuration
   l2:
-    chainId: 123
     networkName: op-network
     sequencerHttp: http://somewhere
 
+  # Rollup configuration
+  rollup:
+    halt: major
+    disableTxPoolGossip: "true"
+
+  # Cache configuration
   cache:
     database: 20 # 4GB
     gc: 12
     main: 20480 # 20GB
     snapshot: 24
     trie: 24
-
-  log:
-    environment: development # "production" or "development"
-    level: info
-
-  rollupJson: |
-    {}
 
 resources:
   limits:

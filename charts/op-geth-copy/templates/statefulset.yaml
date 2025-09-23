@@ -16,6 +16,7 @@ spec:
     metadata:
       {{- with .Values.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
@@ -45,46 +46,10 @@ spec:
           image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.container.image.pullPolicy }}
           command:
-            - /bin/sh
-            - -c
-          args:
-            - |
-              geth \
-                --datadir="{{ .Values.storage.path }}" \
-                --verbosity="3" \
-                --http \
-                --http.corsdomain="*" \
-                --http.vhosts="*" \
-                --http.addr=0.0.0.0 \
-                --http.port="{{ .Values.service.http.port }}" \
-                --http.api={{ .Values.config.http.api }} \
-                --authrpc.addr=0.0.0.0 \
-                --authrpc.port="{{ .Values.service.authrpc.port }}" \
-                --authrpc.vhosts="*" \
-                --authrpc.jwtsecret="/chainconfig/jwt.txt" \
-                --ws \
-                --ws.addr=0.0.0.0 \
-                --ws.port="{{ .Values.service.ws.port }}" \
-                --ws.origins="*" \
-                --ws.api={{ .Values.config.ws.api }} \
-                --log.format=json \
-                --metrics \
-                --metrics.addr=0.0.0.0 \
-                --metrics.port="{{ .Values.service.metrics.port }}" \
-                --syncmode="{{ .Values.config.syncmode }}" \
-                --gcmode="{{ .Values.config.gcmode }}" \
-                --maxpeers=100 \
-                --rollup.sequencerhttp="{{ .Values.config.l2.sequencerHttp }}" \
-                --rollup.halt=major \
-                --op-network="{{ .Values.config.l2.networkName }}" \
-                --discovery.port="{{ .Values.service.p2pTCP.port }}" \
-                --port="{{ .Values.service.p2pTCP.port }}" \
-                --rollup.disabletxpoolgossip=true \
-                --cache="{{ .Values.config.cache.main }}" \
-                --cache.database="{{ .Values.config.cache.database }}" \
-                --cache.gc="{{ .Values.config.cache.gc }}" \
-                --cache.snapshot="{{ .Values.config.cache.snapshot }}" \
-                --cache.trie="{{ .Values.config.cache.trie }}"
+            - geth
+          envFrom:
+            - configMapRef:
+                name: {{ include "op-geth.fullname" . }}
           ports:
             - name: authrpc
               containerPort: {{ .Values.service.authrpc.port }}

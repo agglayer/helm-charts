@@ -1,0 +1,62 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "op-geth.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+data:
+  # Data directory
+  GETH_DATADIR: {{ .Values.storage.path | quote }}
+
+  # Logging configuration
+  GETH_VERBOSITY: {{ .Values.config.log.verbosity | quote }}
+  GETH_LOG_FORMAT: {{ .Values.config.log.format | quote }}
+
+  # HTTP configuration
+  GETH_HTTP: "true"
+  GETH_HTTP_CORSDOMAIN: {{ .Values.config.http.corsdomains | quote }}
+  GETH_HTTP_VHOSTS: {{ .Values.config.http.vhosts | quote }}
+  GETH_HTTP_ADDR: {{ .Values.config.http.addr | quote }}
+  GETH_HTTP_PORT: {{ .Values.service.http.port | quote }}
+  GETH_HTTP_API: {{ .Values.config.http.api | quote }}
+
+  # Auth RPC configuration
+  GETH_AUTHRPC_ADDR: {{ .Values.config.authrpc.addr | quote }}
+  GETH_AUTHRPC_PORT: {{ .Values.service.authrpc.port | quote }}
+  GETH_AUTHRPC_VHOSTS: {{ .Values.config.authrpc.vhosts | quote }}
+  GETH_AUTHRPC_JWTSECRET: /chainconfig/jwt.txt
+
+  # WebSocket configuration
+  GETH_WS: "true"
+  GETH_WS_ADDR: {{ .Values.config.ws.addr | quote }}
+  GETH_WS_PORT: {{ .Values.service.ws.port | quote }}
+  GETH_WS_ORIGINS: {{ .Values.config.ws.origins | quote }}
+  GETH_WS_API: {{ .Values.config.ws.api | quote }}
+
+  # Metrics configuration
+  GETH_METRICS: "true"
+  GETH_METRICS_ADDR: {{ .Values.config.metrics.addr | quote }}
+  GETH_METRICS_PORT: {{ .Values.service.metrics.port | quote }}
+
+  # Sync and GC configuration
+  GETH_SYNCMODE: {{ .Values.config.syncmode | quote }}
+  GETH_GCMODE: {{ .Values.config.gcmode | quote }}
+
+  # P2P configuration
+  GETH_MAXPEERS: {{ .Values.config.p2p.maxpeers | quote }}
+  GETH_DISCOVERY_PORT: {{ .Values.service.p2pTCP.port | quote }}
+  GETH_PORT: {{ .Values.service.p2pTCP.port | quote }}
+
+  # Rollup configuration
+  GETH_ROLLUP_SEQUENCERHTTP: {{ .Values.config.l2.sequencerHttp | quote }}
+  GETH_ROLLUP_HALT: {{ .Values.config.rollup.halt | quote }}
+  GETH_OP_NETWORK: {{ .Values.config.l2.networkName | quote }}
+  GETH_ROLLUP_DISABLETXPOOLGOSSIP: {{ .Values.config.rollup.disableTxPoolGossip | quote }}
+
+  # Cache configuration
+  GETH_CACHE: {{ .Values.config.cache.main | quote }}
+  GETH_CACHE_DATABASE: {{ .Values.config.cache.database | quote }}
+  GETH_CACHE_GC: {{ .Values.config.cache.gc | quote }}
+  GETH_CACHE_SNAPSHOT: {{ .Values.config.cache.snapshot | quote }}
+  GETH_CACHE_TRIE: {{ .Values.config.cache.trie | quote }}
