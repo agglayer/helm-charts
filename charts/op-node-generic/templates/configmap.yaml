@@ -38,7 +38,6 @@ data:
   OP_NODE_P2P_LISTEN_UDP_PORT: {{ .Values.config.p2p.listenUdpPort | quote }}
   OP_NODE_INTERNAL_IP: {{ .Values.config.p2p.internalIp | quote }}
   OP_NODE_P2P_BOOTNODES: {{ .Values.config.p2p.bootnodes | quote }}
-  OP_NODE_P2P_ADVERTISE_IP: 130.211.51.7
 
   # Logging configuration
   OP_NODE_LOG_LEVEL: {{ .Values.config.log.level | quote }}
