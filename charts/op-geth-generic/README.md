@@ -26,6 +26,20 @@ helm install my-op-geth ./op-geth-generic
 | `config.syncmode` | Sync mode (full/snap) | `snap` |
 | `resources.limits.memory` | Memory limit | `10Gi` |
 
+### Init Containers Configuration
+
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `initContainers` | Array of init containers (empty = no init containers) | `[]` |
+| `initContainers[].name` | Name of the init container | Required |
+| `initContainers[].image.repository` | Init container image repository | Required |
+| `initContainers[].image.tag` | Init container image tag | Required |
+| `initContainers[].command` | Command to run in init container | Optional |
+| `initContainers[].args` | Arguments for the command | Optional |
+| `initContainers[].env` | Environment variables | `{}` |
+| `initContainers[].volumeMounts` | Additional volume mounts | `[]` |
+| `initContainers[].resources` | Resource limits and requests | `{}` |
+
 ## Example Values
 
 ```yaml
@@ -41,6 +55,19 @@ config:
 
 storage:
   size: 1Ti
+
+# Enable init container for snapshot download
+initContainers:
+  - name: snapshot-downloader
+    image:
+      repository: curlimages/curl
+      tag: "8.4.0"
+    command: ["sh"]
+    args:
+      - -c
+      - "curl -L -o /data/geth/snapshot.tar.gz ${SNAPSHOT_URL} && cd /data/geth && tar -xzf snapshot.tar.gz"
+    env:
+      SNAPSHOT_URL: "https://snapshots.example.com/mainnet-latest.tar.gz"
 
 resources:
   limits:

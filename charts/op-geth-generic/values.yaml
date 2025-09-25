@@ -42,6 +42,29 @@ serviceAccount:
   automount: true
   annotations: {}
 
+# Init containers for various initialization tasks
+# Empty array by default - no init containers will be created
+initContainers: []
+
+# Example init container (commented out):
+# initContainers:
+#   - name: snapshot-downloader
+#     image:
+#       repository: curlimages/curl
+#       tag: "8.4.0"
+#       pullPolicy: IfNotPresent
+#     command: ["sh", "-c"]
+#     args:
+#       - |
+#         curl -L -o /data/geth/snapshot.tar.gz "${SNAPSHOT_URL}"
+#         cd /data/geth && tar -xzf snapshot.tar.gz && rm snapshot.tar.gz
+#     env:
+#       SNAPSHOT_URL: "https://example.com/snapshot.tar.gz"
+#     volumeMounts: []
+#     resources:
+#       limits:
+#         memory: 1Gi
+
 config:
   # Sync and GC configuration
   syncmode: snap # "full" or "snap"
