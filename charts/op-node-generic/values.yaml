@@ -1,0 +1,87 @@
+env: bali
+
+podLabels:
+  name: myname
+  business_unit: agglayer
+  role: myrole
+  partner: Polygon
+  network: mynetwork
+
+replicaCount: 1
+
+container:
+  image:
+    pullPolicy: IfNotPresent
+    repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node
+    tag: v1.9.5
+
+storage:
+  path: /data
+  size: 500Gi
+
+service:
+  type: ClusterIP
+  annotations: {}
+
+ingress:
+  create: true
+  hostname: domain.com
+
+podSecurityContext: {}
+securityContext: {}
+
+existingSecret: "secretName"
+
+config:
+  # Network configuration
+  network: some-l2-network-name
+
+  # L1 configuration (required)
+  l1:
+    beaconFetchAllSidecars: true
+    rpcKind: "basic"
+    trustRpc: false
+
+  # L2 Engine configuration
+  l2:
+    engineKind: geth
+    engineRpc: "http://op-geth:8551"
+
+  # Sync configuration
+  sync:
+    mode: consensus-layer # "execution-layer" or "consensus-layer"
+    verifierL1Confs: 4
+    rollupLoadProtocolVersions: true
+
+  # RPC configuration
+  rpc:
+    addr: "0.0.0.0"
+    port: 8545
+
+  # P2P configuration
+  p2p:
+    agent: base
+    listenIp: "0.0.0.0"
+    listenTcpPort: 9222
+    listenUdpPort: 9222
+    internalIp: true
+    bootnodes: ""
+
+  # Logging configuration
+  log:
+    level: info
+    format: json
+    snapshotLog: "/tmp/op-node-snapshot-log"
+
+  # Metrics configuration
+  metrics:
+    enabled: true
+    addr: "0.0.0.0"
+    port: 7300
+
+resources:
+  limits:
+    memory: 10Gi
+  requests:
+    cpu: 1
+    memory: 2Gi
