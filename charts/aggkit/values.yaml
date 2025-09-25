@@ -18,6 +18,7 @@ container:
   ports:
     aggsender: 5576
     bridge: 5577
+    validator: 5578
 
 service:
   type: ClusterIP
@@ -30,6 +31,9 @@ ingresses:
   bridge:
     create: false
     hostname: "something-else.dev.polygon"
+  validator:
+    create: false
+    hostname: "something-else-else.dev.polygon"
 
 serviceAccount:
   create: false
@@ -44,6 +48,7 @@ securityContext: {}
 
 config:
   bridgeAddress: "0x123"
+  # list of components: aggsender, aggsender-validator, aggoracle, bridge
   components:
     - aggsender
     - aggoracle
@@ -64,11 +69,24 @@ config:
       url: "http://agglayer:4444"
       useTLS: true
 
+    validatorClient:
+      url: "http://localhost:5578"
+
     privateKey:
       keyName: "" # if this string is not empty, aggSender will try to use KMS
     optimisticModeEnabled: false
 
+  validator:
+    agglayerClient:
+      url: "http://agglayer:4444"
+      useTLS: true
+
+    privateKey:
+      keyName: "" # KMS key name
+
   aggOracle:
+    enableAggOracleCommittee: false
+    aggOracleCommitteeAddr: "0x"
     privateKey:
       keyName: "" # if this string is not empty, aggOracle will try to use KMS
 
