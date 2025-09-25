@@ -112,7 +112,6 @@ data:
 
     [BridgeL2Sync]
     BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
-    BlockFinality="FinalizedBlock"
 
     [L1InfoTreeSync]
     SyncBlockChunkSize=1000
