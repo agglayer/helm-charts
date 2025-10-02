@@ -27,7 +27,7 @@ spec:
                 {
                   "openmetrics_endpoint": "http://%%host%%:{{ .Values.ports.telemetry }}/metrics",
                   "namespace": "agglayer",
-                  "metrics": ["agglayer.*"]
+                  "metrics": [".*"]
                 }
               ]
             }
