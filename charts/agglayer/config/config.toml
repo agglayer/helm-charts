@@ -109,10 +109,10 @@ max-decoding-message-size = {{ .Values.config.prover.grpc.maxDecodingMessageSize
 max-encoding-message-size = {{ .Values.config.prover.grpc.maxEncodingMessageSize | int }}
 
 [outbound.rpc.settle]
-max-retries = 3
-retry-interval = "7s"
-confirmations = 1
-settlement-timeout = "20m"
+max-retries = {{ .Values.config.outbound.rpc.settle.maxRetries | int }}
+retry-interval = {{ .Values.config.outbound.rpc.settle.retryInterval | quote }}
+confirmations = {{ .Values.config.outbound.rpc.settle.confirmations | int }}
+settlement-timeout = {{ .Values.config.outbound.rpc.settle.settlementTimeout | quote }}
 gas-multiplier-factor = {{ .Values.config.outbound.rpc.settle.gasMultiplierFactor | int }}
 
 [log]

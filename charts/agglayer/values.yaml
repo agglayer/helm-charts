@@ -56,6 +56,10 @@ config:
     rpc:
       settle:
         gasMultiplierFactor: 130
+        maxRetries: 3
+        retryInterval: "60s"
+        confirmations: 1
+        settlementTimeout: "20m"
 
   rpc:
     maxRequestBodySize: 10485760 # 10MB

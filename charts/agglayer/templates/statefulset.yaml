@@ -25,16 +25,9 @@ spec:
               "init_config": {},
               "instances": [
                 {
-                  "openmetrics_endpoint": "http://%%host%%:2223/metrics",
-                  "metrics": [
-                    {"execute": "agglayer.execute"},
-                    {"check_tx": "agglayer.check_tx"},
-                    {"send_tx": "agglayer.send_tx"},
-                    {"settle": "agglayer.settle"},
-                    {"target_info": "agglayer.target_info"},
-                    {"verify_signature": "agglayer.verify_signature"},
-                    {"verify_zkp": "agglayer.verify_zkp"}
-                  ]
+                  "openmetrics_endpoint": "http://%%host%%:{{ .Values.ports.telemetry }}/metrics",
+                  "namespace": "agglayer",
+                  "metrics": [".*"]
                 }
               ]
             }
