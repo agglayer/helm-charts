@@ -36,9 +36,7 @@ Common labels
 {{- define "agglayer.labels" -}}
 helm.sh/chart: {{ include "agglayer.chart" . }}
 {{ include "agglayer.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+app.kubernetes.io/version: {{ .Values.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 tags.datadoghq.com/env: {{ .Values.env }}
 tags.datadoghq.com/service: agglayer
