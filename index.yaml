@@ -195,6 +195,17 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/op-geth-0.6.0/op-geth-0.6.0.tgz
     version: 0.6.0
+  op-geth-generic:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-10-03T07:24:29.366620056Z"
+    description: A Helm chart for op-geth
+    digest: 888ac06cfee123b24029969596ae97e0e22fc7ac677bddf3de053d40629ecdea
+    name: op-geth-generic
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-geth-generic-1.0.0/op-geth-generic-1.0.0.tgz
+    version: 1.0.0
   op-node:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -206,6 +217,17 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/op-node-0.5.0/op-node-0.5.0.tgz
     version: 0.5.0
+  op-node-generic:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-10-03T07:24:29.533860489Z"
+    description: A Helm chart for op-node
+    digest: a32a4c1b68519e33ebef1be633e938c212b338abe0e541b75b783d934d8f97d7
+    name: op-node-generic
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-node-generic-1.0.0/op-node-generic-1.0.0.tgz
+    version: 1.0.0
   op-secrets:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -310,4 +332,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-explorer-0.3.1/zkevm-explorer-0.3.1.tgz
     version: 0.3.1
-generated: "2025-10-02T10:41:15.236181734Z"
+generated: "2025-10-03T07:24:29.533880937Z"
