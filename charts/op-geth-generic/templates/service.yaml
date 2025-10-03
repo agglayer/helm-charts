@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "op-geth.fullname" . }}
+  labels:
+    {{- include "op-geth.labels" . | nindent 4 }}
+  annotations:
+    {{ toYaml .Values.service.annotations | indent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.config.authrpc.port }}
+      targetPort: authrpc
+      protocol: TCP
+      name: authrpc
+    - port: {{ .Values.config.http.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{ .Values.config.ws.port }}
+      targetPort: ws
+      protocol: TCP
+      name: ws
+    - port: {{ .Values.config.p2p.port }}
+      targetPort: p2p-tcp
+      protocol: TCP
+      name: p2p-tcp
+    - port: {{ .Values.config.p2p.port }}
+      targetPort: p2p-udp
+      protocol: UDP
+      name: p2p-udp
+  # StatefulSets require headless services
+  # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
+  clusterIP: {{ .Values.service.clusterIP }}
+  selector:
+    {{- include "op-geth.selectorLabels" . | nindent 4 }}

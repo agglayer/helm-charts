@@ -1,0 +1,80 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "op-node.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "op-node.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "op-node.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "op-node.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          command:
+            - op-node
+          ports:
+            - name: rpc
+              containerPort: {{ .Values.config.rpc.port }}
+              protocol: TCP
+            - name: p2p-tcp
+              containerPort: {{ .Values.config.p2p.listenTcpPort }}
+              protocol: TCP
+            - name: p2p-udp
+              containerPort: {{ .Values.config.p2p.listenUdpPort }}
+              protocol: UDP
+            {{ if .Values.config.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.config.metrics.port }}
+              protocol: TCP
+            {{ end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "op-node.fullname" . }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: "/chainconfig"
+              readOnly: true
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+      volumes:
+        - name: config
+          projected:
+            sources:
+              - secret:
+                  name: {{ .Values.existingSecret }}
+                  items:
+                    - key: "jwt"
+                      path: "jwt.txt"
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
