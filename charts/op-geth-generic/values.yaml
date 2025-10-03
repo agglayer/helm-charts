@@ -33,10 +33,6 @@ securityContext: {}
 
 existingSecret: "secretName"
 
-genesisFileGCP:
-  bucket: "bucket-name"
-  object: "bucket-object"
-
 serviceAccount:
   create: true
   automount: true
