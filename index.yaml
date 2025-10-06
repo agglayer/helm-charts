@@ -261,6 +261,16 @@ entries:
     version: 0.1.5
   op-succinct-proposer:
   - apiVersion: v2
+    appVersion: v3.1.0-agglayer
+    created: "2025-10-06T13:36:41.18480638Z"
+    description: A Helm chart for op-succinct-proposer
+    digest: 97e749fa54210304a253deb1b68971a52ddf5f4810666e4e3d732f334210c143
+    name: op-succinct-proposer
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-succinct-proposer-2.0.0/op-succinct-proposer-2.0.0.tgz
+    version: 2.0.0
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2025-09-10T12:01:33.682373501Z"
     description: A Helm chart for op-succinct-proposer
@@ -342,4 +352,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-explorer-0.3.1/zkevm-explorer-0.3.1.tgz
     version: 0.3.1
-generated: "2025-10-06T13:36:18.048407365Z"
+generated: "2025-10-06T13:36:41.184836008Z"
