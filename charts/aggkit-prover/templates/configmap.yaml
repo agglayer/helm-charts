@@ -42,13 +42,10 @@ data:
 
     [aggchain-proof-service.aggchain-proof-builder]
     network-id = {{ .Values.config.networkId | int }}
+    proving-timeout = "1h"
 
     [aggchain-proof-service.aggchain-proof-builder.primary-prover.network-prover]
     proving-timeout = "1h"
-
-    [aggchain-proof-service.aggchain-proof-builder.proving-timeout]
-    secs = 3600
-    nanos = 0
 
     [aggchain-proof-service.aggchain-proof-builder.contracts]
     l1-rpc-endpoint = {{ $l1RpcURL | quote }}
