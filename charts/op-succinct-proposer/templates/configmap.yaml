@@ -51,3 +51,4 @@ data:
   USE_CACHED_DB: {{ .Values.config.useCachedDB | quote }}
   WITNESS_GEN_TIMEOUT: {{ .Values.config.witnessGenTimeout | quote }}
   NETWORK_RPC_URL: {{ $sp1NetworkRpcURL | quote }}
+  OP_SUCCINCT_CONFIG_NAME: {{ .Values.config.opSuccinctConfigName | quote }}
