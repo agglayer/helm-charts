@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/agglayer/aggkit-prover
   pullPolicy: IfNotPresent
-  tag: "feat-rust-proposer"
+  tag: "1.4.2"
   command: ["/usr/local/bin/aggkit-prover"]
   args: ["run", "--config-path", "/etc/aggkit/aggkit-prover-config.toml"]
 
