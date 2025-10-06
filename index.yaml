@@ -44,6 +44,16 @@ entries:
     version: 3.1.0
   aggkit-prover:
   - apiVersion: v2
+    appVersion: 1.4.2
+    created: "2025-10-06T13:36:18.048386877Z"
+    description: A Helm chart for Kubernetes
+    digest: f97bc530ab1870d0c51c493949286d3de0eee875ec569692682b9e4345a30db0
+    name: aggkit-prover
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/aggkit-prover-1.0.0/aggkit-prover-1.0.0.tgz
+    version: 1.0.0
+  - apiVersion: v2
     appVersion: 1.16.0
     created: "2025-09-10T12:01:30.886963579Z"
     description: A Helm chart for Kubernetes
@@ -332,4 +342,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-explorer-0.3.1/zkevm-explorer-0.3.1.tgz
     version: 0.3.1
-generated: "2025-10-03T07:24:29.533880937Z"
+generated: "2025-10-06T13:36:18.048407365Z"
