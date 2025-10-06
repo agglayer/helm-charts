@@ -13,7 +13,7 @@ container:
   image:
     pullPolicy: IfNotPresent
     repository: ghcr.io/succinctlabs/op-succinct/op-proposer
-    tag: main
+    tag: v3.1.0-agglayer
 
 ports:
   metrics: 7300
@@ -51,6 +51,7 @@ config:
   rustLog: "info"
   useCachedDB: false
   witnessGenTimeout: "1200"
+  opSuccinctConfigName: "opsuccinct_genesis"
 
 resources:
   requests:
