@@ -107,3 +107,4 @@ data:
     PrivateKey = {Path = {{ .Values.config.claimTxManager.path | quote }}, Password = {{ $claimTxPrivateKeyPassword | quote }}}
     Enabled = true
     RetryInterval = "1s"
+    AreClaimsBetweenL2sEnabled = {{ .Values.config.claimTxManager.areClaimsBetweenL2sEnabled }}
