@@ -44,6 +44,7 @@ config:
     l2Url: "http://cdk-erigon-rpc:8123"
   claimTxManager:
     path: /etc/bridge/claimtx.keystore
+    areClaimsBetweenL2sEnabled: false
   network:
     genBlockNumber: 0
     polygonBridgeAddress: "0x0000000000000000000000000000000000000000"
