@@ -109,6 +109,16 @@ entries:
   bridge:
   - apiVersion: v2
     appVersion: v0.6.2-RC2
+    created: "2025-10-09T10:45:36.008523242Z"
+    description: A Helm chart for Kubernetes
+    digest: 2a2906b1360123461b2e9aee2c83199c9137ce30498de831715e0652dba4b603
+    name: bridge
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/bridge-0.10.0/bridge-0.10.0.tgz
+    version: 0.10.0
+  - apiVersion: v2
+    appVersion: v0.6.2-RC2
     created: "2025-10-08T08:13:53.595114944Z"
     description: A Helm chart for Kubernetes
     digest: 182a170a72eb9e138494cf075b2a9ba23341d4261f814fe12bcb31f79906a259
@@ -362,4 +372,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-explorer-0.3.1/zkevm-explorer-0.3.1.tgz
     version: 0.3.1
-generated: "2025-10-08T08:13:53.595139079Z"
+generated: "2025-10-09T10:45:36.008561644Z"
