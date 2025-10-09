@@ -115,6 +115,11 @@ confirmations = {{ .Values.config.outbound.rpc.settle.confirmations | int }}
 settlement-timeout = {{ .Values.config.outbound.rpc.settle.settlementTimeout | quote }}
 gas-multiplier-factor = {{ .Values.config.outbound.rpc.settle.gasMultiplierFactor | int }}
 
+[outbound.rpc.settle.gas-price]
+multiplier = {{ .Values.config.outbound.rpc.settle.gasPrice.multiplier | float }}
+floor = {{ .Values.config.outbound.rpc.settle.gasPrice.floor | quote }}
+ceiling = {{ .Values.config.outbound.rpc.settle.gasPrice.ceiling | quote }}
+
 [log]
 environment = {{ .Values.config.log.environment | quote }} # "production" or "development"
 level = {{ .Values.config.log.level | quote }}
