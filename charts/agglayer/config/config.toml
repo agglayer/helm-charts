@@ -116,7 +116,7 @@ settlement-timeout = {{ .Values.config.outbound.rpc.settle.settlementTimeout | q
 gas-multiplier-factor = {{ .Values.config.outbound.rpc.settle.gasMultiplierFactor | int }}
 
 [outbound.rpc.settle.gas-price]
-multiplier = {{ .Values.config.outbound.rpc.settle.gasPrice.multiplier | float }}
+multiplier = {{ .Values.config.outbound.rpc.settle.gasPrice.multiplier | float64 }}
 floor = {{ .Values.config.outbound.rpc.settle.gasPrice.floor | quote }}
 ceiling = {{ .Values.config.outbound.rpc.settle.gasPrice.ceiling | quote }}
 
