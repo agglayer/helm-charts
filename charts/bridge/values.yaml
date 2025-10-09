@@ -40,6 +40,8 @@ config:
   log:
     environment: development # "production" or "development"
     level: info
+  bridgeServer:
+    finalizedGEREnabled: true
   etherman:
     l2Url: "http://cdk-erigon-rpc:8123"
   claimTxManager:
