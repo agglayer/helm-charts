@@ -9,9 +9,9 @@ podLabels:
 
 container:
   image:
-    repository: hermeznetwork/zkevm-bridge-ui
+    repository: ghcr.io/0xpolygon/zkevm-bridge-ui
     pullPolicy: IfNotPresent
-    tag: etrog-v2
+    tag: multi-network
 
   ports:
     app: 80

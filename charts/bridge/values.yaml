@@ -10,9 +10,9 @@ podLabels:
 replicaCount: 1
 
 image:
-  repository: hermeznetwork/zkevm-bridge-service
+  repository: ghcr.io/0xpolygon/zkevm-bridge-service
   pullPolicy: IfNotPresent
-  tag: "v0.6.0-RC16"
+  tag: "v0.6.2"
   command: ["/app/zkevm-bridge"]
   args: ["run", "--cfg", "/etc/bridge/bridge-config.toml"]
 

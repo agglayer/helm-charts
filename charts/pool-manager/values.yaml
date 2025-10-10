@@ -10,7 +10,7 @@ podLabels:
 replicaCount: 1
 
 image:
-  repository: hermeznetwork/zkevm-pool-manager
+  repository: ghcr.io/0xpolygon/zkevm-pool-manager
   pullPolicy: IfNotPresent
   tag: "v0.1.2"
   command: ["/app/zkevm-pool-manager"]
