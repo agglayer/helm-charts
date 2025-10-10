@@ -118,6 +118,16 @@ entries:
     version: 0.3.2
   bridge:
   - apiVersion: v2
+    appVersion: v0.6.2
+    created: "2025-10-10T07:37:41.95674978Z"
+    description: A Helm chart for Kubernetes
+    digest: 9687dbd035556896c29269a21ff423c6d044855dea9167343bfe0c63e4692e47
+    name: bridge
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/bridge-0.11.0/bridge-0.11.0.tgz
+    version: 0.11.0
+  - apiVersion: v2
     appVersion: v0.6.2-RC2
     created: "2025-10-09T10:45:36.008523242Z"
     description: A Helm chart for Kubernetes
@@ -160,6 +170,16 @@ entries:
     version: 0.3.0
   bridge-ui:
   - apiVersion: v2
+    appVersion: multi-network
+    created: "2025-10-10T07:37:42.098913087Z"
+    description: A Helm chart for Kubernetes
+    digest: 949a4add9b9c01430d2e5059e82550695d4245b171ffdd03ce46dd67eafdf32b
+    name: bridge-ui
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/bridge-ui-0.5.0/bridge-ui-0.5.0.tgz
+    version: 0.5.0
+  - apiVersion: v2
     appVersion: 0.1.3
     created: "2025-09-10T12:01:31.884375587Z"
     description: A Helm chart for Kubernetes
@@ -181,6 +201,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/cdk-0.6.0/cdk-0.6.0.tgz
     version: 0.6.0
   cdk-erigon:
+  - apiVersion: v2
+    appVersion: v2.61.24
+    created: "2025-10-10T07:37:42.269321123Z"
+    description: A Helm chart for Kubernetes
+    digest: 4e96d9fb1406118122433de01a282363bcc71f665bac260e3306a28c369f6ce4
+    name: cdk-erigon
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/cdk-erigon-0.8.0/cdk-erigon-0.8.0.tgz
+    version: 0.8.0
   - apiVersion: v2
     appVersion: v2.60.0-beta8
     created: "2025-09-10T12:01:32.177203674Z"
@@ -340,6 +370,16 @@ entries:
   pool-manager:
   - apiVersion: v2
     appVersion: v0.1.2
+    created: "2025-10-10T07:37:42.547517896Z"
+    description: A Helm chart for Kubernetes
+    digest: 7f3ccc9c51a7534cfc47cc36334dc5374784852c1fcd75753bf13efe442ccba1
+    name: pool-manager
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/pool-manager-0.4.0/pool-manager-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: v0.1.2
     created: "2025-09-10T12:01:34.196857036Z"
     description: A Helm chart for Kubernetes
     digest: c2587e7762e5a85dd5f8807d94648ee7ecf7913616a48c10561ba47c0f90704c
@@ -382,4 +422,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-explorer-0.3.1/zkevm-explorer-0.3.1.tgz
     version: 0.3.1
-generated: "2025-10-10T05:49:27.250829539Z"
+generated: "2025-10-10T07:37:42.547565785Z"
