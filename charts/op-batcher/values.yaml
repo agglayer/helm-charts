@@ -32,6 +32,8 @@ securityContext: {}
 existingSecret: "secretName"
 
 config:
+  extraOptions: {}
+
   l2:
     opGethUrl: http://op-geth:8545
     opNodeUrl: http://op-node:9545
