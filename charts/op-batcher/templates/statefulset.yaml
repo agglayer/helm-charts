@@ -54,7 +54,7 @@ spec:
                 --private-key={{ index $opSecrets.data "batcher_private_key" | b64dec }} \
                 {{- range .Values.config.extraOptions }}
                 --{{ . }} \
-                {{- end}}
+                {{- end }}
                 --data-availability-type=blobs
           ports:
             - name: rpc
