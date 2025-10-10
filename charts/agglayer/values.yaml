@@ -9,7 +9,7 @@ podLabels:
 image:
   repository: ghcr.io/agglayer/agglayer
   pullPolicy: IfNotPresent
-  tag: 0.3.3-post.2
+  tag: 0.4.0-rc.16
 
 ports:
   grpc: 9089
@@ -60,6 +60,10 @@ config:
         retryInterval: "60s"
         confirmations: 1
         settlementTimeout: "20m"
+        gasPrice:
+          multiplier: 1.5
+          floor: "1gwei"
+          ceiling: "100gwei"
 
   rpc:
     maxRequestBodySize: 10485760 # 10MB
