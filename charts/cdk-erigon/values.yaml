@@ -11,9 +11,9 @@ podLabels:
 replicaCount: 1
 
 image:
-  repository: hermeznetwork/cdk-erigon
+  repository: ghcr.io/0xpolygon/cdk-erigon
   pullPolicy: IfNotPresent
-  tag: "v2.1.0"
+  tag: "v2.61.24"
   command: ["cdk-erigon"]
   args: ["--config=/etc/cdk-erigon/erigon.yaml", "--metrics", "--metrics.addr=0.0.0.0", "--metrics.port=9090"]
 
