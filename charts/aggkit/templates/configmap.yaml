@@ -110,6 +110,16 @@ data:
 
     {{- end }}
 
+    {{- if or (has "bridge" .Values.config.components) (has "l1bridgesync" .Values.config.components) }}
+
+    [ReorgDetectorL1]
+    FinalizedBlock = {{ .Values.config.bridge.reorgDetectorL1.blockFinality | quote }}
+
+    [BridgeL1Sync]
+    BlockFinality = {{ .Values.config.bridge.bridgeL1Sync.blockFinality | quote }}
+
+    {{- end }}
+
     [BridgeL2Sync]
     BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
 
