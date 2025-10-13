@@ -90,6 +90,12 @@ config:
     privateKey:
       keyName: "" # if this string is not empty, aggOracle will try to use KMS
 
+  bridge:
+    reorgDetectorL1:
+      blockFinality: "LatestBlock"
+    bridgeL1Sync:
+      blockFinality: "LatestBlock"
+
   l1:
     chainId: 123
     globalExitRootAddress: "0x123"
