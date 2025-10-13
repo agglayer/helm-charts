@@ -92,7 +92,7 @@ config:
 
   bridge:
     reorgDetectorL1:
-      finalizedBlock: "LatestBlock"
+      blockFinality: "LatestBlock"
     bridgeL1Sync:
       blockFinality: "LatestBlock"
 
