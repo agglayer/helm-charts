@@ -1,0 +1,23 @@
+{{- range $i, $_ := until (.Values.replicas | int) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cdk-data-availability-{{ $i }}-service
+  labels:
+    {{- include "cdk-data-availability.labels" $ | nindent 4 }}
+    {{- toYaml $.Values.podLabels | nindent 4 }}
+  annotations:
+    {{- toYaml $.Values.service.annotations | nindent 4 }}
+spec:
+  type: {{ $.Values.service.type }}
+  selector:
+    {{- include "cdk-data-availability.selectorLabels" $ | nindent 4 }}
+    {{- toYaml $.Values.podLabels | nindent 4 }}
+    instance: cdk-data-availability-{{ $i }}
+  ports:
+    - name: cdk-data-availability-{{ $i }}
+      port: {{ $.Values.service.port }}
+      protocol: TCP
+      targetPort: {{ $.Values.service.port }}
+{{ end }}

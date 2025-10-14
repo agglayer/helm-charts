@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zkevm-prover-deployment
+  labels:
+  {{- include "zkevm-prover.labels" $ | nindent 4 }}
+  {{- toYaml .Values.podLabels | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+    {{- include "zkevm-prover.selectorLabels" $ | nindent 6 }}
+    {{- toYaml .Values.podLabels | nindent 6 }}
+  template:
+    metadata:
+      labels:
+      {{- include "zkevm-prover.labels" $ | nindent 8 }}
+      {{- toYaml .Values.podLabels | nindent 8 }}
+      annotations:
+        ad.datadoghq.com/zkevm-prover.logs: '[{"source": "zkevm-prover"}]'
+        gke-gcsfuse/volumes: "true"
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+      - name: zkevm-prover
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        resources:
+          requests:
+            cpu: {{ .Values.resources.cpu }}
+            memory: {{ .Values.resources.memory }}
+        command:
+        - /bin/sh
+        - -c
+        - "zkProver -c /etc/zkevm-prover/config.json"
+        volumeMounts:
+        - name: zkevm-prover-config
+          mountPath: /etc/zkevm-prover
+          readOnly: true
+        - name: prover-fs-gcs
+          mountPath: /mnt/prover
+          readOnly: true
+      volumes:
+      - name: zkevm-prover-config
+        configMap:
+          name: zkevm-prover-config
+          items:
+          - key: config.json
+            path: config.json
+      - name: prover-fs-gcs
+        csi:
+          driver: gcsfuse.csi.storage.gke.io
+          readOnly: true
+          volumeAttributes:
+            bucketName: {{ .Values.gcs.bucket }}
+            mountOptions: "implicit-dirs,only-dir={{ .Values.gcs.version }}"
+      nodeSelector:
+        node.kubernetes.io/instance-type: {{ .Values.nodeSelectorMachineType }}
+      tolerations:
+      - key: "cloud.google.com/gke-spot"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"

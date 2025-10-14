@@ -1,0 +1,31 @@
+env: bali
+
+podLabels:
+  name: bali-01-erigon
+  business_unit: zkevm
+  role: integration-network
+  partner: Polygon
+  network: bali-01-erigon
+
+replicas: 1
+
+image:
+  repository: ghcr.io/0xpolygon/cdk-data-availability
+  tag: 0.0.13
+
+resources:
+  requests:
+    cpu: 1
+    memory: 6Gi
+  limits:
+    cpu: 1
+    memory: 6Gi
+
+service:
+  type: ClusterIP
+  port: 8484
+
+existingSecret: op-secrets
+secretItems:
+  config: "cdk-data-availability.toml"
+  keystore: "dac.keystore"

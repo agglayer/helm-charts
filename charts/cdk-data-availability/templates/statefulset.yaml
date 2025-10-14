@@ -1,0 +1,55 @@
+{{- range $i, $_ := until (.Values.replicas | int) }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: cdk-data-availability-{{ $i }}-statefulset
+  labels:
+  {{- include "cdk-data-availability.labels" $ | nindent 4 }}
+  {{- toYaml $.Values.podLabels | nindent 4 }}
+    instance: cdk-data-availability-{{ $i }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+    {{- include "cdk-data-availability.selectorLabels" $ | nindent 6 }}
+    {{- toYaml $.Values.podLabels | nindent 6 }}
+      instance: cdk-data-availability-{{ $i }}
+  template:
+    metadata:
+      labels:
+      {{- include "cdk-data-availability.labels" $ | nindent 8 }}
+      {{- toYaml $.Values.podLabels | nindent 8 }}
+        instance: cdk-data-availability-{{ $i }}
+      annotations:
+        ad.datadoghq.com/cdk-data-availability-{{ $i }}.logs: '[{"source": "cdk-data-availability-{{ $i }}"}]'
+    spec:
+      containers:
+      - name: cdk-data-availability-{{ $i }}
+        image: {{ $.Values.image.repository }}:{{ $.Values.image.tag }}
+        resources:
+          limits:
+            cpu: {{ $.Values.resources.limits.cpu }}
+            memory: {{ $.Values.resources.limits.memory }}
+          requests:
+            cpu: {{ $.Values.resources.requests.cpu }}
+            memory: {{ $.Values.resources.requests.memory }}
+        command:
+        - /bin/sh
+        - -c
+        - "/app/cdk-data-availability run --cfg /etc/cdk-data-availability/config.toml"
+        volumeMounts:
+        - name: cdk-data-availability-config
+          mountPath: /etc/cdk-data-availability
+          readOnly: true
+      volumes:
+      - name: cdk-data-availability-config
+        secret:
+          secretName: {{ $.Values.existingSecret }}
+          items:
+            - key: {{ $.Values.secretItems.config }}
+              path: config.toml
+            - key: {{ $.Values.secretItems.keystore }}
+              path: dac.keystore
+{{ end }}

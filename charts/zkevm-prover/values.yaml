@@ -1,0 +1,31 @@
+env: bali
+
+podLabels:
+  name: bali-00-erigon
+  business_unit: zkevm
+  role: integration-network
+  partner: Polygon
+  network: bali-00-erigon
+
+image:
+  repository: ghcr.io/0xpolygon/zkevm-prover
+  tag: v8.0.0-RC16-fork.12
+
+nodeSelectorMachineType: n2d-standard-224
+
+resources:
+  cpu: 200
+  memory: 800Gi
+
+aggregator:
+  host: cdk-aggregator-service
+  port: 50081
+
+serviceAccount:
+  name: zkevm-prover-sa
+  annotations: 
+    iam.gke.io/gcp-service-account: zkevm-alpha-prover-gcp-sa@prj-polygonlabs-zkevm-dev.iam.gserviceaccount.com
+
+gcs:
+  bucket: zkevm-prover-files
+  version: v8.0.0-rc.9-fork.12

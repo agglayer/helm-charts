@@ -1,0 +1,23 @@
+{{- range $i, $_ := until (.Values.replicas | int) }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: executor-{{ $i }}-service
+  labels:
+    {{- include "executor.labels" $ | nindent 4 }}
+    {{- toYaml $.Values.podLabels | nindent 4 }}
+  annotations:
+    {{- toYaml $.Values.service.annotations | nindent 4 }}
+spec:
+  type: {{ $.Values.service.type }}
+  selector:
+    {{- include "executor.selectorLabels" $ | nindent 4 }}
+    {{- toYaml $.Values.podLabels | nindent 4 }}
+    instance: executor-{{ $i }}
+  ports:
+    - name: executor-{{ $i }}
+      port: {{ $.Values.service.port }}
+      protocol: TCP
+      targetPort: {{ $.Values.service.port }}
+{{ end }}

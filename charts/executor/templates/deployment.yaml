@@ -1,0 +1,52 @@
+{{- range $i, $_ := until (.Values.replicas | int) }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: executor-{{ $i }}-deployment
+  labels:
+  {{- include "executor.labels" $ | nindent 4 }}
+  {{- toYaml $.Values.podLabels | nindent 4 }}
+    instance: executor-{{ $i }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+    {{- include "executor.selectorLabels" $ | nindent 6 }}
+    {{- toYaml $.Values.podLabels | nindent 6 }}
+      instance: executor-{{ $i }}
+  template:
+    metadata:
+      labels:
+      {{- include "executor.labels" $ | nindent 8 }}
+      {{- toYaml $.Values.podLabels | nindent 8 }}
+        instance: executor-{{ $i }}
+      annotations:
+        ad.datadoghq.com/executor-{{ $i }}.logs: '[{"source": "executor-{{ $i }}"}]'
+    spec:
+      containers:
+      - name: executor-{{ $i }}
+        image: {{ $.Values.image.repository }}:{{ $.Values.image.tag }}
+        resources:
+          limits:
+            cpu: {{ $.Values.resources.limits.cpu }}
+            memory: {{ $.Values.resources.limits.memory }}
+          requests:
+            cpu: {{ $.Values.resources.requests.cpu }}
+            memory: {{ $.Values.resources.requests.memory }}
+        command:
+        - /bin/sh
+        - -c
+        - "zkProver -c /etc/executor/config.json"
+        volumeMounts:
+        - mountPath: /etc/executor
+          readOnly: true
+          name: executor-config
+      volumes:
+      - name: executor-config
+        configMap:
+          name: executor-config
+          items:
+          - key: config.json
+            path: config.json
+{{ end }}
