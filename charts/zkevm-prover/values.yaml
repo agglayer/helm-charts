@@ -24,7 +24,7 @@ aggregator:
 serviceAccount:
   name: zkevm-prover-sa
   annotations: 
-    iam.gke.io/gcp-service-account: zkevm-alpha-prover-gcp-sa@prj-polygonlabs-zkevm-dev.iam.gserviceaccount.com
+    iam.gke.io/gcp-service-account: shared-dev-zkevm-prover-sa@prj-polygonlabs-shared-dev.iam.gserviceaccount.com
 
 gcs:
   bucket: zkevm-prover-files

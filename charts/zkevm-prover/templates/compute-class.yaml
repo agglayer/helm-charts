@@ -1,0 +1,13 @@
+apiVersion: cloud.google.com/v1
+kind: ComputeClass
+metadata:
+  name: zkevm-prover-class
+spec:
+  nodePoolAutoCreation:
+    enabled: true
+  priorities:
+  - machineFamily: n2d
+    spot: true
+  - machineFamily: n2d
+    spot: false
+  

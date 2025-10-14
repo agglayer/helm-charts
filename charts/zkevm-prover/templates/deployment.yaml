@@ -55,9 +55,4 @@ spec:
             bucketName: {{ .Values.gcs.bucket }}
             mountOptions: "implicit-dirs,only-dir={{ .Values.gcs.version }}"
       nodeSelector:
-        node.kubernetes.io/instance-type: {{ .Values.nodeSelectorMachineType }}
-      tolerations:
-      - key: "cloud.google.com/gke-spot"
-        operator: "Equal"
-        value: "true"
-        effect: "NoSchedule"
+        cloud.google.com/compute-class: zkevm-prover-class
