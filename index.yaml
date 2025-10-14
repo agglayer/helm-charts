@@ -278,6 +278,16 @@ entries:
   op-batcher:
   - apiVersion: v2
     appVersion: v1.16.0
+    created: "2025-10-14T16:24:10.114253299Z"
+    description: A Helm chart for op-batcher
+    digest: 51e198a2431ddabaa906b699aeecb674962d56f4fff488b2acdb9ceeb5604549
+    name: op-batcher
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-batcher-1.1.0/op-batcher-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
+    appVersion: v1.16.0
     created: "2025-10-13T13:34:43.118856645Z"
     description: A Helm chart for op-batcher
     digest: 0ce682a6b50967b427e1cc097cd15fcf8b22ec894977a23e9820627068aa0354
@@ -495,4 +505,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2025-10-14T07:17:00.331741228Z"
+generated: "2025-10-14T16:24:10.114316108Z"
