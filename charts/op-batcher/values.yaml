@@ -34,6 +34,8 @@ existingSecret: "secretName"
 config:
   extraOptions: {}
 
+  dataAvailabilityType: blobs
+
   l2:
     opGethUrl: http://op-geth:8545
     opNodeUrl: http://op-node:9545

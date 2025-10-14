@@ -54,7 +54,7 @@ spec:
                 {{- range .Values.config.extraOptions }}
                 --{{ . }} \
                 {{- end }}
-                --data-availability-type=blobs
+                --data-availability-type={{ .Values.config.dataAvailabilityType }}
           ports:
             - name: rpc
               containerPort: {{ .Values.service.rpc.port }}
