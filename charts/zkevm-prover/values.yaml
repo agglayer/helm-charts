@@ -11,20 +11,15 @@ image:
   repository: ghcr.io/0xpolygon/zkevm-prover
   tag: v8.0.0-RC16-fork.12
 
-machineFamily: n2d
-
 resources:
-  cpu: 200
-  memory: 800Gi
+  cpu: 222
+  memory: 850Gi
 
 aggregator:
   host: cdk-aggregator-service
   port: 50081
 
-serviceAccount:
-  name: zkevm-prover-sa
-  annotations: 
-    iam.gke.io/gcp-service-account: shared-dev-zkevm-prover-sa@prj-polygonlabs-shared-dev.iam.gserviceaccount.com
+gcpServiceAccount: shared-dev-zkevm-prover-sa@prj-polygonlabs-shared-dev.iam.gserviceaccount.com
 
 gcs:
   bucket: zkevm-prover-files

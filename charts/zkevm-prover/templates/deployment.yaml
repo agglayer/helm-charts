@@ -21,7 +21,7 @@ spec:
         ad.datadoghq.com/zkevm-prover.logs: '[{"source": "zkevm-prover"}]'
         gke-gcsfuse/volumes: "true"
     spec:
-      serviceAccountName: {{ .Values.serviceAccount.name }}
+      serviceAccountName: zkevm-prover-sa
       containers:
       - name: zkevm-prover
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -55,4 +55,6 @@ spec:
             bucketName: {{ .Values.gcs.bucket }}
             mountOptions: "implicit-dirs,only-dir={{ .Values.gcs.version }}"
       nodeSelector:
-        cloud.google.com/compute-class: zkevm-prover-class
+        cloud.google.com/compute-class: Performance
+        cloud.google.com/machine-family: n2d
+        cloud.google.com/gke-spot: "true"
