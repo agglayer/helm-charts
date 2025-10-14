@@ -477,6 +477,16 @@ entries:
   zkevm-prover:
   - apiVersion: v2
     appVersion: v8.0.0-RC16-fork.12
+    created: "2025-10-14T07:17:00.331674404Z"
+    description: A Helm chart for Kubernetes
+    digest: adf0710792679b7727ff63fa88e4647828ea1f984cfcb3f967624c7cf040c44c
+    name: zkevm-prover
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.1.0/zkevm-prover-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
+    appVersion: v8.0.0-RC16-fork.12
     created: "2025-10-14T05:59:15.569080596Z"
     description: A Helm chart for Kubernetes
     digest: f28b1a569b3bbd39eb9775952d779863294ea5d56d0dcb474b0abe792e738699
@@ -485,4 +495,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2025-10-14T05:59:15.569139366Z"
+generated: "2025-10-14T07:17:00.331741228Z"
