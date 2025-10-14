@@ -210,6 +210,17 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/cdk-0.6.0/cdk-0.6.0.tgz
     version: 0.6.0
+  cdk-data-availability:
+  - apiVersion: v2
+    appVersion: 0.0.13
+    created: "2025-10-14T05:59:15.21741819Z"
+    description: A Helm chart for deploying legacy zkEVM executors on Kubernetes
+    digest: 000cf8ad2d0917452d1ea350ce815eeaf38600b068c40a76a75fc1c99a63fc61
+    name: cdk-data-availability
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/cdk-data-availability-1.0.0/cdk-data-availability-1.0.0.tgz
+    version: 1.0.0
   cdk-erigon:
   - apiVersion: v2
     appVersion: v2.61.24
@@ -231,6 +242,17 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/cdk-erigon-0.7.0/cdk-erigon-0.7.0.tgz
     version: 0.7.0
+  executor:
+  - apiVersion: v2
+    appVersion: v8.0.0-RC16-fork.12
+    created: "2025-10-14T05:59:15.409345648Z"
+    description: A Helm chart for deploying executors on Kubernetes
+    digest: f7e2765ededb20b1cdeddd2f48712a53d441160367fb84e68d818c87d13b406f
+    name: executor
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/executor-1.0.0/executor-1.0.0.tgz
+    version: 1.0.0
   gke-internal-generic:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -452,4 +474,15 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-explorer-0.3.1/zkevm-explorer-0.3.1.tgz
     version: 0.3.1
-generated: "2025-10-13T13:34:43.118909985Z"
+  zkevm-prover:
+  - apiVersion: v2
+    appVersion: v8.0.0-RC16-fork.12
+    created: "2025-10-14T05:59:15.569080596Z"
+    description: A Helm chart for Kubernetes
+    digest: f28b1a569b3bbd39eb9775952d779863294ea5d56d0dcb474b0abe792e738699
+    name: zkevm-prover
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
+    version: 1.0.0
+generated: "2025-10-14T05:59:15.569139366Z"
