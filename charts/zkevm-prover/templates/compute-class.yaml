@@ -6,8 +6,8 @@ spec:
   nodePoolAutoCreation:
     enabled: true
   priorities:
-  - machineFamily: n2d
+  - machineFamily: {{ .Values.machineFamily }}
     spot: true
-  - machineFamily: n2d
+  - machineFamily: {{ .Values.machineFamily }}
     spot: false
   
