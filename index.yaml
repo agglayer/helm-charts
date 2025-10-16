@@ -201,6 +201,16 @@ entries:
     version: 0.4.0
   cdk:
   - apiVersion: v2
+    appVersion: 0.5.4
+    created: "2025-10-16T15:04:09.471332036Z"
+    description: A Helm chart for deploying legacy cdk component on Kubernetes
+    digest: be947e7f38ce5f57799101bfc4ea9bdd169cc0da3394e4b462602162f67e1829
+    name: cdk
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/cdk-1.0.0/cdk-1.0.0.tgz
+    version: 1.0.0
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2025-09-10T12:01:32.028733289Z"
     description: A Helm chart for CDK nodes
@@ -505,4 +515,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2025-10-14T16:24:10.114316108Z"
+generated: "2025-10-16T15:04:09.471397529Z"
