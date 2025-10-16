@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cdk-aggregator-service
+  labels:
+    {{- include "cdk.labels" . | nindent 4 }}
+    {{- toYaml .Values.podLabels | nindent 4 }}
+    instance: cdk-aggregator
+  annotations:
+    {{- toYaml .Values.service.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    {{- include "cdk.selectorLabels" . | nindent 4 }}
+    {{- toYaml .Values.podLabels | nindent 4 }}
+    instance: cdk-aggregator
+  ports:
+    - name: cdk-aggregator
+      port: {{ .Values.service.port }}
+      protocol: TCP
+      targetPort: {{ .Values.service.port }}

@@ -1,59 +1,31 @@
 env: bali
 
 podLabels:
-  name: myname
-  business_unit: agglayer
-  role: myrole
+  name: bali-01-erigon
+  business_unit: zkevm
+  role: integration-network
   partner: Polygon
-  network: mynetwork
+  network: bali-01-erigon
 
-replicas: 1
+image:
+  repository: ghcr.io/0xpolygon/cdk
+  tag: 0.5.4
 
-container:
-  image:
-    pullPolicy: IfNotPresent
-    repository: ghcr.io/0xpolygon/cdk
-    tag: main
+resources:
+  pvc: 100Gi
+  requests:
+    cpu: 1
+    memory: 4Gi
+  limits:
+    cpu: 1
+    memory: 4Gi
 
-storage:
-  path: /etc/cdk/data
-  size: 500Gi
+service:
+  type: ClusterIP
+  port: 50081
 
-podSecurityContext: {}
-securityContext: {}
-
-config:
-  agglayerURL: http://agglayer:4444
-  bridgeAddress: "0x123"
-  contractsVersion: banana
-  forkId: 12
-  isValidium: true
-
-  aggSender:
-    certificateSendInterval: 1m
-    checkSettledInterval: 5s
-    maxCertSize: 8388608
-    saveCertificatesToFilesPath: /tmp
-  
-  l1:
-    chainId: 123
-    globalExitRootAddress: "0x123"
-    polTokenAddress: "0x123"
-    rollupAddress: "0x123"
-    rollupManagerAddress: "0x123"
-    rollupManagerBlockNumber: 123
-    syncBlockChunkSize: 10
-
-  l2:
-    agglayerAddress: "0x123"
-    globalExitRootAddress: "0x123"
-    rollupId: 123
-    rpcURL: http://localhost:8545
-    sequencerAddress: "0x123"
-
-  log:
-    environment: development # "production" or "development"
-    level: info
-
-genesis: |
-  {}
+existingSecret: op-secrets
+secretItems:
+  config: "cdk.toml"
+  sequencer-keystore: "sequencer.keystore"
+  aggregator-keystore: "aggregator.keystore"

@@ -42,7 +42,7 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 tags.datadoghq.com/env: {{ .Values.env }}
 tags.datadoghq.com/service: cdk
-tags.datadoghq.com/version: {{ .Values.container.image.tag }}
+tags.datadoghq.com/version: {{ .Values.image.tag }}
 {{- end }}
 
 {{/*
