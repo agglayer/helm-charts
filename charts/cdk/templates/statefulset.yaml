@@ -1,77 +1,135 @@
+---
 apiVersion: apps/v1
 kind: StatefulSet
+
 metadata:
-  name: {{ include "cdk.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  name: cdk-sequence-sender-statefulset
   labels:
-    {{- include "cdk.labels" . | nindent 4 }}
+  {{- include "cdk.labels" . | nindent 4 }}
+  {{- toYaml .Values.podLabels | nindent 4 }}
+    instance: cdk-sequence-sender
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
-      {{- include "cdk.selectorLabels" . | nindent 6 }}
+    {{- include "cdk.selectorLabels" . | nindent 6 }}
+    {{- toYaml .Values.podLabels | nindent 6 }}
+      instance: cdk-sequence-sender
   template:
     metadata:
-      annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        {{- with .Values.podAnnotations }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
       labels:
-        {{- include "cdk.labels" . | nindent 8 }}
-        {{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+      {{- include "cdk.labels" . | nindent 8 }}
+      {{- toYaml .Values.podLabels | nindent 8 }}
+        instance: cdk-sequence-sender
+      annotations:
+        ad.datadoghq.com/cdk-sequence-sender.logs: '[{"source": "cdk-sequence-sender"}]'
     spec:
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
-          entrypoint:
-            - /bin/sh
-            - -c
-          command:
-            - cdk-node
-            - run
-            - --cfg=/etc/cdk/config.toml
-            - --custom-network-file=/etc/cdk/genesis.json
-            - --save-config-path={{ .Values.storage.path }}
-            - --components=aggsender
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          volumeMounts:
-            - mountPath: "/etc/cdk"
-              name: config
-              readOnly: true
-            - mountPath: {{ .Values.storage.path | quote }}
-              name: data
+      - name: cdk-sequence-sender
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        resources:
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }}
+        command:
+        - /bin/sh
+        - -c
+        - "cdk-node run -cfg /etc/cdk/config.toml -components=sequence-sender"
+        volumeMounts:
+        - name: cdk-config
+          mountPath: /etc/cdk
+          readOnly: true
+        - name: cdk-sequence-sender-data
+          mountPath: /data
+          readOnly: false
       volumes:
-        - name: config
-          projected:
-            sources:
-            - configMap:
-                name: {{ include "cdk.fullname" . }}
-                items:
-                  - key: "config.toml"
-                    path: "config.toml"
-                  - key: "genesis.json"
-                    path: "genesis.json"
-            - secret:
-                name: op-secrets
-                items:
-                  - key: sequencer.keystore
-                    path: sequencer.keystore
-                  - key: aggregator.keystore
-                    path: aggregator.keystore
+        - name: cdk-config
+          secret:
+            secretName: {{ .Values.existingSecret }}
+            items:
+              - key: {{ .Values.secretItems.config }}
+                path: config.toml
+              - key: {{ index .Values.secretItems "sequencer-keystore" }}
+                path: sequencer.keystore
+              - key: {{ index .Values.secretItems "aggregator-keystore" }}
+                path: aggregator.keystore
   volumeClaimTemplates:
     - metadata:
-        name: data
+        name: cdk-sequence-sender-data
       spec:
-        accessModes: [ "ReadWriteOnce" ]
+        accessModes:
+        - ReadWriteOnce
         resources:
           requests:
-            storage: {{ .Values.storage.size }}
+            storage: {{ .Values.resources.pvc }}
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+
+metadata:
+  name: cdk-aggregator-statefulset
+  labels:
+  {{- include "cdk.labels" . | nindent 4 }}
+  {{- toYaml .Values.podLabels | nindent 4 }}
+    instance: cdk-aggregator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+    {{- include "cdk.selectorLabels" . | nindent 6 }}
+    {{- toYaml .Values.podLabels | nindent 6 }}
+      instance: cdk-aggregator
+  template:
+    metadata:
+      labels:
+      {{- include "cdk.labels" . | nindent 8 }}
+      {{- toYaml .Values.podLabels | nindent 8 }}
+        instance: cdk-aggregator
+      annotations:
+        ad.datadoghq.com/cdk-aggregator.logs: '[{"source": "cdk-aggregator"}]'
+    spec:
+      containers:
+      - name: cdk-aggregator
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        resources:
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}
+          requests:
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }}
+        command:
+        - /bin/sh
+        - -c
+        - "cdk-node run -cfg /etc/cdk/config.toml -components=aggregator"
+        volumeMounts:
+        - name: cdk-config
+          mountPath: /etc/cdk
+          readOnly: true
+        - name: cdk-aggregator-data
+          mountPath: /data
+          readOnly: false
+      volumes:
+        - name: cdk-config
+          secret:
+            secretName: {{ .Values.existingSecret }}
+            items:
+              - key: {{ .Values.secretItems.config }}
+                path: config.toml
+              - key: {{ index .Values.secretItems "sequencer-keystore" }}
+                path: sequencer.keystore
+              - key: {{ index .Values.secretItems "aggregator-keystore" }}
+                path: aggregator.keystore
+  volumeClaimTemplates:
+    - metadata:
+        name: cdk-aggregator-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.resources.pvc }}
