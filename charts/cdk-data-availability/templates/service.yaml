@@ -16,7 +16,7 @@ spec:
     {{- toYaml $.Values.podLabels | nindent 4 }}
     instance: cdk-data-availability-{{ $i }}
   ports:
-    - name: cdk-data-availability-{{ $i }}
+    - name: http
       port: {{ $.Values.service.port }}
       protocol: TCP
       targetPort: {{ $.Values.service.port }}

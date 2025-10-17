@@ -1,0 +1,45 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: prover-hpa
+  labels:
+    {{- include "zkevm-prover.labels" . | nindent 8 }}
+    {{- toYaml .Values.podLabels | nindent 8 }}
+spec:
+  schedule: "*/10 * * * *"
+  successfulJobsHistoryLimit: 0
+  failedJobsHistoryLimit: 0
+  suspend: {{ not .Values.hpa.enable }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          annotations:
+            ad.datadoghq.com/prover-hpa.logs: '[{ "source": "prover-hpa" }]'
+        spec:
+          serviceAccountName: zkevm-prover-sa
+          restartPolicy: OnFailure
+          containers:
+          - name: prover-hpa
+            image: alpine/k8s:1.33.5
+            command: [sh, -c]
+            args:
+            - |
+              PROVER_MIN_REPLICAS={{ .Values.hpa.minReplicas }}
+              PROVER_MAX_REPLICAS={{ .Values.hpa.maxReplicas }}
+
+              BATCH_VERIFIED=$(kubectl -n bali-54-erigon logs cdk-aggregator-statefulset-0 | grep "Last Verified Batch Number:" | tail -n1 | jq -r .msg | rev | cut -d':' -f1 | rev)
+              [ -z "$BATCH_VERIFIED" ] || [ "$BATCH_VERIFIED" -le 0 ] && echo "BATCH_VERIFIED is not a valid number greater than 0. Exiting." && exit
+
+              BATCH_VIRTUAL=$(kubectl -n bali-54-erigon logs cdk-sequence-sender-statefulset-0 | grep "latest virtual batch is" | tail -n1 | jq -r .msg | rev | cut -d' ' -f1 | rev)
+              [ -z "$BATCH_VIRTUAL" ] || [ "$BATCH_VIRTUAL" -le 0 ] && echo "BATCH_VIRTUAL is not a valid number greater than 0. Exiting." && exit
+
+              GAP=$((BATCH_VERIFIED - BATCH_VIRTUAL))
+              REPLICAS=$((GAP / 6))
+
+              [ $REPLICAS -gt ${PROVER_MAX_REPLICAS} ] && REPLICAS=${PROVER_MAX_REPLICAS}
+              [ $REPLICAS -lt ${PROVER_MIN_REPLICAS} ] && REPLICAS=${PROVER_MIN_REPLICAS}
+
+              echo "Pending proofs = $BATCH_VIRTUAL - $BATCH_CURRENT = $GAP. Scaling provers to $REPLICAS replicas."
+              kubectl scale deployment zkevm-prover-deployment --replicas=$REPLICAS > /dev/null 2>&1

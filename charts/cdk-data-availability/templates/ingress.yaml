@@ -1,7 +1,8 @@
+{{- range $i, $_ := until (.Values.replicas | int) }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "cdk-data-availability.fullname" . }}
+  name: {{ include "cdk-data-availability.fullname" $ }}-{{ $i }}
   annotations:
     cert-manager.io/issuer: gcp-cas-issuer
     cert-manager.io/issuer-kind: GoogleCASClusterIssuer
@@ -11,20 +12,21 @@ metadata:
     # protocol for the GCP-managed load balancer
     # See https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balance-ingress#https_between_client_and_load_balancer
     kubernetes.io/ingress.allow-http: "false"
-    external-dns.alpha.kubernetes.io/hostname: {{ .Values.ingress.hostname }}
+    external-dns.alpha.kubernetes.io/hostname: {{ $.Values.ingress.hostname | replace "dac" (printf "dac%d" $i) }}
 spec:
   tls:
     - hosts:
-        - {{ .Values.ingress.hostname }}
-      secretName: "{{ .Values.ingress.hostname }}-secret-tls"
+        - {{ $.Values.ingress.hostname | replace "dac" (printf "dac%d" $i) }}
+      secretName: "{{ $.Values.ingress.hostname | replace "dac" (printf "dac%d" $i) }}-secret-tls"
   rules:
-    - host: {{ .Values.ingress.hostname }}
+    - host: {{ $.Values.ingress.hostname | replace "dac" (printf "dac%d" $i) }}
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ include "cdk-data-availability.fullname" . }}
+                name: {{ include "cdk-data-availability.fullname" $ }}-{{ $i }}-service
                 port:
-                  name: rpc
+                  name: http
+{{- end }}

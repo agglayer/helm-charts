@@ -38,7 +38,13 @@ spec:
         command:
         - /bin/sh
         - -c
-        - "/app/cdk-data-availability run --cfg /etc/cdk-data-availability/config.toml"
+        - "echo -e \"$PEM_POLYGON\" > /etc/ssl/certs/dev.polygon.pem && /app/cdk-data-availability run --cfg /etc/cdk-data-availability/config.toml"
+        env:
+        - name: PEM_POLYGON
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Values.existingSecret }}
+              key: {{ $.Values.secretItems.certificate }}
         volumeMounts:
         - name: cdk-data-availability-config
           mountPath: /etc/cdk-data-availability

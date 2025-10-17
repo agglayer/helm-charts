@@ -27,5 +27,6 @@ service:
 existingSecret: op-secrets
 secretItems:
   config: "cdk.toml"
+  certificate: "dev-polygon.pem"
   sequencer-keystore: "sequencer.keystore"
   aggregator-keystore: "aggregator.keystore"
