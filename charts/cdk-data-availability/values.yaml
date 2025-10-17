@@ -25,6 +25,9 @@ service:
   type: ClusterIP
   port: 8484
 
+ingress:
+  hostname: something.dev.polygon
+
 existingSecret: op-secrets
 secretItems:
   config: "cdk-data-availability.toml"
