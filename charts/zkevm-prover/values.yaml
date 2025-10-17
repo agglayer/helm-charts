@@ -24,3 +24,8 @@ gcpServiceAccount: shared-dev-zkevm-prover-sa@prj-polygonlabs-shared-dev.iam.gse
 gcs:
   bucket: zkevm-prover-files
   version: v8.0.0-rc.9-fork.12
+
+hpa:
+  enable: true
+  minReplicas: 0
+  maxReplicas: 10

@@ -25,7 +25,11 @@ service:
   type: ClusterIP
   port: 8484
 
+ingress:
+  hostname: dac.network.dev.polygon # DAC will be replaced with replica index: dac -> dac0
+
 existingSecret: op-secrets
 secretItems:
   config: "cdk-data-availability.toml"
   keystore: "dac.keystore"
+  certificate: "dev-polygon.pem"

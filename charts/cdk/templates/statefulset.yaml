@@ -37,7 +37,13 @@ spec:
         command:
         - /bin/sh
         - -c
-        - "cdk-node run -cfg /etc/cdk/config.toml -components=sequence-sender"
+        - "echo \"$PEM_POLYGON\" > /usr/local/share/ca-certificates/dev_polygon_root.crt && update-ca-certificates && cdk-node run -cfg /etc/cdk/config.toml -components=sequence-sender"
+        env:
+        - name: PEM_POLYGON
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Values.existingSecret }}
+              key: {{ $.Values.secretItems.certificate }}
         volumeMounts:
         - name: cdk-config
           mountPath: /etc/cdk
@@ -105,7 +111,13 @@ spec:
         command:
         - /bin/sh
         - -c
-        - "cdk-node run -cfg /etc/cdk/config.toml -components=aggregator"
+        - "echo \"$PEM_POLYGON\" > /usr/local/share/ca-certificates/dev_polygon_root.crt && update-ca-certificates && cdk-node run -cfg /etc/cdk/config.toml -components=aggregator"
+        env:
+        - name: PEM_POLYGON
+          valueFrom:
+            secretKeyRef:
+              name: {{ $.Values.existingSecret }}
+              key: {{ $.Values.secretItems.certificate }}
         volumeMounts:
         - name: cdk-config
           mountPath: /etc/cdk
