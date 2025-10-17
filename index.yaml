@@ -202,6 +202,16 @@ entries:
   cdk:
   - apiVersion: v2
     appVersion: 0.5.4
+    created: "2025-10-17T14:15:00.306034276Z"
+    description: A Helm chart for deploying legacy cdk component on Kubernetes
+    digest: dd3ad7b7ce9158699cb415ecf54505c5f7e4cf9448e91009cf2a4e91a4401605
+    name: cdk
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/cdk-1.1.0/cdk-1.1.0.tgz
+    version: 1.1.0
+  - apiVersion: v2
+    appVersion: 0.5.4
     created: "2025-10-16T15:04:09.471332036Z"
     description: A Helm chart for deploying legacy cdk component on Kubernetes
     digest: be947e7f38ce5f57799101bfc4ea9bdd169cc0da3394e4b462602162f67e1829
@@ -221,6 +231,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/cdk-0.6.0/cdk-0.6.0.tgz
     version: 0.6.0
   cdk-data-availability:
+  - apiVersion: v2
+    appVersion: 0.0.13
+    created: "2025-10-17T14:15:00.450940468Z"
+    description: A Helm chart for deploying legacy zkEVM executors on Kubernetes
+    digest: 4cece6d81b4867406f4e9b113e31ae1691df4facfc37514f354b8b81a7eead3b
+    name: cdk-data-availability
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/cdk-data-availability-1.1.0/cdk-data-availability-1.1.0.tgz
+    version: 1.1.0
   - apiVersion: v2
     appVersion: 0.0.13
     created: "2025-10-14T05:59:15.21741819Z"
@@ -497,6 +517,16 @@ entries:
   zkevm-prover:
   - apiVersion: v2
     appVersion: v8.0.0-RC16-fork.12
+    created: "2025-10-17T14:15:00.594828689Z"
+    description: A Helm chart for Kubernetes
+    digest: d1e052783e4b307efdb2cb98d59c95822a2bdb7a46f66d7d2368f60152add0fa
+    name: zkevm-prover
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.2.0/zkevm-prover-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
+    appVersion: v8.0.0-RC16-fork.12
     created: "2025-10-14T07:17:00.331674404Z"
     description: A Helm chart for Kubernetes
     digest: adf0710792679b7727ff63fa88e4647828ea1f984cfcb3f967624c7cf040c44c
@@ -515,4 +545,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2025-10-16T15:04:09.471397529Z"
+generated: "2025-10-17T14:15:00.594937352Z"
