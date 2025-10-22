@@ -1,13 +1,36 @@
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: Role
 metadata:
-  name: prover-role-binding
+  name: {{ include "zkevm-prover.fullname" . }}-role
+  namespace: {{ .Release.Namespace }}
+rules:
+  # kubectl pods
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+
+  # kubectl logs
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+  
+  # kubectl scale deployment
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    verbs: ["get", "update", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "zkevm-prover.fullname" . }}-rolebinding
+  namespace: {{ .Release.Namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "zkevm-prover.fullname" . }}-sa
+    namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-- kind: ServiceAccount
-  name: zkevm-prover-sa
-  namespace: {{ .Release.Namespace }}
+  kind: Role
+  name: {{ include "zkevm-prover.fullname" . }}-role
