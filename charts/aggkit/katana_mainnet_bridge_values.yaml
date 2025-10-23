@@ -49,8 +49,11 @@ extraVolumes:
 initContainers:
   - name: config-env-substitution
     image: alpine:latest
-    command: |
-      (apk add gettext &> /dev/null) && (envsubst < /config-raw/config.toml > /config/config.toml)
+    command:
+      - "/bin/sh"
+    args:
+      - "-c"
+      - "(apk add gettext &> /dev/null) && (envsubst < /config-raw/config.toml > /config/config.toml)"
     volumeMounts:
       - mountPath: "/config-raw"
         name: config-raw
