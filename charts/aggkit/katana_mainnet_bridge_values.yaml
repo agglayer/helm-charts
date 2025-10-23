@@ -1,7 +1,7 @@
 ---
 mountRawConfig: false
 
-onePasswordItems:
+onePasswordSecrets:
   aggkit-bridge-katana: "vaults/infra-common-production-cluster/items/aggkit-bridge-katana"
 
 env: production
