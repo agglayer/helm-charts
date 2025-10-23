@@ -7,12 +7,12 @@ metadata:
   service: aggkit-bridge-katana
 
 nodeSelector:
-  cloud.google.com/compute-class: general-arm64
+  cloud.google.com/compute-class: general-amd64
 
 tolerations:
   - key: "kubernetes.io/arch"
     operator: "Equal"
-    value: "arm64"
+    value: "amd64"
     effect: "NoSchedule"
 
 podLabels: {}
