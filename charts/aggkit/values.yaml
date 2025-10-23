@@ -1,3 +1,7 @@
+# For use in clusters with the 1P operator
+# onePasswordSecrets:
+#   <name>: <item-path>
+
 # Used as a backwards-compatible stopgap to do environment interpolation in the config until the aggkit supports config from the environment
 mountRawConfig: true
 

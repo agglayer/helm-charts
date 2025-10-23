@@ -23,6 +23,10 @@ container:
     repository: ghcr.io/agglayer/aggkit
     tag: 0.7.0-beta12
 
+  extraVolumeMounts:
+    - name: config
+      mountPath: "/etc/aggkit"
+
 service:
   type: ClusterIP
 
@@ -30,6 +34,32 @@ storage:
   storageClass: "balanced-ha-storage"
   path: /data
   size: 500Gi
+
+extraVolumes:
+  - name: config
+    emptyDir: {}
+
+  - name: config-raw
+    configMap:
+      name: aggkit-bridge-katana
+      items:
+        - key: config.toml
+          path: config.toml
+
+initContainers:
+  - name: config-env-substitution
+    image: alpine:latest
+    command: |
+      (apk add gettext &> /dev/null) && (envsubst < /config-raw/config.toml > /config/config.toml)
+    volumeMounts:
+      - mountPath: "/config-raw"
+        name: config-raw
+        readOnly: true
+      - mountPath: "/config"
+        name: config
+    env:
+      - name: L1_RPC_URL
+        value: "testrpc"
 
 config:
   bridgeAddress: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
