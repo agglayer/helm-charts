@@ -1,3 +1,6 @@
+# Used as a backwards-compatible stopgap to do environment interpolation in the config until the aggkit supports config from the environment
+mountRawConfig: true
+
 env: bali
 
 podLabels:
@@ -7,9 +10,19 @@ podLabels:
   partner: Polygon
   network: mynetwork
 
+nodeSelector: {}
+
+tolerations: []
+
+initContainers: []
+
+extraVolumes: []
+
 replicas: 1
 
 container:
+  extraVolumeMounts: []
+
   image:
     pullPolicy: IfNotPresent
     repository: ghcr.io/agglayer/aggkit
