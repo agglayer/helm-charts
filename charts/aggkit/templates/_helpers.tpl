@@ -41,7 +41,7 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 tags.datadoghq.com/env: {{ .Values.env }}
-tags.datadoghq.com/service: aggkit
+tags.datadoghq.com/service: {{ .Values.metadata.service }}
 tags.datadoghq.com/version: {{ .Values.container.image.tag }}
 deployment: {{ htmlDateInZone (now) "UTC" }}
 {{- end }}

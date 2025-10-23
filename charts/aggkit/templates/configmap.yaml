@@ -9,7 +9,11 @@ data:
   config.toml: |
     NetworkID = {{ .Values.config.l2.rollupId | int }}
     PathRWData = {{ .Values.storage.path | quote }}
+    {{- if .Values.config.l1.rpcUrl }}
+    L1URL = {{ .Values.config.l1.rpcUrl | quote }}
+    {{- else }}
     L1URL = {{ index $opSecrets.data "l1RpcURL" | b64dec | quote }}
+    {{- end }}
     L2URL = {{ .Values.config.l2.rpcURL | quote }}
 
     SequencerPrivateKeyPath = ""
