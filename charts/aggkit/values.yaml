@@ -1,4 +1,13 @@
+# For use in clusters with the 1P operator
+# onePasswordSecrets:
+#   <name>: <item-path>
+
+# Used as a backwards-compatible stopgap to do environment interpolation in the config until the aggkit supports config from the environment
+mountRawConfig: true
+
 env: bali
+metadata:
+  service: aggkit
 
 podLabels:
   name: myname
@@ -7,9 +16,21 @@ podLabels:
   partner: Polygon
   network: mynetwork
 
+nodeSelector: {}
+
+tolerations: []
+
+initContainers: []
+
+extraVolumes: []
+
+topologySpreadConstraints: []
+
 replicas: 1
 
 container:
+  extraVolumeMounts: []
+
   image:
     pullPolicy: IfNotPresent
     repository: ghcr.io/agglayer/aggkit
