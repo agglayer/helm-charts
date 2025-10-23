@@ -1,6 +1,9 @@
 ---
 mountRawConfig: false
 
+onePasswordItems:
+  aggkit-bridge-katana: "vaults/infra-common-production-cluster/items/aggkit-bridge-katana"
+
 env: production
 
 metadata:
@@ -60,9 +63,9 @@ initContainers:
         readOnly: true
       - mountPath: "/config"
         name: config
-    env:
-      - name: L1_RPC_URL
-        value: "testrpc"
+    envFrom:
+      - secretRef:
+          name: aggkit-bridge-katana
 
 config:
   bridgeAddress: "0x2a3DD3EB832aF982ec71669E178424b10Dca2EDe"
