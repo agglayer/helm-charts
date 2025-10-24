@@ -35,11 +35,11 @@ spec:
               BATCH_VIRTUAL=$(kubectl -n {{ .Release.Namespace }} logs cdk-sequence-sender-statefulset-0 | grep "latest virtual batch is" | tail -n1 | jq -r .msg | rev | cut -d' ' -f1 | rev)
               [ -z "$BATCH_VIRTUAL" ] || [ "$BATCH_VIRTUAL" -le 0 ] && echo "BATCH_VIRTUAL is not a valid number greater than 0. Exiting." && exit
 
-              GAP=$((BATCH_VERIFIED - BATCH_VIRTUAL))
+              GAP=$((BATCH_VIRTUAL - BATCH_VERIFIED))
               REPLICAS=$((GAP / 6))
 
               [ $REPLICAS -gt ${PROVER_MAX_REPLICAS} ] && REPLICAS=${PROVER_MAX_REPLICAS}
               [ $REPLICAS -lt ${PROVER_MIN_REPLICAS} ] && REPLICAS=${PROVER_MIN_REPLICAS}
 
-              echo "Pending proofs = $BATCH_VERIFIED - $BATCH_VIRTUAL = $GAP. Scaling provers to $REPLICAS replicas."
+              echo "Pending proofs = $BATCH_VIRTUAL - $BATCH_VERIFIED = $GAP. Scaling provers to $REPLICAS replicas."
               kubectl scale deployment zkevm-prover-deployment --replicas=$REPLICAS > /dev/null 2>&1
