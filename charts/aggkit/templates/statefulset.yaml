@@ -14,6 +14,21 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- if .Values.config.prometheus.enabled }}
+        ad.datadoghq.com/{{ .Chart.Name }}.checks: |
+          {
+            "openmetrics": {
+              "init_config": {},
+              "instances": [
+                {
+                  "openmetrics_endpoint": "http://%%host%%:{{ .Values.container.ports.prometheus }}/metrics",
+                  "namespace": "aggkit",
+                  "metrics": ["^aggsender_.*", "^aggoracle_.*", "^bridge_.*"]
+                }
+              ]
+            }
+          }
+        {{- end }}
         {{- with .Values.podAnnotations }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -74,6 +89,11 @@ spec:
             - name: validator
               containerPort: {{ .Values.container.ports.validator }}
               protocol: TCP
+            {{- if .Values.config.prometheus.enabled }}
+            - name: prometheus
+              containerPort: {{ .Values.container.ports.prometheus }}
+              protocol: TCP
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

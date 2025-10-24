@@ -40,6 +40,7 @@ container:
     aggsender: 5576
     bridge: 5577
     validator: 5578
+    prometheus: 9091
 
 service:
   type: ClusterIP
@@ -113,7 +114,7 @@ config:
 
   bridge:
     reorgDetectorL1:
-      blockFinality: "LatestBlock"
+      blockFinality: "FinalizedBlock"
     bridgeL1Sync:
       blockFinality: "LatestBlock"
 
@@ -129,7 +130,6 @@ config:
 
   l2:
     agglayerAddress: "0x123"
-    bridgeAddress: "0x123"
     chainId: 123
     globalExitRootAddress: "0x123"
     rollupId: 123
@@ -138,6 +138,10 @@ config:
   log:
     environment: development # "production" or "development"
     level: info
+
+  prometheus:
+    enabled: true
+    host: 0.0.0.0
 
 resources:
   limits:

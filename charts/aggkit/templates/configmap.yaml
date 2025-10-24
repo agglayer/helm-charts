@@ -21,9 +21,6 @@ data:
 
     polygonBridgeAddr = {{ .Values.config.bridgeAddress | quote }}
 
-    RPCURL = {{ .Values.config.l2.rpcURL | quote }}
-    WitnessURL = ""
-
     rollupCreationBlockNumber = {{ .Values.config.l1.rollupBlockNumber | int }}
     rollupManagerCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
     genesisBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
@@ -124,12 +121,8 @@ data:
 
     {{- end }}
 
-    [BridgeL2Sync]
-    BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
-
     [L1InfoTreeSync]
     SyncBlockChunkSize=1000
-    InitialBlock = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
 
     [REST]
     Port = {{ .Values.container.ports.bridge | quote }}
@@ -164,3 +157,8 @@ data:
     URL = {{ .Values.config.validator.agglayerClient.url | quote }}
     UseTLS = {{ .Values.config.validator.agglayerClient.useTLS | quote }}
     {{ end }}
+
+    [Prometheus]
+    Enabled = {{ .Values.config.prometheus.enabled }}
+    Host = {{ .Values.config.prometheus.host | quote }}
+    Port = {{ .Values.container.ports.prometheus }}
