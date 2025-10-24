@@ -19,6 +19,12 @@ spec:
       targetPort: validator
       protocol: TCP
       name: validator
+    {{- if .Values.config.prometheus.enabled }}
+    - port: {{ .Values.container.ports.prometheus }}
+      targetPort: prometheus
+      protocol: TCP
+      name: prometheus
+    {{- end }}
   # StatefulSets require headless services
   # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
   clusterIP: {{ .Values.service.clusterIP }}
