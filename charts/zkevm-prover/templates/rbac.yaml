@@ -15,6 +15,11 @@ rules:
     resources: ["pods/log"]
     verbs: ["get"]
   
+  # read the Deployment object
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch"]
+
   # kubectl scale deployment
   - apiGroups: ["apps"]
     resources: ["deployments/scale"]
