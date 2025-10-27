@@ -27,8 +27,8 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         resources:
           requests:
-            cpu: {{ .Values.resources.cpu }}
-            memory: {{ .Values.resources.memory }}
+            cpu: {{ ternary "1" "222" $isMockProver | quote }}
+            memory: {{ ternary "6Gi" "850Gi" $isMockProver | quote }}
         command:
         - /bin/sh
         - -c
@@ -54,7 +54,9 @@ spec:
           volumeAttributes:
             bucketName: {{ .Values.gcs.bucket }}
             mountOptions: "implicit-dirs,only-dir={{ .Values.gcs.version }}"
+      {{ if not .Values.isMockProver }}
       nodeSelector:
         cloud.google.com/compute-class: Performance
         cloud.google.com/machine-family: n2d
         cloud.google.com/gke-spot: "true"
+      {{ end }}
