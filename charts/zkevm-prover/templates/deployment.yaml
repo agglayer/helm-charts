@@ -27,8 +27,8 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         resources:
           requests:
-            cpu: {{ ternary "1" "222" $isMockProver | quote }}
-            memory: {{ ternary "6Gi" "850Gi" $isMockProver | quote }}
+            cpu: {{ ternary "1" "222" .Values.isMockProver | quote }}
+            memory: {{ ternary "6Gi" "850Gi" .Values.isMockProver | quote }}
         command:
         - /bin/sh
         - -c
