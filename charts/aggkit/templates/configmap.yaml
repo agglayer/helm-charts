@@ -58,6 +58,8 @@ data:
     SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
     Mode={{ .Values.config.aggSender.mode | quote }}
     RequireNoFEPBlockGap = true
+    DryRun = {{ .Values.config.aggSender.dryRun }}
+    MaxL2BlockNumber = {{ .Values.config.aggSender.maxL2BlockNumber | int }}
 
     {{ if .Values.config.aggSender.optimisticModeEnabled }}
     [AggSender.OptimisticModeConfig]
