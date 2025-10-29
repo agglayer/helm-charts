@@ -81,6 +81,8 @@ config:
     maxCertSize: 8388608
     saveCertificatesToFilesPath: /tmp
     mode: "PessimisticProof" # PessimisticProof (PP) or AggchainProof (FEP)
+    maxL2BlockNumber: 0
+    dryRun: false
 
     # Set this if aggSender.mode is AggchainProof
     # aggkitProverClient:
