@@ -27,8 +27,8 @@ spec:
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         resources:
           requests:
-            cpu: {{ ternary "1" .Values.node.cpu .Values.isMockProver | quote }}
-            memory: {{ ternary "6Gi" .Values.node.memory .Values.isMockProver | quote }}
+            cpu: {{ ternary "1" "178" .Values.isMockProver | quote }}
+            memory: {{ ternary "6Gi" "850Gi" .Values.isMockProver | quote }}
         command:
         - /bin/sh
         - -c
@@ -57,6 +57,6 @@ spec:
       {{ if not .Values.isMockProver }}
       nodeSelector:
         cloud.google.com/compute-class: Performance
-        cloud.google.com/machine-family: {{ .Values.node.machineFamily }}
+        cloud.google.com/machine-family: {{ .Values.machineFamily }}
         cloud.google.com/gke-spot: "true"
       {{ end }}
