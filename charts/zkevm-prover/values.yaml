@@ -13,6 +13,8 @@ image:
 
 isMockProver: false
 
+machineFamily: c3d # c3d for 1.4TB memory, n2d for 850GB. Used only with real provers
+
 aggregator:
   host: cdk-aggregator-service
   port: 50081
