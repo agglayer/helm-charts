@@ -12,7 +12,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/0xpolygon/zkevm-bridge-service
   pullPolicy: IfNotPresent
-  tag: "v0.6.3-RC2"
+  tag: "v0.6.3-RC4"
   command: ["/app/zkevm-bridge"]
   args: ["run", "--cfg", "/etc/bridge/bridge-config.toml"]
 
