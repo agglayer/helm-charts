@@ -12,7 +12,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/0xpolygon/zkevm-bridge-service
   pullPolicy: IfNotPresent
-  tag: "v0.6.2"
+  tag: "v0.6.3-RC2"
   command: ["/app/zkevm-bridge"]
   args: ["run", "--cfg", "/etc/bridge/bridge-config.toml"]
 
@@ -48,11 +48,12 @@ config:
     path: /etc/bridge/claimtx.keystore
     areClaimsBetweenL2sEnabled: false
   network:
-    genBlockNumber: 0
+    l1GenBlockNumber: 0
     polygonBridgeAddress: "0x0000000000000000000000000000000000000000"
     polygonZkEVMGlobalExitRootAddress: "0x0000000000000000000000000000000000000000"
     polygonRollupManagerAddress: "0x0000000000000000000000000000000000000000"
     polygonZkEVMAddress: "0x0000000000000000000000000000000000000000"
+    l2GenBlockNumbers: 0
     l2PolygonBridgeAddress: "0x0000000000000000000000000000000000000000"
     l2PolygonZkEVMGlobalExitRootAddress: "0x0000000000000000000000000000000000000000"
     requireSovereignChainSmcs: true
