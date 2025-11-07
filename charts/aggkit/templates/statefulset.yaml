@@ -121,7 +121,7 @@ spec:
                   - key: "config.toml"
                     path: "config.toml"
             - secret:
-                name: op-secrets
+                name: {{ .Values.existingSecret }}
                 items:
                   {{- if and (has "aggsender" .Values.config.components) (eq .Values.config.aggsender.privateKey.keyName "") }}
                   - key: {{ .Values.config.aggsender.privateKey.keystoreFileName }}
