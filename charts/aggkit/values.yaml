@@ -16,6 +16,8 @@ podLabels:
   partner: Polygon
   network: mynetwork
 
+existingSecret: op-secrets
+
 nodeSelector: {}
 
 tolerations: []
@@ -39,7 +41,7 @@ container:
   ports:
     aggsender: 5576
     bridge: 5577
-    validator: 5578
+    validator: 5578 # named validator as is common to aggsender and aggsender-validator
     prometheus: 9091
 
 service:
@@ -53,7 +55,7 @@ ingresses:
   bridge:
     create: false
     hostname: "something-else.dev.polygon"
-  validator:
+  aggsenderValidator:
     create: false
     hostname: "something-else-else.dev.polygon"
 
@@ -75,7 +77,7 @@ config:
     - aggsender
     - aggoracle
 
-  aggSender:
+  aggsender:
     certificateSendInterval: 1m
     checkSettledInterval: 5s
     maxCertSize: 8388608
@@ -84,7 +86,7 @@ config:
     maxL2BlockNumber: 0
     dryRun: false
 
-    # Set this if aggSender.mode is AggchainProof
+    # Set this if aggsender.mode is AggchainProof
     # aggkitProverClient:
     #   url: "http://aggkit-prover:4446"
     #   useTLS: true
@@ -97,22 +99,32 @@ config:
       url: "http://localhost:5578"
 
     privateKey:
-      keyName: "" # if this string is not empty, aggSender will try to use KMS
+      keyName: "" # if this string is not empty, aggsender will try to use KMS
+      keystoreFileName: "aggsender.keystore"
+      keystoreFilePasswordSecretFieldName: "aggsenderKeystorePassword"
+
     optimisticModeEnabled: false
 
-  validator:
+  aggsenderValidator:
+    mode: "PessimisticProof" # PessimisticProof (PP) or AggchainProof (FEP)
+
     agglayerClient:
       url: "http://agglayer:4444"
       useTLS: true
 
     privateKey:
-      keyName: "" # KMS key name
+      keyName: "" # if this string is not empty, aggsender-validator will try to use KMS
+      keystoreFileName: "aggsenderValidator.keystore"
+      keystoreFilePasswordSecretFieldName: "aggsenderValidatorKeystorePassword"
 
-  aggOracle:
+  aggoracle:
     enableAggOracleCommittee: false
-    aggOracleCommitteeAddr: "0x"
+    aggoracleCommitteeAddr: "0x"
+
     privateKey:
-      keyName: "" # if this string is not empty, aggOracle will try to use KMS
+      keyName: "" # if this string is not empty, aggoracle will try to use KMS
+      keystoreFileName: "aggoracle.keystore"
+      keystoreFilePasswordSecretFieldName: "aggoracleKeystorePassword"
 
   reorgDetectorL1:
     blockFinality: "FinalizedBlock"

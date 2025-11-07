@@ -1,4 +1,4 @@
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
 
 apiVersion: v1
 kind: ConfigMap
@@ -46,66 +46,66 @@ data:
     {{- if has "aggsender" .Values.config.components }}
 
     [AggSender]
-    {{ if .Values.config.aggSender.privateKey.keyName }}
-    AggsenderPrivateKey = {Method ="GCP", KeyName={{ .Values.config.aggSender.privateKey.keyName | quote }}}
+    {{ if .Values.config.aggsender.privateKey.keyName }}
+    AggsenderPrivateKey = {Method ="GCP", KeyName={{ .Values.config.aggsender.privateKey.keyName | quote }}}
     {{ else }}
-    AggsenderPrivateKey = {Path = "/etc/aggkit/sequencer.keystore", Password = {{ index $opSecrets.data "sequencerPrivateKeyPassword" | b64dec | quote }}}
+    AggsenderPrivateKey = {Path = "/etc/aggkit/{{ .Values.config.aggsender.privateKey.keystoreFileName }}", Password = {{ index $opSecrets.data (.Values.config.aggsender.privateKey.keystoreFilePasswordSecretFieldName) | b64dec | quote }}}
     {{ end }}
 
-    CertificateSendInterval = {{ .Values.config.aggSender.certificateSendInterval | quote }}
-    CheckSettledInterval = {{ .Values.config.aggSender.checkSettledInterval | quote }}
-    MaxCertSize = {{ .Values.config.aggSender.maxCertSize | int }}
-    SaveCertificatesToFilesPath = {{ .Values.config.aggSender.saveCertificatesToFilesPath | quote }}
-    Mode={{ .Values.config.aggSender.mode | quote }}
+    CertificateSendInterval = {{ .Values.config.aggsender.certificateSendInterval | quote }}
+    CheckSettledInterval = {{ .Values.config.aggsender.checkSettledInterval | quote }}
+    MaxCertSize = {{ .Values.config.aggsender.maxCertSize | int }}
+    SaveCertificatesToFilesPath = {{ .Values.config.aggsender.saveCertificatesToFilesPath | quote }}
+    Mode={{ .Values.config.aggsender.mode | quote }}
     RequireNoFEPBlockGap = true
-    DryRun = {{ .Values.config.aggSender.dryRun }}
-    MaxL2BlockNumber = {{ .Values.config.aggSender.maxL2BlockNumber | int }}
+    DryRun = {{ .Values.config.aggsender.dryRun }}
+    MaxL2BlockNumber = {{ .Values.config.aggsender.maxL2BlockNumber | int }}
 
-    {{ if .Values.config.aggSender.optimisticModeEnabled }}
+    {{ if .Values.config.aggsender.optimisticModeEnabled }}
     [AggSender.OptimisticModeConfig]
     SovereignRollupAddr = {{ .Values.config.l1.rollupAddress | quote }}
     # By default use the same key that aggsender  sign certs
-    {{ if .Values.config.aggSender.privateKey.keyName }}
-    TrustedSequencerKey = {Method ="GCP", KeyName={{ .Values.config.aggSender.privateKey.keyName | quote }}}
+    {{ if .Values.config.aggsender.privateKey.keyName }}
+    TrustedSequencerKey = {Method ="GCP", KeyName={{ .Values.config.aggsender.privateKey.keyName | quote }}}
     {{ else }}
-    TrustedSequencerKey = {Path = "/etc/aggkit/sequencer.keystore", Password = {{ index $opSecrets.data "sequencerPrivateKeyPassword" | b64dec | quote }}}
+    TrustedSequencerKey = {Path = "/etc/aggkit/{{ .Values.config.aggsender.privateKey.keystoreFileName }}", Password = {{ index $opSecrets.data (.Values.config.aggsender.privateKey.keystoreFilePasswordSecretFieldName) | b64dec | quote }}}
     {{ end }}
     OpNodeURL = "http://op-node:9545"
     RequireKeyMatchTrustedSequencer = true
     {{ end }}
 
-    {{ if .Values.config.aggSender.mode | eq "AggchainProof" }}
+    {{ if .Values.config.aggsender.mode | eq "AggchainProof" }}
     [AggSender.AggkitProverClient]
-    URL = {{ .Values.config.aggSender.aggkitProverClient.url | quote }}
-    UseTLS = {{ .Values.config.aggSender.aggkitProverClient.useTLS | quote }}
+    URL = {{ .Values.config.aggsender.aggkitProverClient.url | quote }}
+    UseTLS = {{ .Values.config.aggsender.aggkitProverClient.useTLS | quote }}
     {{ end }}
 
     [AggSender.AgglayerClient.GRPC]
-    URL = {{ .Values.config.aggSender.agglayerClient.url | quote }}
-    UseTLS = {{ .Values.config.aggSender.agglayerClient.useTLS | quote }}
+    URL = {{ .Values.config.aggsender.agglayerClient.url | quote }}
+    UseTLS = {{ .Values.config.aggsender.agglayerClient.useTLS | quote }}
 
     [AggSender.ValidatorClient]
-    URL = {{ .Values.config.aggSender.validatorClient.url | quote }}
+    URL = {{ .Values.config.aggsender.validatorClient.url | quote }}
 
     {{- end }}
 
     {{- if has "aggoracle" .Values.config.components }}
 
     [AggOracle]
-    EnableAggOracleCommittee = {{ .Values.config.aggOracle.enableAggOracleCommittee }}
+    EnableAggOracleCommittee = {{ .Values.config.aggoracle.enableAggOracleCommittee }}
 
     [AggOracle.EVMSender]
     GlobalExitRootL2 = {{ .Values.config.l2.globalExitRootAddress | quote }}
 
-    {{ if .Values.config.aggOracle.enableAggOracleCommittee }}
-    AggOracleCommitteeAddr = {{ .Values.config.aggOracle.aggOracleCommitteeAddr | quote }}
+    {{ if .Values.config.aggoracle.enableAggOracleCommittee }}
+    AggOracleCommitteeAddr = {{ .Values.config.aggoracle.aggoracleCommitteeAddr | quote }}
     {{ end }}
 
     [AggOracle.EVMSender.EthTxManager]
-    {{ if .Values.config.aggOracle.privateKey.keyName }}
-    PrivateKeys = [{Method ="GCP", KeyName={{ .Values.config.aggOracle.privateKey.keyName | quote }}}]
+    {{ if .Values.config.aggoracle.privateKey.keyName }}
+    PrivateKeys = [{Method ="GCP", KeyName={{ .Values.config.aggoracle.privateKey.keyName | quote }}}]
     {{ else }}
-    PrivateKeys = [{Path = "/etc/aggkit/aggoracle.keystore", Password = {{ index $opSecrets.data "aggoraclePrivateKeyPassword" | b64dec | quote }}}]
+    PrivateKeys = [{Path = "/etc/aggkit/{{ .Values.config.aggoracle.privateKey.keystoreFileName }}", Password = {{ index $opSecrets.data (.Values.config.aggoracle.privateKey.keystoreFilePasswordSecretFieldName) | b64dec | quote }}}]
     {{ end }}
 
     [AggOracle.EVMSender.EthTxManager.Etherman]
@@ -132,12 +132,16 @@ data:
     [L2GERSync]
     BlockFinality = "LatestBlock"
 
-    {{- if has "aggsender-validator" .Values.config.components }}
-
     [Validator]
-    EnableRPC = true
-    Signer = {Method ="GCP", KeyName={{ .Values.config.validator.privateKey.keyName | quote }}}
-    Mode={{ .Values.config.validator.mode | quote }}
+    EnableRPC = {{ has "aggsender-validator" .Values.config.components }}
+    {{- $pk := ternary .Values.config.aggsenderValidator.privateKey .Values.config.aggsender.privateKey (has "aggsender-validator" .Values.config.components) }}
+    {{- $mode := ternary .Values.config.aggsenderValidator.mode .Values.config.aggsender.mode (has "aggsender-validator" .Values.config.components) }}
+    {{ if $pk.keyName }}
+    Signer = {Method ="GCP", KeyName={{ $pk.keyName | quote }}}
+    {{ else }}
+    Signer = {Path = "/etc/aggkit/{{ $pk.keystoreFileName }}", Password = {{ index $opSecrets.data ($pk.keystoreFilePasswordSecretFieldName) | b64dec | quote }}}
+    {{ end }}
+    Mode={{ $mode | quote }}
 
     [Validator.ServerConfig]
     Host = "0.0.0.0"
@@ -156,9 +160,13 @@ data:
     Capacity = 100
 
     [Validator.AgglayerClient.GRPC]
-    URL = {{ .Values.config.validator.agglayerClient.url | quote }}
-    UseTLS = {{ .Values.config.validator.agglayerClient.useTLS | quote }}
-    {{ end }}
+    {{- if has "aggsender-validator" .Values.config.components }}
+    URL = {{ .Values.config.aggsenderValidator.agglayerClient.url | quote }}
+    UseTLS = {{ .Values.config.aggsenderValidator.agglayerClient.useTLS | quote }}
+    {{- else }}
+    URL = {{ .Values.config.aggsender.agglayerClient.url | quote }}
+    UseTLS = {{ .Values.config.aggsender.agglayerClient.useTLS | quote }}
+    {{- end }}
 
     [Prometheus]
     Enabled = {{ .Values.config.prometheus.enabled }}
