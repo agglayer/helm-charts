@@ -64,11 +64,11 @@ spec:
                   name: bridge
 {{- end }}
 ---
-{{- if .Values.ingresses.validator.create -}}
+{{- if .Values.ingresses.aggsenderValidator.create -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "aggkit.fullname" . }}-validator
+  name: {{ include "aggkit.fullname" . }}-aggsenderValidator
   annotations:
     cert-manager.io/issuer: gcp-cas-issuer
     cert-manager.io/issuer-kind: GoogleCASClusterIssuer
@@ -78,14 +78,14 @@ metadata:
     # protocol for the GCP-managed load balancer
     # See https://cloud.google.com/kubernetes-engine/docs/how-to/internal-load-balance-ingress#https_between_client_and_load_balancer
     kubernetes.io/ingress.allow-http: "false"
-    external-dns.alpha.kubernetes.io/hostname: "{{ .Values.ingresses.validator.hostname }}"
+    external-dns.alpha.kubernetes.io/hostname: "{{ .Values.ingresses.aggsenderValidator.hostname }}"
 spec:
   tls:
     - hosts:
-        - {{ .Values.ingresses.validator.hostname }}
-      secretName: "{{ .Values.ingresses.validator.hostname }}-secret-tls"
+        - {{ .Values.ingresses.aggsenderValidator.hostname }}
+      secretName: "{{ .Values.ingresses.aggsenderValidator.hostname }}-secret-tls"
   rules:
-    - host: {{ .Values.ingresses.validator.hostname }}
+    - host: {{ .Values.ingresses.aggsenderValidator.hostname }}
       http:
         paths:
           - path: /

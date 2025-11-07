@@ -121,15 +121,19 @@ spec:
                   - key: "config.toml"
                     path: "config.toml"
             - secret:
-                name: op-secrets
+                name: {{ .Values.existingSecret }}
                 items:
-                  {{- if has "aggsender" .Values.config.components }}
-                  - key: sequencer.keystore
-                    path: sequencer.keystore
+                  {{- if and (has "aggsender" .Values.config.components) (eq .Values.config.aggsender.privateKey.keyName "") }}
+                  - key: {{ .Values.config.aggsender.privateKey.keystoreFileName }}
+                    path: {{ .Values.config.aggsender.privateKey.keystoreFileName }}
                   {{- end }}
-                  {{- if has "aggoracle" .Values.config.components }}
-                  - key: aggoracle.keystore
-                    path: aggoracle.keystore
+                  {{- if and (has "aggsender-validator" .Values.config.components) (eq .Values.config.aggsenderValidator.privateKey.keyName "") }}
+                  - key: {{ .Values.config.aggsenderValidator.privateKey.keystoreFileName }}
+                    path: {{ .Values.config.aggsenderValidator.privateKey.keystoreFileName }}
+                  {{- end }}
+                  {{- if and (has "aggoracle" .Values.config.components) (eq .Values.config.aggoracle.privateKey.keyName "") }}
+                  - key: {{ .Values.config.aggoracle.privateKey.keystoreFileName }}
+                    path: {{ .Values.config.aggoracle.privateKey.keystoreFileName }}
                   {{- end }}
         {{- end }}
   volumeClaimTemplates:
