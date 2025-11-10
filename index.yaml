@@ -14,6 +14,16 @@ entries:
   aggkit:
   - apiVersion: v2
     appVersion: 0.7.0
+    created: "2025-11-10T07:35:30.762854074Z"
+    description: A Helm chart for Aggkit
+    digest: c5c39b6072be03720575c1e35357d67f9f574b9de499d1565b71bee0c6856797
+    name: aggkit
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/aggkit-5.0.1/aggkit-5.0.1.tgz
+    version: 5.0.1
+  - apiVersion: v2
+    appVersion: 0.7.0
     created: "2025-11-07T07:45:51.809235914Z"
     description: A Helm chart for Aggkit
     digest: c297cb0ae22b7391308d07e89d9e2ac218407945d86f403d28d0257c3362399d
@@ -105,6 +115,16 @@ entries:
   aggkit-prover:
   - apiVersion: v2
     appVersion: 1.4.2
+    created: "2025-11-10T07:35:30.91090228Z"
+    description: A Helm chart for Kubernetes
+    digest: dffc923fd984fc7e6e848814b56d3558a6f86194b0651415630ba6753ea15280
+    name: aggkit-prover
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/aggkit-prover-1.0.1/aggkit-prover-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: 1.4.2
     created: "2025-10-06T13:36:18.048386877Z"
     description: A Helm chart for Kubernetes
     digest: f97bc530ab1870d0c51c493949286d3de0eee875ec569692682b9e4345a30db0
@@ -155,6 +175,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/agglayer-3.4.1/agglayer-3.4.1.tgz
     version: 3.4.1
   agglayer-prover:
+  - apiVersion: v2
+    appVersion: 0.3.0-rc.22
+    created: "2025-11-10T07:35:31.084325524Z"
+    description: A Helm chart for Kubernetes
+    digest: 98ea86fbf4823c9cd4a7593e68aafa8c52eefe3de24ed9fb8aaa23143ed315e1
+    name: agglayer-prover
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/agglayer-prover-1.1.1/agglayer-prover-1.1.1.tgz
+    version: 1.1.1
   - apiVersion: v2
     appVersion: 0.3.0-rc.22
     created: "2025-09-10T12:01:31.234570874Z"
@@ -241,6 +271,16 @@ entries:
   bridge-ui:
   - apiVersion: v2
     appVersion: multi-network
+    created: "2025-11-10T07:35:31.223522413Z"
+    description: A Helm chart for Kubernetes
+    digest: fc3d32829de54ed2ca3e95e8ed3339019caca4b707ad39105ab6743f35df193e
+    name: bridge-ui
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/bridge-ui-0.5.1/bridge-ui-0.5.1.tgz
+    version: 0.5.1
+  - apiVersion: v2
+    appVersion: multi-network
     created: "2025-10-10T07:37:42.098913087Z"
     description: A Helm chart for Kubernetes
     digest: 949a4add9b9c01430d2e5059e82550695d4245b171ffdd03ce46dd67eafdf32b
@@ -260,6 +300,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/bridge-ui-0.4.0/bridge-ui-0.4.0.tgz
     version: 0.4.0
   cdk:
+  - apiVersion: v2
+    appVersion: 0.5.4
+    created: "2025-11-10T07:35:31.372846668Z"
+    description: A Helm chart for deploying legacy cdk component on Kubernetes
+    digest: 6554de169e7df470a23da55f9ad93b89accdab1953652ed8b4da5f518ac0693f
+    name: cdk
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/cdk-1.1.1/cdk-1.1.1.tgz
+    version: 1.1.1
   - apiVersion: v2
     appVersion: 0.5.4
     created: "2025-10-17T14:15:00.306034276Z"
@@ -312,6 +362,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/cdk-data-availability-1.0.0/cdk-data-availability-1.0.0.tgz
     version: 1.0.0
   cdk-erigon:
+  - apiVersion: v2
+    appVersion: v2.61.24
+    created: "2025-11-10T07:35:31.53627327Z"
+    description: A Helm chart for Kubernetes
+    digest: 6a46d02e6d2a3dc9c10cfa43d700fba9ba5cb24d3108f7f68fbbb83518778a6a
+    name: cdk-erigon
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/cdk-erigon-0.8.1/cdk-erigon-0.8.1.tgz
+    version: 0.8.1
   - apiVersion: v2
     appVersion: v2.61.24
     created: "2025-10-10T07:37:42.269321123Z"
@@ -368,6 +428,16 @@ entries:
   op-batcher:
   - apiVersion: v2
     appVersion: v1.16.0
+    created: "2025-11-10T07:35:31.701383287Z"
+    description: A Helm chart for op-batcher
+    digest: fabf5da7604339d3d18ca9e6855077b8b623ad05aec90ef2a38dd23c2b4dddde
+    name: op-batcher
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-batcher-1.1.1/op-batcher-1.1.1.tgz
+    version: 1.1.1
+  - apiVersion: v2
+    appVersion: v1.16.0
     created: "2025-10-14T16:24:10.114253299Z"
     description: A Helm chart for op-batcher
     digest: 51e198a2431ddabaa906b699aeecb674962d56f4fff488b2acdb9ceeb5604549
@@ -409,6 +479,16 @@ entries:
   op-geth:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-11-10T07:35:31.83872491Z"
+    description: A Helm chart for op-geth
+    digest: 244b5333efd653c67c596ddd29f887c227e860abd76b354b7ed5299354094786
+    name: op-geth
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-geth-0.6.1/op-geth-0.6.1.tgz
+    version: 0.6.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-09-10T12:01:32.789694442Z"
     description: A Helm chart for op-geth
     digest: ea54b9b43e394bf0e2e59281f045a48fb86e68b577e2000b88c9caba256f8252
@@ -418,6 +498,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/op-geth-0.6.0/op-geth-0.6.0.tgz
     version: 0.6.0
   op-geth-generic:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-11-10T07:35:31.969470353Z"
+    description: A Helm chart for op-geth
+    digest: 30f7f4f312ac508e01a282a7845a70a0154d435313c166c371de89fed7822c2e
+    name: op-geth-generic
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-geth-generic-1.0.1/op-geth-generic-1.0.1.tgz
+    version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
     created: "2025-10-03T07:24:29.366620056Z"
@@ -431,6 +521,16 @@ entries:
   op-node:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-11-10T07:35:32.116336243Z"
+    description: A Helm chart for op-node
+    digest: af8753754266fdcfbe00d7561b22bdb0a48a9cc43b84ee3493727fc0ccab5c4e
+    name: op-node
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-node-0.5.1/op-node-0.5.1.tgz
+    version: 0.5.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-09-10T12:01:32.986298067Z"
     description: A Helm chart for op-node
     digest: 5200f0978d9b2ccde9474860548c875dca68c2c0e545cea2f0f4f27e3c1aeec7
@@ -440,6 +540,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/op-node-0.5.0/op-node-0.5.0.tgz
     version: 0.5.0
   op-node-generic:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2025-11-10T07:35:32.24577626Z"
+    description: A Helm chart for op-node
+    digest: 946663178aa78a17047ae81178d13d15308926f41ebe912c33a41c48726af294
+    name: op-node-generic
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-node-generic-1.0.1/op-node-generic-1.0.1.tgz
+    version: 1.0.1
   - apiVersion: v2
     appVersion: 1.0.0
     created: "2025-10-03T07:24:29.533860489Z"
@@ -472,6 +582,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/op-secrets-0.1.5/op-secrets-0.1.5.tgz
     version: 0.1.5
   op-succinct-proposer:
+  - apiVersion: v2
+    appVersion: v3.1.0-agglayer
+    created: "2025-11-10T07:35:32.39437473Z"
+    description: A Helm chart for op-succinct-proposer
+    digest: 63ff06c20ed0c9331c3d81fbd4a717f554bf18882a79d4a50c5dbc085928738b
+    name: op-succinct-proposer
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-succinct-proposer-2.0.1/op-succinct-proposer-2.0.1.tgz
+    version: 2.0.1
   - apiVersion: v2
     appVersion: v3.1.0-agglayer
     created: "2025-10-06T13:36:41.18480638Z"
@@ -520,6 +640,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/permissionless-nodes-1.3.0/permissionless-nodes-1.3.0.tgz
     version: 1.3.0
   pool-manager:
+  - apiVersion: v2
+    appVersion: v0.1.2
+    created: "2025-11-10T07:35:32.66015103Z"
+    description: A Helm chart for Kubernetes
+    digest: 68ff5c798ed0b6b0180c71e0140c856e6e0b1998e79f6fc1bd9ab8f420bb667f
+    name: pool-manager
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/pool-manager-0.4.1/pool-manager-0.4.1.tgz
+    version: 0.4.1
   - apiVersion: v2
     appVersion: v0.1.2
     created: "2025-10-10T07:37:42.547517896Z"
@@ -655,4 +785,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2025-11-07T07:45:51.809333226Z"
+generated: "2025-11-10T07:35:32.660324733Z"
