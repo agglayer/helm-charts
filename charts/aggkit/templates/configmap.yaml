@@ -132,6 +132,8 @@ data:
     [L2GERSync]
     BlockFinality = "LatestBlock"
 
+    {{- if or (has "aggsender-validator" .Values.config.components) (has "aggsender" .Values.config.components) }}
+
     [Validator]
     EnableRPC = {{ has "aggsender-validator" .Values.config.components }}
     {{- $pk := ternary .Values.config.aggsenderValidator.privateKey .Values.config.aggsender.privateKey (has "aggsender-validator" .Values.config.components) }}
@@ -166,6 +168,8 @@ data:
     {{- else }}
     URL = {{ .Values.config.aggsender.agglayerClient.url | quote }}
     UseTLS = {{ .Values.config.aggsender.agglayerClient.useTLS | quote }}
+    {{- end }}
+
     {{- end }}
 
     [Prometheus]
