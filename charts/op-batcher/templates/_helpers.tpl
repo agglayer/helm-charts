@@ -36,9 +36,7 @@ Common labels
 {{- define "op-batcher.labels" -}}
 helm.sh/chart: {{ include "op-batcher.chart" . }}
 {{ include "op-batcher.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+app.kubernetes.io/version: {{ .Values.container.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 tags.datadoghq.com/env: {{ .Values.env }}
 tags.datadoghq.com/service: op-batcher

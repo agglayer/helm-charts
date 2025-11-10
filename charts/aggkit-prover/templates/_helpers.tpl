@@ -36,9 +36,7 @@ Common labels
 {{- define "aggkit-prover.labels" -}}
 helm.sh/chart: {{ include "aggkit-prover.chart" . }}
 {{ include "aggkit-prover.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+app.kubernetes.io/version: {{ .Values.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
@@ -48,6 +46,7 @@ Selector labels
 {{- define "aggkit-prover.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "aggkit-prover.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/version: {{ .Values.image.tag }}
 {{- end }}
 
 {{/*

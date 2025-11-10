@@ -36,9 +36,7 @@ Common labels
 {{- define "pool-manager.labels" -}}
 helm.sh/chart: {{ include "pool-manager.chart" . }}
 {{ include "pool-manager.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+app.kubernetes.io/version: {{ .Values.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 tags.datadoghq.com/env: {{ .Values.env }}
 tags.datadoghq.com/service: pool-manager

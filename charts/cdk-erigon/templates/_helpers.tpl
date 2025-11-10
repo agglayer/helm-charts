@@ -36,9 +36,7 @@ Common labels
 {{- define "cdk-erigon.labels" -}}
 helm.sh/chart: {{ include "cdk-erigon.chart" . }}
 {{ include "cdk-erigon.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+app.kubernetes.io/version: {{ .Values.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 tags.datadoghq.com/env: {{ .Values.env }}
 tags.datadoghq.com/service: cdk-erigon

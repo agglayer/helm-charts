@@ -36,9 +36,7 @@ Common labels
 {{- define "bridgeUI.labels" -}}
 helm.sh/chart: {{ include "bridgeUI.chart" . }}
 {{ include "bridgeUI.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
+app.kubernetes.io/version: {{ .Values.container.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 tags.datadoghq.com/env: {{ .Values.env }}
 tags.datadoghq.com/service: bridge-ui
