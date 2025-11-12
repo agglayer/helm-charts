@@ -1,0 +1,18 @@
+{{- $resources := list -}}
+{{- range .Values.extraManifests }}
+  {{- if typeIs "string" . }}
+    {{/* Handle multi-part YAML documents */}}
+    {{- range . | splitList "---\n" }}
+      {{- with . | fromYaml }}
+        {{- $resources = append $resources . }}
+      {{- end }}
+    {{- end }}
+  {{- else }}
+    {{- $resources = append $resources . }}
+  {{- end }}
+{{- end }}
+
+{{- range $resources }}
+---
+{{ . | toYaml }}
+{{- end }}
