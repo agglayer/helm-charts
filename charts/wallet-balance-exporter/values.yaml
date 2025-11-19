@@ -1,0 +1,68 @@
+env: bali
+
+config:
+  checkInterval:
+    seconds: 300
+
+existingSecret:
+  name: "op-secrets"
+  field: "wallet-balance-exporter"
+
+ports:
+  metrics: 8080
+
+revisionHistoryLimit: 3
+
+replicaCount: 1
+
+image:
+  repository: python
+  pullPolicy: IfNotPresent
+  tag: "3.11-alpine"
+
+imagePullSecrets: []
+
+podAnnotations:
+  ad.datadoghq.com/wallet-balance-exporter.checks: |
+    {
+      "openmetrics": {
+        "init_config": {},
+        "instances": [
+          {
+            "openmetrics_endpoint": "http://%%host%%:8080/metrics",
+            "namespace": "wallet_balance",
+            "metrics": ["^wallet_.*"]
+          }
+        ]
+      }
+    }
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  fsGroup: 65534
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+extraEnv: []
+
+envFrom: []
