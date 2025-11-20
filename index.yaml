@@ -713,6 +713,25 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/service-account-permissions-0.1.0/service-account-permissions-0.1.0.tgz
     version: 0.1.0
+  wallet-balance-exporter:
+  - apiVersion: v2
+    created: "2025-11-20T10:46:51.895409754Z"
+    description: A Helm chart for monitoring wallet balances and exposing them as
+      Prometheus metrics
+    digest: b62b42b7e4ad77794859f700ef0366048cc3fde522f94a6a8b025461c73729eb
+    keywords:
+    - wallet
+    - balance
+    - exporter
+    - prometheus
+    - monitoring
+    maintainers:
+    - name: Polygon Labs
+    name: wallet-balance-exporter
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/wallet-balance-exporter-1.0.0/wallet-balance-exporter-1.0.0.tgz
+    version: 1.0.0
   zkevm-explorer:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -805,4 +824,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2025-11-12T17:53:17.736079795Z"
+generated: "2025-11-20T10:46:51.895537028Z"
