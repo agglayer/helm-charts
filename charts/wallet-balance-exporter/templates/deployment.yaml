@@ -1,0 +1,371 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "wallet-balance-exporter.fullname" . }}
+  labels:
+    {{- include "wallet-balance-exporter.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      {{- include "wallet-balance-exporter.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "wallet-balance-exporter.selectorLabels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: {{ .Chart.Name }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 10 }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+          - name: metrics
+            containerPort: {{ .Values.ports.metrics }}
+            protocol: TCP
+        command:
+          - /bin/sh
+          - -c
+          - |
+            set -e
+
+            echo "Installing dependencies..."
+            export HOME=/tmp
+            export PYTHONUSERBASE=/tmp/.local
+            pip install --user --no-warn-script-location web3==6.11.3 prometheus-client==0.19.0
+            export PYTHONPATH=/tmp/.local/lib/python3.11/site-packages:$PYTHONPATH
+
+            echo "Starting wallet balance exporter..."
+
+            python3 << 'PYTHON_SCRIPT'
+            import json
+            import os
+            import sys
+            import time
+            import logging
+            from decimal import Decimal
+            from prometheus_client import start_http_server, Gauge, Info
+            from web3 import Web3
+            from web3.exceptions import Web3Exception
+
+            logging.basicConfig(
+                level=logging.INFO,
+                format='%(asctime)s - %(levelname)s - %(message)s'
+            )
+            logger = logging.getLogger(__name__)
+
+            RELEASE_NAME = "{{ .Release.Name }}"
+            NAMESPACE = "{{ .Release.Namespace }}"
+            CHECK_INTERVAL = int(os.environ.get('CHECK_INTERVAL', 300))
+            METRICS_PORT = int(os.environ.get('METRICS_PORT', 8080))
+
+            balance_wei_gauge = Gauge(
+                'wallet_balance_wei',
+                'Wallet balance in wei',
+                ['address', 'label', 'network', 'release', 'namespace']
+            )
+
+            balance_eth_gauge = Gauge(
+                'wallet_balance_eth',
+                'Wallet balance in ETH',
+                ['address', 'label', 'network', 'release', 'namespace']
+            )
+
+            below_minimum_gauge = Gauge(
+                'wallet_balance_below_minimum',
+                'Wallet balance is below minimum threshold (1=below, 0=above)',
+                ['address', 'label', 'network', 'min_balance_eth', 'release', 'namespace']
+            )
+
+            check_success_gauge = Gauge(
+                'wallet_balance_check_success',
+                'Balance check was successful (1=success, 0=failure)',
+                ['address', 'label', 'network', 'release', 'namespace']
+            )
+
+            check_timestamp_gauge = Gauge(
+                'wallet_balance_check_timestamp',
+                'Unix timestamp of last balance check',
+                ['address', 'label', 'network', 'release', 'namespace']
+            )
+
+            exporter_up_gauge = Gauge(
+                'wallet_balance_exporter_up',
+                'Exporter is running (always 1)',
+                ['release', 'namespace']
+            )
+
+            exporter_last_check_gauge = Gauge(
+                'wallet_balance_exporter_last_check_timestamp',
+                'Unix timestamp when exporter last ran',
+                ['release', 'namespace']
+            )
+
+            exporter_info = Info(
+                'wallet_balance_exporter',
+                'Wallet balance exporter version info'
+            )
+            exporter_info.info({'version': '{{ .Chart.Version }}', 'release': RELEASE_NAME, 'namespace': NAMESPACE})
+
+            def extract_network_name(rpc_url):
+                try:
+                    parts = rpc_url.split('//')[1].split('/')
+                    hostname = parts[0].split('.')[0]
+                    return hostname.replace(':', '_').replace('-', '_')
+                except Exception:
+                    return 'unknown'
+
+            def check_wallet_balance(w3, rpc_url, wallet, network_name):
+                address = wallet['address']
+                label = wallet['label']
+                min_balance = wallet.get('min_balance_eth')
+
+                try:
+                    # Convert to checksum address for web3.py compatibility
+                    address = Web3.to_checksum_address(address)
+
+                    logger.info(f"Checking balance for {label} ({address}) on {network_name}")
+
+                    balance_wei = w3.eth.get_balance(address)
+                    balance_eth = Decimal(balance_wei) / Decimal(10**18)
+
+                    logger.info(f"Balance for {label}: {balance_eth} ETH ({balance_wei} wei)")
+
+                    balance_wei_gauge.labels(
+                        address=address,
+                        label=label,
+                        network=network_name,
+                        release=RELEASE_NAME,
+                        namespace=NAMESPACE
+                    ).set(float(balance_wei))
+
+                    balance_eth_gauge.labels(
+                        address=address,
+                        label=label,
+                        network=network_name,
+                        release=RELEASE_NAME,
+                        namespace=NAMESPACE
+                    ).set(float(balance_eth))
+
+                    below_min = 0
+                    if min_balance is not None:
+                        min_balance_decimal = Decimal(str(min_balance))
+                        if balance_eth < min_balance_decimal:
+                            below_min = 1
+                            logger.warning(
+                                f"Balance for {label} ({balance_eth} ETH) is below minimum ({min_balance} ETH)"
+                            )
+
+                    below_minimum_gauge.labels(
+                        address=address,
+                        label=label,
+                        network=network_name,
+                        min_balance_eth=str(min_balance) if min_balance else '',
+                        release=RELEASE_NAME,
+                        namespace=NAMESPACE
+                    ).set(below_min)
+
+                    check_success_gauge.labels(
+                        address=address,
+                        label=label,
+                        network=network_name,
+                        release=RELEASE_NAME,
+                        namespace=NAMESPACE
+                    ).set(1)
+
+                    check_timestamp_gauge.labels(
+                        address=address,
+                        label=label,
+                        network=network_name,
+                        release=RELEASE_NAME,
+                        namespace=NAMESPACE
+                    ).set(time.time())
+
+                    return True
+
+                except Web3Exception as e:
+                    logger.error(f"Web3 error checking {label} on {network_name}: {e}")
+                    check_success_gauge.labels(
+                        address=address,
+                        label=label,
+                        network=network_name,
+                        release=RELEASE_NAME,
+                        namespace=NAMESPACE
+                    ).set(0)
+                    return False
+                except Exception as e:
+                    logger.error(f"Error checking {label} on {network_name}: {e}")
+                    check_success_gauge.labels(
+                        address=address,
+                        label=label,
+                        network=network_name,
+                        release=RELEASE_NAME,
+                        namespace=NAMESPACE
+                    ).set(0)
+                    return False
+
+            def check_all_balances(config):
+                logger.info("=" * 60)
+                logger.info("Running balance check cycle...")
+
+                success_count = 0
+                fail_count = 0
+
+                for rpc_url, wallets in config.items():
+                    network_name = extract_network_name(rpc_url)
+                    logger.info(f"Processing network: {network_name} ({rpc_url})")
+
+                    try:
+                        w3 = Web3(Web3.HTTPProvider(rpc_url, request_kwargs={'timeout': 30}))
+
+                        if not w3.is_connected():
+                            logger.error(f"Failed to connect to {network_name}")
+                            for wallet in wallets:
+                                check_success_gauge.labels(
+                                    address=wallet['address'],
+                                    label=wallet['label'],
+                                    network=network_name,
+                                    release=RELEASE_NAME,
+                                    namespace=NAMESPACE
+                                ).set(0)
+                                fail_count += 1
+                            continue
+
+                        for wallet in wallets:
+                            if check_wallet_balance(w3, rpc_url, wallet, network_name):
+                                success_count += 1
+                            else:
+                                fail_count += 1
+
+                    except Exception as e:
+                        logger.error(f"Error connecting to {network_name}: {e}")
+                        for wallet in wallets:
+                            check_success_gauge.labels(
+                                address=wallet['address'],
+                                label=wallet['label'],
+                                network=network_name,
+                                release=RELEASE_NAME,
+                                namespace=NAMESPACE
+                            ).set(0)
+                            fail_count += 1
+
+                exporter_last_check_gauge.labels(
+                    release=RELEASE_NAME,
+                    namespace=NAMESPACE
+                ).set(time.time())
+
+                logger.info(f"Balance check completed: {success_count} successful, {fail_count} failed")
+                logger.info("=" * 60)
+
+            def main():
+                logger.info("Wallet Balance Exporter starting...")
+                logger.info(f"Release: {RELEASE_NAME}, Namespace: {NAMESPACE}")
+                logger.info(f"Check interval: {CHECK_INTERVAL} seconds")
+                logger.info(f"Metrics port: {METRICS_PORT}")
+
+                wallet_config_json = os.environ.get('WALLET_CONFIG')
+                if not wallet_config_json:
+                    logger.error("WALLET_CONFIG environment variable is not set")
+                    sys.exit(1)
+
+                try:
+                    config = json.loads(wallet_config_json)
+                    logger.info(f"Loaded configuration for {len(config)} networks")
+                except json.JSONDecodeError as e:
+                    logger.error(f"Failed to parse WALLET_CONFIG JSON: {e}")
+                    sys.exit(1)
+
+                exporter_up_gauge.labels(
+                    release=RELEASE_NAME,
+                    namespace=NAMESPACE
+                ).set(1)
+
+                logger.info(f"Starting Prometheus HTTP server on port {METRICS_PORT}")
+                start_http_server(METRICS_PORT)
+                logger.info("Prometheus HTTP server started successfully")
+
+                while True:
+                    try:
+                        check_all_balances(config)
+                    except Exception as e:
+                        logger.error(f"Error in balance check cycle: {e}", exc_info=True)
+
+                    logger.info(f"Sleeping for {CHECK_INTERVAL} seconds...")
+                    time.sleep(CHECK_INTERVAL)
+
+            if __name__ == '__main__':
+                try:
+                    main()
+                except KeyboardInterrupt:
+                    logger.info("Received shutdown signal, exiting...")
+                    sys.exit(0)
+                except Exception as e:
+                    logger.error(f"Fatal error: {e}", exc_info=True)
+                    sys.exit(1)
+            PYTHON_SCRIPT
+        env:
+          - name: WALLET_CONFIG
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.existingSecret.name }}
+                key: {{ .Values.existingSecret.field }}
+          - name: CHECK_INTERVAL
+            value: {{ .Values.config.checkInterval.seconds | quote }}
+          - name: METRICS_PORT
+            value: {{ .Values.ports.metrics | quote }}
+          {{- with .Values.extraEnv }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- with .Values.envFrom }}
+        envFrom:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: metrics
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: metrics
+          initialDelaySeconds: 45
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        volumeMounts:
+          - name: tmp
+            mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
