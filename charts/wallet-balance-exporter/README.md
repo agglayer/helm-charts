@@ -35,32 +35,34 @@ Example configuration structure:
 {
   "https://eth-mainnet.g.alchemy.com/v2/YOUR-API-KEY": [
     {
-      "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "address": "0x742d35cc6634c0532925a3b844bc9e7595f0beb",
       "label": "deployer-wallet",
       "min_balance_eth": 1.0
     },
     {
-      "address": "0xAnotherAddress123...",
+      "address": "0xanotheraddress123...",
       "label": "operations-wallet",
       "min_balance_eth": 5.0
     }
   ],
   "https://sepolia.infura.io/v3/YOUR-PROJECT-ID": [
     {
-      "address": "0xTestAddress456...",
+      "address": "0xtestaddress456...",
       "label": "test-deployer",
       "min_balance_eth": 0.1
     }
   ],
   "https://polygon-mainnet.g.alchemy.com/v2/YOUR-API-KEY": [
     {
-      "address": "0xPolygonAddress789...",
+      "address": "0xpolygonaddress789...",
       "label": "polygon-operator",
       "min_balance_eth": 100.0
     }
   ]
 }
 ```
+
+**Note:** Addresses can be provided in any format (lowercase, uppercase, or checksummed) - the exporter automatically converts them to proper checksum format.
 
 Create the secret:
 
@@ -70,7 +72,7 @@ cat > wallet-config.json << 'EOF'
 {
   "https://eth-mainnet.g.alchemy.com/v2/YOUR-API-KEY": [
     {
-      "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+      "address": "0x742d35cc6634c0532925a3b844bc9e7595f0beb",
       "label": "deployer-wallet",
       "min_balance_eth": 1.0
     }
@@ -186,12 +188,12 @@ You can deploy multiple instances of this chart (e.g., one per environment or ne
 # Deploy for mainnet wallets
 helm install wallet-exporter-mainnet agglayer/wallet-balance-exporter \
   --namespace production \
-  --set-file secret...
+  --set env=mainnet
 
 # Deploy for testnet wallets
 helm install wallet-exporter-testnet agglayer/wallet-balance-exporter \
   --namespace testing \
-  --set-file secret...
+  --set env=testnet
 ```
 
 All metrics automatically include `release` and `namespace` labels to distinguish between deployments:
@@ -215,22 +217,22 @@ The exporter exposes the following Prometheus metrics (all prefixed with `wallet
 ### `wallet_balance_wei`
 - **Type**: Gauge
 - **Description**: Current balance of the wallet in wei
-- **Labels**: `address`, `label`, `network`
+- **Labels**: `address`, `label`, `network`, `release`, `namespace`
 
 ### `wallet_balance_eth`
 - **Type**: Gauge
 - **Description**: Current balance of the wallet in ETH
-- **Labels**: `address`, `label`, `network`
+- **Labels**: `address`, `label`, `network`, `release`, `namespace`
 
 ### `wallet_balance_below_minimum`
 - **Type**: Gauge
 - **Description**: Indicates if wallet balance is below minimum threshold (1 = below, 0 = above)
-- **Labels**: `address`, `label`, `network`, `min_balance_eth`
+- **Labels**: `address`, `label`, `network`, `min_balance_eth`, `release`, `namespace`
 
 ### `wallet_balance_check_success`
 - **Type**: Gauge
 - **Description**: Indicates if the balance check was successful (1 = success, 0 = failure)
-- **Labels**: `address`, `label`, `network`
+- **Labels**: `address`, `label`, `network`, `release`, `namespace`
 
 ### `wallet_balance_check_timestamp`
 - **Type**: Gauge
@@ -252,7 +254,7 @@ The exporter exposes the following Prometheus metrics (all prefixed with `wallet
 - **Description**: Exporter version and metadata
 - **Labels**: `version`, `release`, `namespace`
 
-**Note**: All metrics include `release` and `namespace` labels to support multiple deployments.
+**Note**: All metrics include `release` and `namespace` labels to support multiple deployments. Wallet addresses are automatically converted to checksum format regardless of input casing.
 
 ## Example Datadog Monitors
 
@@ -332,6 +334,8 @@ avg:wallet_balance.wallet_balance_eth{*} by {label,network} * avg:crypto.eth.usd
 The chart installs Python dependencies at pod startup using `pip install`:
 - `web3==6.11.3` - Ethereum JSON-RPC client
 - `prometheus-client==0.19.0` - Prometheus metrics library
+
+Packages are installed to `/tmp/.local` to work with the read-only root filesystem security setting.
 
 **Startup time**: ~15-20 seconds (includes pip install + initial metrics setup)
 
@@ -436,7 +440,6 @@ kubectl port-forward -n your-namespace deployment/wallet-balance-exporter 8080:8
 
 # Then in another terminal
 curl http://localhost:8080/metrics
-curl http://localhost:8080/healthz
 ```
 
 ### Restart the Deployment
@@ -455,21 +458,24 @@ kubectl get secret op-secrets -n your-namespace -o jsonpath='{.data.wallet-balan
 
 1. **Pod shows "WALLET_CONFIG is empty"**
    - Verify the secret exists and has the correct field name
-   - Check RBAC permissions for the service account
    - Verify: `kubectl get secret op-secrets -n your-namespace -o jsonpath='{.data.wallet-balance-exporter}' | base64 -d | jq .`
 
 2. **Balance check failures**
    - Verify RPC endpoints are accessible from the cluster
    - Check rate limiting on RPC providers
-   - Ensure addresses are properly formatted (checksummed)
+   - Verify addresses are valid Ethereum addresses (checksumming is handled automatically)
 
 3. **Metrics not appearing in Datadog**
    - Verify Datadog agent is running: `kubectl get pods -n datadog`
-   - Check that `datadog.enabled=true` in your values
-   - Verify the pod annotations: `kubectl get pod <job-pod> -o yaml | grep ad.datadoghq.com`
+   - Verify the pod annotations are present: `kubectl get pod <pod-name> -o yaml | grep ad.datadoghq.com`
    - Check Datadog agent logs: `kubectl logs -n datadog <datadog-agent-pod> | grep wallet-balance`
-   - Ensure the pod stays alive long enough (check `metrics.scrapeDuration` value)
-   - Verify the metrics endpoint is accessible: `kubectl port-forward <job-pod> 8080:8080` then `curl http://localhost:8080/metrics`
+   - Verify the metrics endpoint is accessible: `kubectl port-forward deployment/wallet-balance-exporter 8080:8080` then `curl http://localhost:8080/metrics`
+   - Check that the pod is in Running state and ready
+
+4. **Pip install failures during startup**
+   - Verify the pod has internet access to PyPI
+   - Check pod logs: `kubectl logs -n your-namespace -l app.kubernetes.io/name=wallet-balance-exporter`
+   - Ensure `/tmp` volume mount is working correctly
 
 ## Contributing
 
