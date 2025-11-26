@@ -126,6 +126,9 @@ config:
       keystoreFileName: "aggoracle.keystore"
       keystoreFilePasswordSecretFieldName: "aggoracleKeystorePassword"
 
+  l1InfoTreeSync:
+    blockFinality: "FinalizedBlock" # IMPORTANT! Should be SafeBlock for aggkit >= v0.7.3
+
   reorgDetectorL1:
     blockFinality: "FinalizedBlock"
 
