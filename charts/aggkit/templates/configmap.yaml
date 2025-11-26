@@ -124,6 +124,7 @@ data:
     {{- end }}
 
     [L1InfoTreeSync]
+    BlockFinality = {{ .Values.config.l1InfoTreeSync.blockFinality | quote }}
     SyncBlockChunkSize=1000
 
     [REST]
