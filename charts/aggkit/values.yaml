@@ -71,7 +71,6 @@ podSecurityContext: {}
 securityContext: {}
 
 config:
-  bridgeAddress: "0x123"
   # list of components: aggsender, aggsender-validator, aggoracle, bridge
   components:
     - aggsender
@@ -127,7 +126,7 @@ config:
       keystoreFilePasswordSecretFieldName: "aggoracleKeystorePassword"
 
   l1InfoTreeSync:
-    blockFinality: "FinalizedBlock" # IMPORTANT! Should be SafeBlock for aggkit >= v0.7.3
+    blockFinality: "FinalizedBlock"
 
   reorgDetectorL1:
     blockFinality: "FinalizedBlock"
@@ -136,6 +135,7 @@ config:
     blockFinality: "LatestBlock"
 
   l1:
+    bridgeAddress: "0x123"
     chainId: 123
     globalExitRootAddress: "0x123"
     polTokenAddress: "0x123"
@@ -147,9 +147,9 @@ config:
 
   l2:
     agglayerAddress: "0x123"
+    bridgeAddress: "0x123"
     chainId: 123
     globalExitRootAddress: "0x123"
-    rollupId: 123
     rpcURL: http://localhost:8545
 
   log:
