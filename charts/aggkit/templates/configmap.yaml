@@ -7,7 +7,6 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   config.toml: |
-    NetworkID = {{ .Values.config.l2.rollupId | int }}
     PathRWData = {{ .Values.storage.path | quote }}
     {{- if .Values.config.l1.rpcUrl }}
     L1URL = {{ .Values.config.l1.rpcUrl | quote }}
@@ -19,13 +18,12 @@ data:
     SequencerPrivateKeyPath = ""
     SequencerPrivateKeyPassword = ""
 
-    polygonBridgeAddr = {{ .Values.config.bridgeAddress | quote }}
-
     rollupCreationBlockNumber = {{ .Values.config.l1.rollupBlockNumber | int }}
     rollupManagerCreationBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
     genesisBlockNumber = {{ .Values.config.l1.rollupManagerBlockNumber | int }}
 
     [L1Config]
+    BridgeAddr = {{ .Values.config.l1.bridgeAddress | quote }}
     chainId = {{ .Values.config.l1.chainId | int }}
     polygonZkEVMGlobalExitRootAddress = {{ .Values.config.l1.globalExitRootAddress | quote }}
     polygonRollupManagerAddress = {{ .Values.config.l1.rollupManagerAddress | quote }}
@@ -33,6 +31,7 @@ data:
     polygonZkEVMAddress = {{ .Values.config.l1.rollupAddress | quote }}
 
     [L2Config]
+    BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
     GlobalExitRootAddr = {{ .Values.config.l2.globalExitRootAddress | quote }}
 
     [Log]
