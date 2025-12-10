@@ -52,6 +52,7 @@ config:
   useCachedDB: false
   witnessGenTimeout: "1200"
   opSuccinctConfigName: "opsuccinct_genesis"
+  logFormat: "json"
 
 resources:
   requests:

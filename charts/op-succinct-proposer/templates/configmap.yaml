@@ -52,3 +52,4 @@ data:
   WITNESS_GEN_TIMEOUT: {{ .Values.config.witnessGenTimeout | quote }}
   NETWORK_RPC_URL: {{ $sp1NetworkRpcURL | quote }}
   OP_SUCCINCT_CONFIG_NAME: {{ .Values.config.opSuccinctConfigName | quote }}
+  LOG_FORMAT: {{ .Values.config.logFormat | quote }}
