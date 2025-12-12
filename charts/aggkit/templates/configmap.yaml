@@ -124,13 +124,14 @@ data:
 
     [L1InfoTreeSync]
     BlockFinality = {{ .Values.config.l1InfoTreeSync.blockFinality | quote }}
-    SyncBlockChunkSize=1000
+    SyncBlockChunkSize={{ .Values.config.l1.syncBlockChunkSize | int }}
 
     [REST]
     Port = {{ .Values.container.ports.bridge | quote }}
 
     [L2GERSync]
-    BlockFinality = "LatestBlock"
+    BlockFinality = {{ .Values.config.l2GERSync.blockFinality | quote }}
+    InitialBlockNum = {{ .Values.config.l2.initialBlockNum | int }}
 
     {{- if or (has "aggsender-validator" .Values.config.components) (has "aggsender" .Values.config.components) }}
 
@@ -176,3 +177,8 @@ data:
     Enabled = {{ .Values.config.prometheus.enabled }}
     Host = {{ .Values.config.prometheus.host | quote }}
     Port = {{ .Values.container.ports.prometheus }}
+
+    [BridgeL2Sync]
+    InitialBlockNum = {{ .Values.config.l2.initialBlockNum | int }}
+    BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
+    BlockFinality = {{ .Values.config.bridgeL2Sync.blockFinality | quote }}

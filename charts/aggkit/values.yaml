@@ -132,7 +132,13 @@ config:
     blockFinality: "FinalizedBlock"
 
   bridgeL1Sync:
-    blockFinality: "LatestBlock"
+    blockFinality: "FinalizedBlock"
+
+  bridgeL2Sync:
+    blockFinality: "FinalizedBlock"
+
+  l2GERSync:
+    blockFinality: "FinalizedBlock"
 
   l1:
     bridgeAddress: "0x123"
@@ -151,6 +157,7 @@ config:
     chainId: 123
     globalExitRootAddress: "0x123"
     rpcURL: http://localhost:8545
+    initialBlockNum: 0
 
   log:
     environment: development # "production" or "development"
