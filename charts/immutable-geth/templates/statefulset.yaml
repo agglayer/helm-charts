@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "immutable-geth.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "immutable-geth.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "immutable-geth.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "immutable-geth.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{ include "immutable-geth.serviceAccountName" . }}
+      initContainers:
+        - name: init
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command:
+            - geth
+          args:
+            - immutable
+            - bootstrap
+            - rpc
+            - --zkevm=testnet
+            - --datadir={{ .Values.storage.path | quote }}
+          volumeMounts:
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - geth
+          args:
+            - --zkevm=testnet
+            - --config=/etc/geth/testnet-public.toml
+            - --datadir={{ .Values.storage.path }}
+            - --http
+            - --http.port={{ .Values.service.http.port }}
+            - --http.addr=0.0.0.0
+            - --http.corsdomain=*
+            - --http.vhosts=*
+            - --http.api=admin,engine,net,eth,web3,debug,miner
+            - --gossipdefault
+            - --disabletxpoolgossip
+            - --rpcproxy
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.http.port }}
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
