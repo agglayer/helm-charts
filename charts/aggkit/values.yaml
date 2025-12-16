@@ -133,6 +133,7 @@ config:
 
   bridgeL1Sync:
     blockFinality: "FinalizedBlock"
+    initialBlockNum: 0
 
   bridgeL2Sync:
     blockFinality: "FinalizedBlock"
