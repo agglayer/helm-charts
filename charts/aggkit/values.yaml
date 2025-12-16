@@ -44,6 +44,17 @@ container:
     validator: 5578 # named validator as is common to aggsender and aggsender-validator
     prometheus: 9091
 
+  # livenessProbe:
+  #   httpGet:
+  #     path: /
+  #     port: 5576
+  #   initialDelaySeconds: 30
+  # readinessProbe:
+  #   httpGet:
+  #     path: /
+  #     port: 5576
+  #   initialDelaySeconds: 30
+
 service:
   type: ClusterIP
   clusterIP: None
