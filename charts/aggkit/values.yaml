@@ -128,13 +128,14 @@ config:
       keystoreFilePasswordSecretFieldName: "aggoracleKeystorePassword"
 
   l1InfoTreeSync:
-    blockFinality: "FinalizedBlock"
+    blockFinality: "LatestBlock"
 
   reorgDetectorL1:
     blockFinality: "FinalizedBlock"
 
   bridgeL1Sync:
     blockFinality: "FinalizedBlock"
+    initialBlockNum: 0
 
   bridgeL2Sync:
     blockFinality: "FinalizedBlock"

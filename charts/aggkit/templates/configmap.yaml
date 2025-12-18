@@ -121,6 +121,7 @@ data:
 
     [BridgeL1Sync]
     BlockFinality = {{ .Values.config.bridgeL1Sync.blockFinality | quote }}
+    InitialBlockNum = {{ .Values.config.bridgeL1Sync.initialBlockNum | int }}
 
     {{- end }}
 
