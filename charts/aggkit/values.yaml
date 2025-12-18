@@ -79,11 +79,13 @@ config:
   aggsender:
     certificateSendInterval: 1m
     checkSettledInterval: 5s
-    maxCertSize: 8388608
-    saveCertificatesToFilesPath: /tmp
-    mode: "PessimisticProof" # PessimisticProof (PP) or AggchainProof (FEP)
-    maxL2BlockNumber: 0
+    checkStatusCertificateInterval: 5m
     dryRun: false
+    maxCertSize: 8388608
+    maxL2BlockNumber: 0
+    mode: "PessimisticProof" # PessimisticProof (PP) or AggchainProof (FEP)
+    retryCertAfterInError: false
+    saveCertificatesToFilesPath: /tmp
 
     # Set this if aggsender.mode is AggchainProof
     # aggkitProverClient:
@@ -117,7 +119,7 @@ config:
       keystoreFilePasswordSecretFieldName: "aggsenderValidatorKeystorePassword"
 
   aggoracle:
-    enableAggOracleCommittee: false
+    enableAggoracleCommittee: false
     aggoracleCommitteeAddr: "0x"
 
     privateKey:
