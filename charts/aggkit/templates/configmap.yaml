@@ -56,6 +56,8 @@ data:
     MaxCertSize = {{ .Values.config.aggsender.maxCertSize | int }}
     SaveCertificatesToFilesPath = {{ .Values.config.aggsender.saveCertificatesToFilesPath | quote }}
     Mode={{ .Values.config.aggsender.mode | quote }}
+    CheckStatusCertificateInterval = {{ .Values.config.aggsender.checkStatusCertificateInterval | quote }}
+    RetryCertAfterInError = {{ .Values.config.aggsender.retryCertAfterInError }}
     RequireNoFEPBlockGap = true
     DryRun = {{ .Values.config.aggsender.dryRun }}
     MaxL2BlockNumber = {{ .Values.config.aggsender.maxL2BlockNumber | int }}
@@ -91,12 +93,12 @@ data:
     {{- if has "aggoracle" .Values.config.components }}
 
     [AggOracle]
-    EnableAggOracleCommittee = {{ .Values.config.aggoracle.enableAggOracleCommittee }}
+    EnableAggOracleCommittee = {{ .Values.config.aggoracle.enableAggoracleCommittee }}
 
     [AggOracle.EVMSender]
     GlobalExitRootL2 = {{ .Values.config.l2.globalExitRootAddress | quote }}
 
-    {{ if .Values.config.aggoracle.enableAggOracleCommittee }}
+    {{ if .Values.config.aggoracle.enableAggoracleCommittee }}
     AggOracleCommitteeAddr = {{ .Values.config.aggoracle.aggoracleCommitteeAddr | quote }}
     {{ end }}
 
