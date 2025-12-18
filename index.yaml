@@ -465,6 +465,17 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/gke-private-cert-manager-0.1.0/gke-private-cert-manager-0.1.0.tgz
     version: 0.1.0
+  immutable-geth:
+  - apiVersion: v2
+    appVersion: v1.0.0-beta.16
+    created: "2025-12-18T14:57:47.121968261Z"
+    description: A Helm chart for Kubernetes
+    digest: 6e86bdb7320533b1dee048a7f5f8c4b393394dbd593692ff9c7e5e45d1ea2c58
+    name: immutable-geth
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/immutable-geth-0.1.0/immutable-geth-0.1.0.tgz
+    version: 0.1.0
   op-batcher:
   - apiVersion: v2
     appVersion: v1.16.0
@@ -854,4 +865,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2025-12-10T13:11:23.384251695Z"
+generated: "2025-12-18T14:57:47.122147775Z"
