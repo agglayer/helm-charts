@@ -30,8 +30,8 @@ spec:
                 port:
                   name: aggsender
 {{- end }}
+{{- if .Values.ingresses.bridge.create }}
 ---
-{{- if .Values.ingresses.bridge.create -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -63,12 +63,12 @@ spec:
                 port:
                   name: bridge
 {{- end }}
+{{- if .Values.ingresses.aggsenderValidator.create }}
 ---
-{{- if .Values.ingresses.aggsenderValidator.create -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "aggkit.fullname" . }}-aggsenderValidator
+  name: {{ include "aggkit.fullname" . }}-aggsender-validator
   annotations:
     cert-manager.io/issuer: gcp-cas-issuer
     cert-manager.io/issuer-kind: GoogleCASClusterIssuer
