@@ -330,6 +330,16 @@ entries:
   bridge-tester:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-12-25T23:48:24.239438845Z"
+    description: A Helm chart for testing bridges between networks
+    digest: 4f78eaf99b89ff5743f0e5206839bb085f9dd42cb5ea81fd6aca17413a3c4a70
+    name: bridge-tester
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/bridge-tester-1.0.0/bridge-tester-1.0.0.tgz
+    version: 1.0.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-09-10T12:01:31.719358001Z"
     description: A Helm chart for testing bridges between networks
     digest: e4112b5e219c0c34054389343bb6264b4668952c7d1e7ded0f52c3a663fbf9c9
@@ -895,4 +905,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2025-12-19T09:24:43.550028846Z"
+generated: "2025-12-25T23:48:24.239544333Z"
