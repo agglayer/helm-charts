@@ -1,0 +1,91 @@
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "bridgeTester.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bridgeTester.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.schedule | quote }}
+  concurrencyPolicy: {{ .Values.concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ .Values.successfulJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: {{ .Values.backoffLimit }}
+      template:
+        metadata:
+          labels:
+            {{- include "bridgeTester.labels" . | nindent 12 }}
+            {{- with .Values.podLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        spec:
+          containers:
+            - name: script-runner
+              image: ubuntu:latest
+              command: ["/bin/bash"]
+              args:
+                - -c
+                - |
+                  echo "#################################################"
+                  echo "##        Starting bridge-tester script        ##"
+                  echo "#################################################"
+                  echo ""
+
+                  echo "## [Step] Apt update and install deps"
+                  apt-get update && apt-get install -y curl
+                  echo ""
+
+                  echo "## [Step] Installing the latest version of polygon-cli for linux amd64"
+                  curl -s --max-time 30 https://api.github.com/repos/0xPolygon/polygon-cli/releases/latest \
+                    | grep "browser_download_url" \
+                    | grep "linux_amd64" \
+                    | cut -d '"' -f 4 \
+                    | xargs -n 1 curl -LO || { echo "## [Error] Failed to download polygon-cli"; exit 1; }
+                  tar -xzf polycli*.tar.gz
+                  rm polycli*.tar.gz
+                  chmod +x polycli*
+                  mv polycli* /usr/local/bin/polycli
+                  polycli version
+                  if [ $? -ne 0 ]; then
+                    echo "## [Error] Failed to verify polygon-cli installation"
+                    exit 1
+                  fi
+                  echo "## [Status] polygon-cli installed successfully"
+                  echo ""
+
+                  echo "## [Step] Prepare environment"
+                  private_key={{ index $opSecrets.data "bridgeTesterPrivateKey" | b64dec }}
+                  destination_address={{ .Values.config.l2.destinationAddress }}
+                  l1_rpc_url={{ index $opSecrets.data "l1RpcURL" | b64dec }}
+
+                  l1_bridge_address={{ .Values.config.l1.bridgeAddress }}
+                  gas_token_address={{ .Values.config.l1.gasTokenAddress }}
+                  destination_network={{ .Values.config.l2.networkId }}
+
+                  echo "## [Step] Bridge asset from L1 to L2"
+                  echo "Bridging funds (gas token) from L1 ($l1_rpc_url) to L2 (Network: $destination_network)"
+
+                  polycli ulxly bridge asset \
+                          --bridge-address $l1_bridge_address \
+                          --destination-address $destination_address \
+                          --private-key $private_key \
+                          --value 123000000000000 \
+                          --destination-network $destination_network \
+                          --rpc-url $l1_rpc_url \
+                          --token-address $gas_token_address
+
+                  echo "## [Status] Bridge command executed"
+                  echo ""
+
+              resources:
+                requests:
+                  memory: "64Mi"
+                  cpu: "250m"
+                limits:
+                  memory: "128Mi"
+                  cpu: "500m"
+          restartPolicy: Never

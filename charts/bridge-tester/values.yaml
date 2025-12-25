@@ -9,18 +9,17 @@ podLabels:
 
 existingSecret: op-secrets
 
-schedule: "*/45 * * * *" # Run every 45 minutes
+schedule: "0 * * * *" # Run every hour
+concurrencyPolicy: Forbid
+failedJobsHistoryLimit: 1
+successfulJobsHistoryLimit: 1
+backoffLimit: 1
 
 config:
-  pp1:
+  l1:
     bridgeAddress: "0x123"
-    bridgeURL: "endpoint"
-    rollupId: 123
-    rpcURL: "endpoint"
-
-  pp2:
-    bridgeAddress: "0x123"
-    bridgeURL: "endpoint"
     gasTokenAddress: "0x123"
-    rollupId: 123
-    rpcURL: "endpoint"
+
+  l2:
+    destinationAddress: "0x123"
+    networkId: 123
