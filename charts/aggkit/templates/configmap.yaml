@@ -119,6 +119,9 @@ data:
     [ReorgDetectorL1]
     FinalizedBlock = {{ .Values.config.reorgDetectorL1.blockFinality | quote }}
 
+    [ReorgDetectorL2]
+    FinalizedBlock = {{ .Values.config.reorgDetectorL2.blockFinality | quote }}
+
     [BridgeL1Sync]
     BlockFinality = {{ .Values.config.bridgeL1Sync.blockFinality | quote }}
     InitialBlockNum = {{ .Values.config.bridgeL1Sync.initialBlockNum | int }}

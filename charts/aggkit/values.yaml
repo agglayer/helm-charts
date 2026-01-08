@@ -133,6 +133,9 @@ config:
   reorgDetectorL1:
     blockFinality: "FinalizedBlock"
 
+  reorgDetectorL2:
+    blockFinality: "FinalizedBlock"
+
   bridgeL1Sync:
     blockFinality: "LatestBlock"
     initialBlockNum: 0
