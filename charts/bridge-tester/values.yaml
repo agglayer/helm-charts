@@ -16,10 +16,16 @@ successfulJobsHistoryLimit: 1
 backoffLimit: 1
 
 config:
-  l1:
-    bridgeAddress: "0x123"
-    gasTokenAddress: "0x123"
+  # Bridge configuration for multiple networks
+  # Each entry represents a bridge operation from L1 to a specific L2
+  networks:
+    - name: "network-1"
+      enabled: true
+      l1:
+        bridgeAddress: "0x123"
+        tokenAddress: "0x123"
+      l2:
+        networkId: 123
+        destinationAddress: "0x123"
+      bridgeAmount: "123000000000000"  # Amount in wei
 
-  l2:
-    destinationAddress: "0x123"
-    networkId: 123
