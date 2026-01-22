@@ -1,5 +1,9 @@
 replicaCount: 1
 
+config:
+  network: testnet # options: testnet, mainnet
+  extraArgs: []
+
 image:
   repository: ghcr.io/immutable/immutable-geth/immutable-geth
   pullPolicy: IfNotPresent
@@ -24,14 +28,20 @@ storage:
 
 service:
   type: ClusterIP
-  clusterIP: None
   http:
     port: 8545
   annotations: {}
 
 ingress:
-  create: true
+  create: false
   hostname: something.dev.polygon
+
+httpRoute:
+  create: false
+  hostname: immutable-geth.development.polygon.internal
+  parentRef:
+    name: development-polygon-internal
+    namespace: gateways
 
 resources: {}
 
