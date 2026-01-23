@@ -1,11 +1,29 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ include "immutable-geth.fullname" . }}-headless
+  labels:
+    {{- include "immutable-geth.labels" . | nindent 4 }}
+spec:
+  clusterIP: None
+  ports:
+    - port: {{ .Values.service.http.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "immutable-geth.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: {{ include "immutable-geth.fullname" . }}
   labels:
     {{- include "immutable-geth.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
   annotations:
-    {{ toYaml .Values.service.annotations | indent 4 }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -13,8 +31,5 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-  # StatefulSets require headless services
-  # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
-  clusterIP: {{ .Values.service.clusterIP }}
   selector:
     {{- include "immutable-geth.selectorLabels" . | nindent 4 }}

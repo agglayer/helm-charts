@@ -6,6 +6,7 @@ metadata:
   labels:
     {{- include "immutable-geth.labels" . | nindent 4 }}
 spec:
+  serviceName: {{ include "immutable-geth.fullname" . }}-headless
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -34,7 +35,7 @@ spec:
             - immutable
             - bootstrap
             - rpc
-            - --zkevm=testnet
+            - --zkevm={{ .Values.config.network }}
             - --datadir={{ .Values.storage.path | quote }}
           volumeMounts:
             - mountPath: {{ .Values.storage.path | quote }}
@@ -48,8 +49,8 @@ spec:
           command:
             - geth
           args:
-            - --zkevm=testnet
-            - --config=/etc/geth/testnet-public.toml
+            - --zkevm={{ .Values.config.network }}
+            - --config=/etc/geth/{{ .Values.config.network }}-public.toml
             - --datadir={{ .Values.storage.path }}
             - --http
             - --http.port={{ .Values.service.http.port }}
@@ -60,6 +61,10 @@ spec:
             - --gossipdefault
             - --disabletxpoolgossip
             - --rpcproxy
+            - --log.format=json
+            {{- range .Values.config.extraArgs }}
+            - {{ . | quote }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.http.port }}
