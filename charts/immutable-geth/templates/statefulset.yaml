@@ -78,6 +78,9 @@ spec:
     - metadata:
         name: data
       spec:
+        {{- with .Values.storage.storageClass }}
+        storageClassName: {{ . }}
+        {{- end }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
