@@ -528,6 +528,16 @@ entries:
   immutable-geth:
   - apiVersion: v2
     appVersion: v1.0.0-beta.16
+    created: "2026-01-26T11:40:39.754296224Z"
+    description: A Helm chart for Kubernetes
+    digest: 1151a02c05a681f1819f45cebd6aadd0d2fa0be1dd5125a0008401477cad7e42
+    name: immutable-geth
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/immutable-geth-1.0.1/immutable-geth-1.0.1.tgz
+    version: 1.0.1
+  - apiVersion: v2
+    appVersion: v1.0.0-beta.16
     created: "2026-01-23T12:18:19.817673033Z"
     description: A Helm chart for Kubernetes
     digest: ee442db311efc7be68dff8dc56760bf0251b6b239622f70e2e1da78a8e90413b
@@ -935,4 +945,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2026-01-23T12:18:19.817845844Z"
+generated: "2026-01-26T11:40:39.754566669Z"
