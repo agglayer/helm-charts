@@ -59,6 +59,14 @@ ingresses:
     create: false
     hostname: "something-else-else.dev.polygon"
 
+httpRoutes:
+  aggsenderValidator:
+    create: false
+    hostname: domain.example
+    parentRef:
+      name: gateway
+      namespace: gateways
+
 serviceAccount:
   create: false
   annotations: {}
