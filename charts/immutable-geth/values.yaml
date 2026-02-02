@@ -38,9 +38,9 @@ ingress:
 
 httpRoute:
   create: false
-  hostname: immutable-geth.development.polygon.internal
+  hostname: domain.example
   parentRef:
-    name: development-polygon-internal
+    name: gateway
     namespace: gateways
 
 resources: {}
