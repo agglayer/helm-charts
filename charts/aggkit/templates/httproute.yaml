@@ -1,6 +1,6 @@
 {{- if .Values.httpRoutes.aggsenderValidator.create -}}
 apiVersion: gateway.networking.k8s.io/v1beta1
-kind: HTTPRoute
+kind: GRPCRoute
 metadata:
   name: {{ include "aggkit.fullname" . }}-aggsender-validator
 spec:
@@ -13,11 +13,7 @@ spec:
   hostnames:
     - {{ .Values.httpRoutes.aggsenderValidator.hostname }}
   rules:
-    - matches:
-      - path:
-          type: PathPrefix
-          value: /
-      backendRefs:
+    - backendRefs:
         - name: {{ include "aggkit.fullname" . }}
           port: {{ .Values.container.ports.validator }}
 {{- end }}
