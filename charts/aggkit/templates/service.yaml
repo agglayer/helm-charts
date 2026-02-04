@@ -20,10 +20,12 @@ spec:
       protocol: TCP
       name: validator
       appProtocol: kubernetes.io/h2c
+    {{- if .Values.config.prometheus.enabled }}
     - port: {{ .Values.container.ports.prometheus }}
       targetPort: prometheus
       protocol: TCP
       name: prometheus
+    {{- end }}
   # StatefulSets require headless services
   # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
   clusterIP: {{ .Values.service.clusterIP }}
