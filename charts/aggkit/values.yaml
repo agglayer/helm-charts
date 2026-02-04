@@ -105,7 +105,7 @@ config:
       useTLS: true
 
     validatorClient:
-      url: "http://localhost:5578" # this is replaced by the info from L1
+      url: "http://localhost:5578"
       useTLS: false
 
     privateKey:
