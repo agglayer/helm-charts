@@ -21,3 +21,23 @@ spec:
         - name: {{ include "aggkit.fullname" . }}
           port: {{ .Values.container.ports.validator }}
 {{- end }}
+---
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: {{ include "aggkit.fullname" . }}-health
+spec:
+  default:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 5
+    config:
+      type: HTTP
+      httpHealthCheck:
+        port: {{ .Values.container.ports.prometheus }}
+        requestPath: /metrics
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "aggkit.fullname" . }}
