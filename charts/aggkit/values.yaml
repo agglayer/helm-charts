@@ -106,7 +106,7 @@ config:
 
     validatorClient:
       url: "http://localhost:5578" # this is replaced by the info from L1
-      useTLS: true
+      useTLS: false
 
     privateKey:
       keyName: "" # if this string is not empty, aggsender will try to use KMS
