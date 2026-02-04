@@ -19,6 +19,7 @@ spec:
       targetPort: validator
       protocol: TCP
       name: validator
+      appProtocol: kubernetes.io/h2c
     - port: {{ .Values.container.ports.prometheus }}
       targetPort: prometheus
       protocol: TCP
