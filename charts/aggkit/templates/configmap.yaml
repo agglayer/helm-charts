@@ -87,6 +87,7 @@ data:
 
     [AggSender.ValidatorClient]
     URL = {{ .Values.config.aggsender.validatorClient.url | quote }}
+    UseTLS = {{ .Values.config.aggsender.validatorClient.useTLS | quote }}
 
     {{- end }}
 
