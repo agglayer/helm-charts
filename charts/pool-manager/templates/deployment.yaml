@@ -31,6 +31,44 @@ spec:
         fsGroupChangePolicy: Always
         seccompProfile:
           type: RuntimeDefault
+      {{- if or .Values.config.envSubstitution.enabled .Values.initContainers }}
+      initContainers:
+        {{- if .Values.config.envSubstitution.enabled }}
+        - name: config-env-substitution
+          image: alpine:latest
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - |
+              apk add gettext > /dev/null 2>&1
+              envsubst < /config-raw/config.toml > /config/config.toml
+          envFrom:
+            {{- range $name, $_ := $.Values.onePasswordSecrets }}
+            - secretRef:
+                name: {{ $name }}
+            {{- end }}
+          volumeMounts:
+            - name: config-raw
+              mountPath: /config-raw
+              readOnly: true
+            - name: config
+              mountPath: /config
+        {{- end }}
+        {{- with .Values.initContainers }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range $constraint := . }}
+        - {{ toYaml $constraint | nindent 10 | trim }}
+            {{- if not $constraint.labelSelector }}
+          labelSelector:
+            matchLabels:
+              {{- include "pool-manager.selectorLabels" $ | nindent 14 }}
+            {{- end }}
+        {{- end }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -46,15 +84,15 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          {{ if .Values.image.command }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.image.command }}
           command: {{- range .Values.image.command }}
             - {{ . }} {{- end}}
-          {{- end}}
-          {{ if .Values.image.args }}
+          {{- end }}
+          {{- if .Values.image.args }}
           args: {{- range .Values.image.args }}
             - {{ . }} {{- end}}
-          {{- end}}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -66,18 +104,26 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - name: pool-manager-config
+            - name: config
               mountPath: /etc/pool-manager/
-              readOnly: false
+              readOnly: true
+            {{- with .Values.extraVolumeMounts }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
       volumes:
-        - name: pool-manager-config
-          projected:
-            sources:
-            - configMap:
-                name: {{ include "pool-manager.fullname" . }}
-                items:
-                  - key: "pool-manager-config.toml"
-                    path: "pool-manager-config.toml"
+        - name: {{ ternary "config" "config-raw" .Values.envSubstitution.enabled }}
+          configMap:
+            name: {{ include "pool-manager.fullname" . }}
+            items:
+              - key: "config.toml"
+                path: "config.toml"
+        {{- if .Values.config.envSubstitution.enabled }}
+        - name: config
+          emptyDir: {}
+        {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

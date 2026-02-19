@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "cdk-erigon.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
       {{- include "cdk-erigon.selectorLabels" . | nindent 6 }}
@@ -32,6 +32,56 @@ spec:
         fsGroupChangePolicy: Always
         seccompProfile:
           type: RuntimeDefault
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.config.envSubstitution.enabled .Values.initContainers }}
+      initContainers:
+        {{- if .Values.config.envSubstitution.enabled }}
+        - name: config-env-substitution
+          image: alpine:latest
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - |
+              apk add gettext > /dev/null 2>&1
+              envsubst < /config-raw/erigon.yaml > /config/erigon.yaml
+              cp /config-raw/dynamic-{{ .Values.config.l2.networkName }}-allocs.json /config/
+              cp /config-raw/dynamic-{{ .Values.config.l2.networkName }}-chainspec.json /config/
+              cp /config-raw/dynamic-{{ .Values.config.l2.networkName }}-conf.json /config/
+              cp /config-raw/first-batch-conf.json /config/
+          envFrom:
+            {{- range $name, $_ := $.Values.onePasswordSecrets }}
+            - secretRef:
+                name: {{ $name }}
+            {{- end }}
+          volumeMounts:
+            - name: config-raw
+              mountPath: /config-raw
+              readOnly: true
+            - name: config
+              mountPath: /config
+        {{- end }}
+        {{- with .Values.initContainers }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range $constraint := . }}
+        - {{ toYaml $constraint | nindent 10 | trim }}
+            {{- if not $constraint.labelSelector }}
+          labelSelector:
+            matchLabels:
+              {{- include "cdk-erigon.selectorLabels" $ | nindent 14 }}
+            {{- end }}
+        {{- end }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -50,7 +100,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: CDK_ERIGON_SEQUENCER
-              value:  "{{ .Values.is_sequencer }}"
+              value: {{ ternary 1 0 .Values.config.isSequencer }}
           {{ if .Values.image.command }}
           command: {{- range .Values.image.command }}
             - {{ . }} {{- end}}
@@ -76,12 +126,15 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - name: datadir
-              mountPath: {{ .Values.datadir.path }}
+            - name: data
+              mountPath: {{ .Values.storage.path }}
               readOnly: false
-            - name: cdk-erigon-config
+            - name: config
               mountPath: /etc/cdk-erigon/
               readOnly: true
+            {{- with .Values.extraVolumeMounts }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -95,30 +148,35 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        - name: cdk-erigon-config
-          projected:
-            sources:
-            - configMap:
-                name: {{ include "cdk-erigon.fullname" . }}
-                items:
-                  - key: "dynamic-integration-allocs.json"
-                    path: "dynamic-{{ .Values.chainName }}-allocs.json"
-                  - key: "dynamic-integration-chainspec.json"
-                    path: "dynamic-{{ .Values.chainName }}-chainspec.json"
-                  - key: "dynamic-integration-conf.json"
-                    path: "dynamic-{{ .Values.chainName }}-conf.json"
-                  - key: "first-batch-conf.json"
-                    path: "first-batch-conf.json"
-            - secret:
-                name: {{ .Values.existingSecret }}
-                items:
-                  - key: {{ .Values.secretItem.key }}
-                    path: {{ .Values.secretItem.path }}
+        - name: {{ ternary "config-raw" "config" .Values.config.envSubstitution.enabled }}
+          configMap:
+            name: {{ include "cdk-erigon.fullname" . }}
+            items:
+              - key: "dynamic-integration-allocs.json"
+                path: "dynamic-{{ .Values.config.l2.networkName }}-allocs.json"
+              - key: "dynamic-integration-chainspec.json"
+                path: "dynamic-{{ .Values.config.l2.networkName }}-chainspec.json"
+              - key: "dynamic-integration-conf.json"
+                path: "dynamic-{{ .Values.config.l2.networkName }}-conf.json"
+              - key: "erigon.yaml"
+                path: "erigon.yaml"
+              - key: "first-batch-conf.json"
+                path: "first-batch-conf.json"
+        {{- if .Values.config.envSubstitution.enabled }}
+        - name: config
+          emptyDir: {}
+        {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
   volumeClaimTemplates:
     - metadata:
-        name: datadir
+        name: data
       spec:
+        {{- with .Values.storage.storageClass }}
+        storageClassName: {{ . }}
+        {{- end }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
-            storage: {{ .Values.datadir.size }}
+            storage: {{ .Values.storage.size }}

@@ -1,0 +1,25 @@
+{{- if .Values.httpRoutes.rpc.create -}}
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: {{ include "cdk-erigon.fullname" . }}
+  labels:
+    {{- include "cdk-erigon.labels" . | nindent 4 }}
+spec:
+  default:
+    checkIntervalSec: {{ .Values.readinessProbe.periodSeconds }}
+    timeoutSec: {{ .Values.readinessProbe.timeoutSeconds }}
+    healthyThreshold: {{ .Values.readinessProbe.successThreshold }}
+    unhealthyThreshold: {{ .Values.readinessProbe.failureThreshold }}
+    config:
+      type: HTTP
+      httpHealthCheck:
+        port: {{ .Values.service.rpc.port }}
+        requestPath: /health
+        # Note: GCP Load Balancer health checks use GET requests
+        # Erigon's /health may return 500 but GCP accepts it as long as there's a response
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "cdk-erigon.fullname" . }}
+{{- end }}
