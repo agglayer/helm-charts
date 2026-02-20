@@ -40,9 +40,9 @@ spec:
       nodeSelector:
         {{- . | toYaml | nindent 8 }}
       {{- end }}
-      {{- if or .Values.config.envSubstitution.enabled .Values.initContainers }}
+      {{- if or .Values.envSubstitution.enabled .Values.initContainers }}
       initContainers:
-        {{- if .Values.config.envSubstitution.enabled }}
+        {{- if .Values.envSubstitution.enabled }}
         - name: config-env-substitution
           image: alpine:latest
           command: ["/bin/sh"]
@@ -148,7 +148,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        - name: {{ ternary "config-raw" "config" .Values.config.envSubstitution.enabled }}
+        - name: {{ ternary "config-raw" "config" .Values.envSubstitution.enabled }}
           configMap:
             name: {{ include "cdk-erigon.fullname" . }}
             items:
@@ -162,7 +162,7 @@ spec:
                 path: "erigon.yaml"
               - key: "first-batch-conf.json"
                 path: "first-batch-conf.json"
-        {{- if .Values.config.envSubstitution.enabled }}
+        {{- if .Values.envSubstitution.enabled }}
         - name: config
           emptyDir: {}
         {{- end }}

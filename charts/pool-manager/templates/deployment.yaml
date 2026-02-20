@@ -31,9 +31,9 @@ spec:
         fsGroupChangePolicy: Always
         seccompProfile:
           type: RuntimeDefault
-      {{- if or .Values.config.envSubstitution.enabled .Values.initContainers }}
+      {{- if or .Values.envSubstitution.enabled .Values.initContainers }}
       initContainers:
-        {{- if .Values.config.envSubstitution.enabled }}
+        {{- if .Values.envSubstitution.enabled }}
         - name: config-env-substitution
           image: alpine:latest
           command: ["/bin/sh"]
@@ -117,7 +117,7 @@ spec:
             items:
               - key: "config.toml"
                 path: "config.toml"
-        {{- if .Values.config.envSubstitution.enabled }}
+        {{- if .Values.envSubstitution.enabled }}
         - name: config
           emptyDir: {}
         {{- end }}
