@@ -12,16 +12,9 @@ spec:
     healthyThreshold: {{ .Values.readinessProbe.successThreshold }}
     unhealthyThreshold: {{ .Values.readinessProbe.failureThreshold }}
     config:
-      {{- if eq .Values.healthCheck.type "TCP" }}
-      type: TCP
+      type: TCP # Erigon's /health expects POST with JSON body {} (see livenessProbe/readinessProbe in statefulset).
       tcpHealthCheck:
         port: {{ .Values.service.rpc.port }}
-      {{- else }}
-      type: HTTP
-      httpHealthCheck:
-        port: {{ .Values.service.rpc.port }}
-        requestPath: /health
-      {{- end }}
   targetRef:
     group: ""
     kind: Service
