@@ -9,7 +9,7 @@ data:
     log.dir.json: true
     log.dir.verbosity: {{ .Values.config.log.level }}
     log.dir.path: /tmp/cdk-erigon.log
-    datadir: {{ .Values.datadir.path | quote }}
+    datadir: {{ .Values.storage.path | quote }}
     chain: "dynamic-{{ .Values.config.l2.networkName }}"
     zkevm.rebuild-tree-after: 10_000
     zkevm.increment-tree-always: false
