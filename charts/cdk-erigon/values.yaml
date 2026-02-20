@@ -7,8 +7,8 @@ onePasswordSecrets:
 
 # Enable to replace $ENV_VARS in the configmap from a Kubernetes secret
   # Secret names are derived from onePasswordSecrets keys
-  envSubstitution:
-    enabled: true
+envSubstitution:
+  enabled: true
 
 # Pod annotations (e.g. ad.datadoghq.com/tags for Datadog)
 podAnnotations: {}
