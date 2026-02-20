@@ -12,12 +12,17 @@ spec:
     healthyThreshold: {{ .Values.readinessProbe.successThreshold }}
     unhealthyThreshold: {{ .Values.readinessProbe.failureThreshold }}
     config:
+      {{- $hcType := index (index .Values "healthCheck" | default (dict "type" "TCP")) "type" | default "TCP" }}
+      {{- if eq $hcType "TCP" }}
+      type: TCP
+      tcpHealthCheck:
+        port: {{ .Values.service.rpc.port }}
+      {{- else }}
       type: HTTP
       httpHealthCheck:
         port: {{ .Values.service.rpc.port }}
         requestPath: /health
-        # Note: GCP Load Balancer health checks use GET requests
-        # Erigon's /health may return 500 but GCP accepts it as long as there's a response
+      {{- end }}
   targetRef:
     group: ""
     kind: Service

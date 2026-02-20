@@ -65,6 +65,10 @@ httpRoutes:
       name: gateway
       namespace: gateways
 
+# GKE HealthCheckPolicy: TCP = LB only checks port is open (no GET /health, avoids 500 and log warnings). HTTP = GET /health (Erigon returns 500 for GET).
+healthCheck:
+  type: TCP
+
 # Note: Erigon's /health endpoint expects POST with JSON body
 livenessProbe:
   exec:
