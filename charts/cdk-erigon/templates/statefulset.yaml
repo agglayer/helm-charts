@@ -100,7 +100,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
             - name: CDK_ERIGON_SEQUENCER
-              value: {{ ternary 1 0 .Values.config.isSequencer }}
+              value: {{ ternary 1 0 .Values.config.isSequencer | quote }}
           {{ if .Values.image.command }}
           command: {{- range .Values.image.command }}
             - {{ . }} {{- end}}
