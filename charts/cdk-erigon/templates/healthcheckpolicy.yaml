@@ -12,8 +12,7 @@ spec:
     healthyThreshold: {{ .Values.readinessProbe.successThreshold }}
     unhealthyThreshold: {{ .Values.readinessProbe.failureThreshold }}
     config:
-      {{- $hcType := index (index .Values "healthCheck" | default (dict "type" "TCP")) "type" | default "TCP" }}
-      {{- if eq $hcType "TCP" }}
+      {{- if eq .Values.healthCheck.type "TCP" }}
       type: TCP
       tcpHealthCheck:
         port: {{ .Values.service.rpc.port }}
