@@ -125,7 +125,8 @@ config:
     RPCURL: http://example.com
 
   l2:
-    allocs: {}
+    allocs: |
+      {}
     chainId: 123123
     firstBatchL2Data: "0x123"
     genesis:
