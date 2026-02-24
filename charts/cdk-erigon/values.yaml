@@ -24,8 +24,9 @@ initContainers: []
 extraContainers:
   - name: mitmproxy
     image: mitmproxy/mitmproxy:latest
-    args:
+    command:
       - mitmweb
+    args:
       - --mode
       - "reverse:https://sepolia.gateway.tenderly.co"
       - --listen-host
