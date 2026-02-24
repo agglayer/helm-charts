@@ -92,12 +92,15 @@ httpRoutes:
 livenessProbe:
   exec:
     command:
-      - sh
-      - -c
-      - |
-        curl -f -X POST http://localhost:8123/health \
-          -H "Content-Type: application/json" \
-          -d '{"min_peer_count": 1}' || exit 1
+      - curl
+      - -sf
+      - -X
+      - POST
+      - http://localhost:8123/health
+      - -H
+      - "Content-Type: application/json"
+      - -d
+      - '{}'
   initialDelaySeconds: 120
   periodSeconds: 30
   timeoutSeconds: 10
@@ -107,12 +110,15 @@ livenessProbe:
 readinessProbe:
   exec:
     command:
-      - sh
-      - -c
-      - |
-        curl -f -X POST http://localhost:8123/health \
-          -H "Content-Type: application/json" \
-          -d '{"min_peer_count": 1}' || exit 1
+      - curl
+      - -sf
+      - -X
+      - POST
+      - http://localhost:8123/health
+      - -H
+      - "Content-Type: application/json"
+      - -d
+      - '{}'
   initialDelaySeconds: 60
   periodSeconds: 10
   timeoutSeconds: 5
