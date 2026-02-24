@@ -74,7 +74,7 @@ livenessProbe:
       - |
         curl -f -X POST http://localhost:8123/health \
           -H "Content-Type: application/json" \
-          -d '{}' || exit 1
+          -d '{"min_peer_count": 0}' || exit 1
   initialDelaySeconds: 120
   periodSeconds: 30
   timeoutSeconds: 10
@@ -89,7 +89,7 @@ readinessProbe:
       - |
         curl -f -X POST http://localhost:8123/health \
           -H "Content-Type: application/json" \
-          -d '{}' || exit 1
+          -d '{"min_peer_count": 0}' || exit 1
   initialDelaySeconds: 60
   periodSeconds: 10
   timeoutSeconds: 5
