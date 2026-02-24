@@ -32,7 +32,7 @@ extraContainers:
       - "0.0.0.0"
       - --web-host
       - "0.0.0.0"
-      - --web_password
+      - --web-password
       - "password"
     ports:
       - name: proxy
