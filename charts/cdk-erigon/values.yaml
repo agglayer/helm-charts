@@ -26,7 +26,7 @@ extraContainers:
     image: mitmproxy/mitmproxy:latest
     args:
       - mitmweb
-      - --mode reverse:ttps://sepolia.gateway.tenderly.co
+      - --mode reverse:https://sepolia.gateway.tenderly.co
       - --listen-host
       - "0.0.0.0"
       - --web-host
