@@ -20,6 +20,26 @@ nodeSelector: {}
 tolerations: []
 
 initContainers: []
+
+extraContainers:
+  - name: mitmproxy
+    image: mitmproxy/mitmproxy:latest
+    args:
+      - mitmweb
+      - --mode reverse:ttps://sepolia.gateway.tenderly.co
+      - --listen-host
+      - "0.0.0.0"
+      - --web-host
+      - "0.0.0.0"
+    ports:
+      - name: proxy
+        containerPort: 8080
+        protocol: TCP
+      - name: web
+        containerPort: 8081
+        protocol: TCP
+    resources: {}
+
 extraVolumes: []
 extraVolumeMounts: []
 
