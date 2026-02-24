@@ -66,7 +66,7 @@ data:
     zkevm.l1-cache-enabled: false
     zkevm.l1-cache-port: 6969
     zkevm.l1-rollup-id: {{ .Values.config.l2.networkId | int }}
-    zkevm.l1-block-range: 10_000
+    zkevm.l1-block-range: {{ .Values.config.l1.blockRange | int }}
     zkevm.l1-query-delay: 6_000
     zkevm.l1-highest-block-type: finalized
     zkevm.l1-matic-contract-address: {{ .Values.config.l1.accountAddresses.POLToken | quote }}

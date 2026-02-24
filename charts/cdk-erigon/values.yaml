@@ -113,6 +113,7 @@ config:
   isSequencer: false
 
   l1:
+    blockRange: 2500
     accountAddresses:
       admin: "0x123"
       sequencer: "0x123"
