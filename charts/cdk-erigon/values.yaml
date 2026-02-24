@@ -32,6 +32,8 @@ extraContainers:
       - "0.0.0.0"
       - --web-host
       - "0.0.0.0"
+      - --web_password
+      - "password"
     ports:
       - name: proxy
         containerPort: 8080
