@@ -1,6 +1,7 @@
 ---
 metadata:
   env: bali
+  costCenter: agglayer
 
 onePasswordSecrets:
   cdk-erigon: "vaults/myvault/items/myitem"
@@ -21,29 +22,29 @@ tolerations: []
 
 initContainers: []
 
-extraContainers:
-  - name: mitmproxy
-    image: mitmproxy/mitmproxy:latest
-    command:
-      - mitmweb
-    args:
-      - --mode
-      - "reverse:https://sepolia.gateway.tenderly.co"
-      - --listen-host
-      - "0.0.0.0"
-      - --web-host
-      - "0.0.0.0"
-      - --set
-      - "web_password=password"
-      - --no-web-open-browser
-    ports:
-      - name: proxy
-        containerPort: 8080
-        protocol: TCP
-      - name: web
-        containerPort: 8081
-        protocol: TCP
-    resources: {}
+# extraContainers:
+#   - name: mitmproxy
+#     image: mitmproxy/mitmproxy:latest
+#     command:
+#       - mitmweb
+#     args:
+#       - --mode
+#       - "reverse:https://sepolia.gateway.tenderly.co"
+#       - --listen-host
+#       - "0.0.0.0"
+#       - --web-host
+#       - "0.0.0.0"
+#       - --set
+#       - "web_password=password"
+#       - --no-web-open-browser
+#     ports:
+#       - name: proxy
+#         containerPort: 8080
+#         protocol: TCP
+#       - name: web
+#         containerPort: 8081
+#         protocol: TCP
+#     resources: {}
 
 extraVolumes: []
 extraVolumeMounts: []
@@ -144,7 +145,7 @@ config:
   isSequencer: false
 
   l1:
-    blockRange: 500
+    blockRange: 10000
     accountAddresses:
       admin: "0x123"
       sequencer: "0x123"
