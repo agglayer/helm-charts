@@ -191,5 +191,5 @@ data:
       "sequencer": {{ .Values.config.l1.accountAddresses.sequencer | quote }},
       "l1BlockNumber": {{ .Values.config.l2.genesis.l1BlockNumber | int }},
       "l1BlockHash": {{ .Values.config.l2.genesis.l1BlockHash | quote }},
-      "l1ParentHash": {{ .Values.config.l2.genesis.l1ParentBlockHash | quote }},
+      "l1ParentHash": {{ .Values.config.l2.genesis.l1ParentBlockHash | quote }}
     }
