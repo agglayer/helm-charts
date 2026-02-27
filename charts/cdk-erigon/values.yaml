@@ -92,41 +92,41 @@ httpRoutes:
       namespace: gateways
 
 # Note: Erigon's /health endpoint expects POST with JSON body
-# livenessProbe:
-#   exec:
-#     command:
-#       - curl
-#       - -sf
-#       - -X
-#       - POST
-#       - http://localhost:8123/health
-#       - -H
-#       - "Content-Type: application/json"
-#       - -d
-#       - '{}'
-#   initialDelaySeconds: 120
-#   periodSeconds: 30
-#   timeoutSeconds: 10
-#   successThreshold: 1
-#   failureThreshold: 5
+livenessProbe:
+  exec:
+    command:
+      - curl
+      - -sf
+      - -X
+      - POST
+      - http://localhost:8123/health
+      - -H
+      - "Content-Type: application/json"
+      - -d
+      - '{}'
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  timeoutSeconds: 10
+  successThreshold: 1
+  failureThreshold: 5
 
-# readinessProbe:
-#   exec:
-#     command:
-#       - curl
-#       - -sf
-#       - -X
-#       - POST
-#       - http://localhost:8123/health
-#       - -H
-#       - "Content-Type: application/json"
-#       - -d
-#       - '{}'
-#   initialDelaySeconds: 60
-#   periodSeconds: 10
-#   timeoutSeconds: 5
-#   successThreshold: 1
-#   failureThreshold: 3
+readinessProbe:
+  exec:
+    command:
+      - curl
+      - -sf
+      - -X
+      - POST
+      - http://localhost:8123/health
+      - -H
+      - "Content-Type: application/json"
+      - -d
+      - '{}'
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
 
 resources:
   limits:
