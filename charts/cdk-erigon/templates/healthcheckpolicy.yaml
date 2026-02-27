@@ -3,6 +3,8 @@ apiVersion: networking.gke.io/v1
 kind: HealthCheckPolicy
 metadata:
   name: {{ include "cdk-erigon.fullname" . }}
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true
   labels:
     {{- include "cdk-erigon.labels" . | nindent 4 }}
 spec:
