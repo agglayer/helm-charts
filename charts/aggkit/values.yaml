@@ -145,6 +145,7 @@ config:
   bridgeL1Sync:
     blockFinality: "LatestBlock" # "LatestBlock/-6" for fast L1 deposits
     initialBlockNum: 0
+    syncBlockChunkSize: 100
 
   reorgDetectorL2:
     blockFinality: "LatestBlock"
