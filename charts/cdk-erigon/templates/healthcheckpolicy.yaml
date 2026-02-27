@@ -7,10 +7,11 @@ metadata:
     {{- include "cdk-erigon.labels" . | nindent 4 }}
 spec:
   default:
-    checkIntervalSec: {{ .Values.readinessProbe.periodSeconds }}
-    timeoutSec: {{ .Values.readinessProbe.timeoutSeconds }}
-    healthyThreshold: {{ .Values.readinessProbe.successThreshold }}
-    unhealthyThreshold: {{ .Values.readinessProbe.failureThreshold }}
+    {{- $probe := .Values.readinessProbe | default dict }}
+    checkIntervalSec: {{ $probe.periodSeconds | default 10 }}
+    timeoutSec: {{ $probe.timeoutSeconds | default 5 }}
+    healthyThreshold: {{ $probe.successThreshold | default 1 }}
+    unhealthyThreshold: {{ $probe.failureThreshold | default 3 }}
     config:
       type: TCP # Erigon's /health expects POST with JSON body {} (see livenessProbe/readinessProbe in statefulset).
       tcpHealthCheck:
