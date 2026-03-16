@@ -4,7 +4,7 @@ metadata:
   costCenter: agglayer
 
 onePasswordSecrets:
-  cdk-erigon: "vaults/myvault/items/myitem"
+  # cdk-erigon: "vaults/myvault/items/myitem"
 
 # Enable to replace $ENV_VARS in the configmap from a Kubernetes secret
   # Secret names are derived from onePasswordSecrets keys
