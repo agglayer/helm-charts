@@ -1,0 +1,136 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "op-reth.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "op-reth.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "op-reth.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "op-reth.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{ include "op-reth.serviceAccountName" . }}
+      initContainers:
+        - name: download-genesis
+          image: google/cloud-sdk:latest
+          command: ["sh", "-c"]
+          args:
+          - |
+            gsutil cp gs://{{ .Values.genesisFileGCP.bucket }}/{{ .Values.genesisFileGCP.object }} {{ .Values.storage.path }}/genesis.json
+          volumeMounts:
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+        - name: init-datadir
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          command:
+            - op-reth
+            - init
+          args:
+            - --datadir={{ .Values.storage.path }}
+            - --chain={{ .Values.storage.path }}/genesis.json
+          volumeMounts:
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          command:
+            - op-reth
+            - node
+          args:
+            - --datadir={{ .Values.storage.path }}
+            - --chain={{ .Values.storage.path }}/genesis.json
+            - --http
+            - --http.corsdomain=*
+            - --http.addr=0.0.0.0
+            - --http.port={{ .Values.service.http.port }}
+            - --http.api={{ .Values.config.http.api }}
+            - --ws
+            - --ws.addr=0.0.0.0
+            - --ws.port={{ .Values.service.ws.port }}
+            - --ws.origins=*
+            - --ws.api={{ .Values.config.ws.api }}
+            - --log.stdout.format=json
+            {{- if .Values.service.p2p.enabled }}
+            - --port={{ .Values.service.p2p.port }}
+            {{- else }}
+            - --disable-discovery
+            - --max-outbound-peers=0
+            - --max-inbound-peers=0
+            {{- end }}
+            - --authrpc.addr=0.0.0.0
+            - --authrpc.port={{ .Values.service.authrpc.port }}
+            - --authrpc.jwtsecret=/etc/reth/jwt.txt
+            - --rollup.disable-tx-pool-gossip
+            {{- if .Values.service.metrics.enabled }}
+            - --metrics=0.0.0.0:{{ .Values.service.metrics.port }}
+            {{- end }}
+            {{- range .Values.config.extraOptions }}
+            - --{{ . }}
+            {{- end }}
+          ports:
+            - name: authrpc
+              containerPort: {{ .Values.service.authrpc.port }}
+              protocol: TCP
+            - name: http
+              containerPort: {{ .Values.service.http.port }}
+              protocol: TCP
+            - name: ws
+              containerPort: {{ .Values.service.ws.port }}
+              protocol: TCP
+            {{- if .Values.service.p2p.enabled }}
+            - name: p2p
+              containerPort: {{ .Values.service.p2p.port }}
+              protocol: TCP
+            {{- end }}
+            {{- if .Values.service.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.service.metrics.port }}
+              protocol: TCP
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /etc/reth
+              name: secret
+              readOnly: true
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+      volumes:
+        - name: secret
+          projected:
+            sources:
+              - secret:
+                  name: {{ .Values.existingSecret }}
+                  items:
+                    - key: "jwt"
+                      path: "jwt.txt"
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.storage.size }}
