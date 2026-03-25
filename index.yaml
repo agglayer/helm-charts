@@ -712,6 +712,16 @@ entries:
   op-node:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-03-25T19:14:11.147720362Z"
+    description: A Helm chart for op-node
+    digest: 5b97a89802f103c4aa94fc21c3aaa94a053aecdae6f171afaf5a2068f8999464
+    name: op-node
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-node-0.6.0/op-node-0.6.0.tgz
+    version: 0.6.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-11-10T07:35:32.116336243Z"
     description: A Helm chart for op-node
     digest: af8753754266fdcfbe00d7561b22bdb0a48a9cc43b84ee3493727fc0ccab5c4e
@@ -1016,4 +1026,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2026-03-25T19:13:50.237703502Z"
+generated: "2026-03-25T19:14:11.147867929Z"
