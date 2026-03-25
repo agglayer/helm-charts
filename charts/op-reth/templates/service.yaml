@@ -1,0 +1,57 @@
+{{- if .Values.service.metrics.enabled }}
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: {{ include "op-reth.fullname" . }}-health
+spec:
+  healthCheck:
+    type: HTTP
+    requestPath: /
+    port: {{ .Values.service.metrics.port }}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "op-reth.fullname" . }}
+  labels:
+    {{- include "op-reth.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.service.metrics.enabled }}
+    cloud.google.com/backend-config: '{"ports": {"http": "{{ include "op-reth.fullname" . }}-health"}}'
+    {{- end }}
+    {{- with .Values.service.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.authrpc.port }}
+      targetPort: authrpc
+      protocol: TCP
+      name: authrpc
+    - port: {{ .Values.service.http.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{ .Values.service.ws.port }}
+      targetPort: ws
+      protocol: TCP
+      name: ws
+    {{- if .Values.service.p2p.enabled }}
+    - port: {{ .Values.service.p2p.port }}
+      targetPort: p2p
+      protocol: TCP
+      name: p2p
+    {{- end }}
+    {{- if .Values.service.metrics.enabled }}
+    - port: {{ .Values.service.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  # StatefulSets require headless services
+  # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
+  clusterIP: {{ .Values.service.clusterIP }}
+  selector:
+    {{- include "op-reth.selectorLabels" . | nindent 4 }}

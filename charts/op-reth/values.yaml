@@ -1,0 +1,77 @@
+env: bali
+
+podLabels:
+  name: myname
+  business_unit: agglayer
+  role: myrole
+  partner: Polygon
+  network: mynetwork
+
+replicaCount: 1
+
+container:
+  image:
+    pullPolicy: IfNotPresent
+    repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-reth
+    tag: v1.11.0
+
+storage:
+  path: /data
+  size: 500Gi
+
+service:
+  type: ClusterIP
+  clusterIP: None
+  authrpc:
+    port: 8551
+  http:
+    port: 8545
+  ws:
+    port: 8546
+  p2p:
+    enabled: false
+    port: 30303
+  metrics:
+    enabled: true
+    port: 9001
+  annotations: {}
+
+ingress:
+  create: true
+  hostname: domain.example
+
+podSecurityContext: {}
+securityContext: {}
+
+existingSecret: "secretName"
+
+genesisFileGCP:
+  bucket: "bucket-name"
+  object: "bucket-object"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+
+config:
+  extraOptions: {}
+
+  http:
+    api: admin,net,eth,web3,debug,miner
+
+  ws:
+    api: admin,net,eth,web3,debug,miner
+
+resources:
+  limits:
+    memory: 8Gi
+  requests:
+    cpu: 1
+    memory: 8Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
