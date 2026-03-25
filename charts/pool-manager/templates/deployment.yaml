@@ -111,7 +111,7 @@ spec:
             {{- . | toYaml | nindent 12 }}
             {{- end }}
       volumes:
-        - name: {{ ternary "config" "config-raw" .Values.envSubstitution.enabled }}
+        - name: {{ ternary "config-raw" "config" .Values.envSubstitution.enabled }}
           configMap:
             name: {{ include "pool-manager.fullname" . }}
             items:
