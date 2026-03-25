@@ -751,6 +751,17 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/op-node-generic-1.0.0/op-node-generic-1.0.0.tgz
     version: 1.0.0
+  op-reth:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-03-25T19:13:50.237535839Z"
+    description: A Helm chart for op-reth
+    digest: d561168f93cba6c0b20829acc2a84615729489deca2d9fa26acb78779d046178
+    name: op-reth
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-reth-0.6.1/op-reth-0.6.1.tgz
+    version: 0.6.1
   op-secrets:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -1005,4 +1016,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2026-02-27T11:45:23.048453301Z"
+generated: "2026-03-25T19:13:50.237703502Z"
