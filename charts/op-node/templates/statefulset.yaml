@@ -43,6 +43,7 @@ spec:
                 --l2.jwt-secret=/chainconfig/jwt.txt \
                 --sequencer.enabled={{ .Values.config.sequencer.enabled }} \
                 --p2p.no-discovery=true \
+                --p2p.disable={{ not .Values.service.p2p.enabled }} \
                 {{- if .Values.service.p2p.enabled }}
                 --p2p.listen.tcp={{ .Values.service.p2p.port }} \
                 {{- end }}
