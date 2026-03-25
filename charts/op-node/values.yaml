@@ -24,6 +24,9 @@ service:
   clusterIP: None
   rpc:
     port: 9545
+  p2p:
+    enabled: true
+    port: 9222
   annotations: {}
 
 ingress:
@@ -37,6 +40,15 @@ existingSecret: "secretName"
 
 config:
   extraOptions: {}
+
+  sequencer:
+    enabled: true
+    l1Confs: 4
+
+  # Verifier configuration (used when sequencer.enabled=false)
+  verifier:
+    l1Confs: 12
+    sequencerHttp: ""
 
   l2:
     opGethAuthUrl: http://op-geth:8551

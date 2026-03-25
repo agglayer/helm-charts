@@ -41,25 +41,37 @@ spec:
               op-node \
                 --l2={{ .Values.config.l2.opGethAuthUrl }} \
                 --l2.jwt-secret=/chainconfig/jwt.txt \
-                --sequencer.enabled \
-                --sequencer.l1-confs=5 \
-                --verifier.l1-confs=4 \
+                --sequencer.enabled={{ .Values.config.sequencer.enabled }} \
+                --p2p.no-discovery=true \
+                {{- if .Values.service.p2p.enabled }}
+                --p2p.listen.tcp={{ .Values.service.p2p.port }} \
+                {{- end }}
+                {{- if .Values.config.sequencer.enabled }}
+                --sequencer.l1-confs={{ .Values.config.sequencer.l1Confs }} \
+                --p2p.sequencer.key={{ index $opSecrets.data "sequencer_private_key" | b64dec }} \
+                {{- end }}
+                --verifier.l1-confs={{ .Values.config.verifier.l1Confs }} \
+                {{- if and (not .Values.config.sequencer.enabled) .Values.config.verifier.sequencerHttp }}
+                --rollup.sequencer-http={{ .Values.config.verifier.sequencerHttp }} \
+                {{- end }}
                 --rollup.config=/chainconfig/rollup.json \
                 --rpc.addr=0.0.0.0 \
                 --rpc.enable-admin \
-                --p2p.disable \
-                --p2p.sequencer.key={{ index $opSecrets.data "sequencer_private_key" | b64dec }} \
                 --l1={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
                 --l1.beacon={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
-                --rollup.config=/chainconfig/rollup.json \
                 {{- range .Values.config.extraOptions }}
                 --{{ . }} \
-                {{- end}}
+                {{- end }}
                 --safedb.path=/data
           ports:
             - name: rpc
               containerPort: {{ .Values.service.rpc.port }}
               protocol: TCP
+            {{- if .Values.service.p2p.enabled }}
+            - name: p2p
+              containerPort: {{ .Values.service.p2p.port }}
+              protocol: TCP
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

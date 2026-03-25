@@ -13,6 +13,12 @@ spec:
       targetPort: rpc
       protocol: TCP
       name: rpc
+    {{- if .Values.service.p2p.enabled }}
+    - port: {{ .Values.service.p2p.port }}
+      targetPort: p2p
+      protocol: TCP
+      name: p2p
+    {{- end }}
   # StatefulSets require headless services
   # https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations
   clusterIP: {{ .Values.service.clusterIP }}
