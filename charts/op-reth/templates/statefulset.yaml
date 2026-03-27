@@ -72,10 +72,10 @@ spec:
             - --ws.origins=*
             - --ws.api={{ .Values.config.ws.api }}
             - --log.stdout.format=json
+            - --disable-discovery
             {{- if .Values.service.p2p.enabled }}
             - --port={{ .Values.service.p2p.port }}
             {{- else }}
-            - --disable-discovery
             - --max-outbound-peers=0
             - --max-inbound-peers=0
             {{- end }}

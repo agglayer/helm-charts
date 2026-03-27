@@ -71,7 +71,11 @@ spec:
                 --syncmode="full" \
                 --gcmode={{ .Values.config.nodeType }} \
                 --nodiscover \
+                {{- if .Values.service.p2p.enabled }}
+                --port={{ .Values.service.p2p.port }} \
+                {{- else }}
                 --maxpeers=0 \
+                {{- end }}
                 --networkid={{ .Values.config.l2.chainId }} \
                 --authrpc.vhosts="*" \
                 --authrpc.addr=0.0.0.0 \
@@ -99,6 +103,11 @@ spec:
             - name: ws
               containerPort: {{ .Values.service.ws.port }}
               protocol: TCP
+            {{- if .Values.service.p2p.enabled }}
+            - name: p2p
+              containerPort: {{ .Values.service.p2p.port }}
+              protocol: TCP
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:

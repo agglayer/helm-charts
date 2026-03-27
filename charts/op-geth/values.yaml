@@ -28,6 +28,9 @@ service:
     port: 8545
   ws:
     port: 8546
+  p2p:
+    enabled: false
+    port: 30303
   annotations: {}
 
 ingress:
