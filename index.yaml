@@ -670,6 +670,16 @@ entries:
   op-geth:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-03-27T14:12:49.682494813Z"
+    description: A Helm chart for op-geth
+    digest: 542788f5509046b12433e56641498c22e34d781163c13c0086bdbacb666182f0
+    name: op-geth
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-geth-0.7.0/op-geth-0.7.0.tgz
+    version: 0.7.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2025-11-10T07:35:31.83872491Z"
     description: A Helm chart for op-geth
     digest: 244b5333efd653c67c596ddd29f887c227e860abd76b354b7ed5299354094786
@@ -772,6 +782,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/op-node-generic-1.0.0/op-node-generic-1.0.0.tgz
     version: 1.0.0
   op-reth:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-03-27T14:12:49.85869513Z"
+    description: A Helm chart for op-reth
+    digest: 9c37c876d30b04edd2c3c1f4806813b62e1a9db127cd9ef4f7ed31ed10c1caa4
+    name: op-reth
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-reth-0.7.0/op-reth-0.7.0.tgz
+    version: 0.7.0
   - apiVersion: v2
     appVersion: 1.0.0
     created: "2026-03-25T19:13:50.237535839Z"
@@ -1036,4 +1056,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2026-03-26T10:58:35.72891465Z"
+generated: "2026-03-27T14:12:49.858911092Z"
