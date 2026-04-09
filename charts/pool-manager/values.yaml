@@ -1,6 +1,7 @@
 ---
 metadata:
   env: bali
+  costCenter: agglayer
 
 onePasswordSecrets:
   pool-manager: "vaults/myvault/items/myitem"

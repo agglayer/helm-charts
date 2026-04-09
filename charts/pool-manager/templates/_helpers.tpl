@@ -41,6 +41,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 tags.datadoghq.com/env: {{ .Values.env }}
 tags.datadoghq.com/service: pool-manager
 tags.datadoghq.com/version: {{ .Values.image.tag }}
+polygon.technology/cost-center: {{ .Values.metadata.costCenter }}
 {{- end }}
 
 {{/*
