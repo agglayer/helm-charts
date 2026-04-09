@@ -75,11 +75,16 @@ spec:
         - name: {{ include "aggkit.fullname" . }}
           port: {{ .Values.container.ports.validator }}
 {{- end }}
+{{- if or .Values.httpRoutes.aggsender.create .Values.httpRoutes.bridge.create .Values.httpRoutes.aggsenderValidator.create }}
 ---
 apiVersion: networking.gke.io/v1
 kind: HealthCheckPolicy
 metadata:
   name: {{ include "aggkit.fullname" . }}-health
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true
+  labels:
+    {{- include "aggkit.labels" . | nindent 4 }}
 spec:
   default:
     checkIntervalSec: 30
@@ -95,3 +100,4 @@ spec:
     group: ""
     kind: Service
     name: {{ include "aggkit.fullname" . }}
+{{- end }}
