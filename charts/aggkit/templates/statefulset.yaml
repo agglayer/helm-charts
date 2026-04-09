@@ -117,15 +117,16 @@ spec:
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
       volumes:
-        {{- with .Values.extraVolumes }}
-          {{- . | toYaml | nindent 8 }}
-        {{- end }}
         - name: {{ ternary "config-raw" "config" .Values.envSubstitution.enabled }}
           configMap:
             name: {{ include "aggkit.fullname" . }}
             items:
               - key: "config.toml"
                 path: "config.toml"
+        {{- if .Values.envSubstitution.enabled }}
+        - name: config
+          emptyDir: {}
+        {{- end }}
         - name: keystores
           secret:
             name: aggkit # Must match the name of the secret in the .Values.onePasswordSecrets list
@@ -142,6 +143,9 @@ spec:
               - key: {{ .Values.config.aggoracle.privateKey.keystoreFileName }}
                 path: {{ .Values.config.aggoracle.privateKey.keystoreFileName }}
               {{- end }}
+        {{- with .Values.extraVolumes }}
+          {{- . | toYaml | nindent 8 }}
+        {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: data
