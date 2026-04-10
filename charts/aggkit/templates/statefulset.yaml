@@ -129,7 +129,7 @@ spec:
         {{- end }}
         - name: keystores
           secret:
-            name: {{ include "aggkit.fullname" . }} # Must match the name of the secret in the .Values.onePasswordSecrets list
+            secretName: {{ include "aggkit.fullname" . }} # Must match the name of the secret in the .Values.onePasswordSecrets list
             items:
               {{- if and (has "aggsender" .Values.config.components) (eq .Values.config.aggsender.privateKey.keyName "") }}
               - key: {{ .Values.config.aggsender.privateKey.keystoreFileName }}
