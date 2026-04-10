@@ -111,9 +111,11 @@ spec:
             - mountPath: "/etc/aggkit/config"
               name: config
               readOnly: true
+            {{- if or (and (has "aggsender" .Values.config.components) (eq .Values.config.aggsender.privateKey.keyName "")) (and (has "aggsender-validator" .Values.config.components) (eq .Values.config.aggsenderValidator.privateKey.keyName "")) (and (has "aggoracle" .Values.config.components) (eq .Values.config.aggoracle.privateKey.keyName "")) }}
             - mountPath: "/etc/aggkit/keystores"
               name: keystores
               readOnly: true
+            {{- end }}
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
       volumes:
@@ -127,9 +129,10 @@ spec:
         - name: config
           emptyDir: {}
         {{- end }}
+        {{- if or (and (has "aggsender" .Values.config.components) (eq .Values.config.aggsender.privateKey.keyName "")) (and (has "aggsender-validator" .Values.config.components) (eq .Values.config.aggsenderValidator.privateKey.keyName "")) (and (has "aggoracle" .Values.config.components) (eq .Values.config.aggoracle.privateKey.keyName "")) }}
         - name: keystores
           secret:
-            secretName: {{ include "aggkit.fullname" . }} # Must match the name of the secret in the .Values.onePasswordSecrets list
+            secretName: {{ include "aggkit.fullname" . }}
             items:
               {{- if and (has "aggsender" .Values.config.components) (eq .Values.config.aggsender.privateKey.keyName "") }}
               - key: {{ .Values.config.aggsender.privateKey.keystoreFileName }}
@@ -143,6 +146,7 @@ spec:
               - key: {{ .Values.config.aggoracle.privateKey.keystoreFileName }}
                 path: {{ .Values.config.aggoracle.privateKey.keystoreFileName }}
               {{- end }}
+        {{- end }}
         {{- with .Values.extraVolumes }}
           {{- . | toYaml | nindent 8 }}
         {{- end }}
