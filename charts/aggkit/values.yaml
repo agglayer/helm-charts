@@ -5,7 +5,7 @@ metadata:
   service: aggkit
 
 onePasswordSecrets:
-  aggkit: "vaults/myvault/items/myitem"
+  # aggkit: "vaults/myvault/items/myitem"
 
 # Enable to replace $ENV_VARS in the configmap from a Kubernetes secret
   # Secret names are derived from onePasswordSecrets keys
