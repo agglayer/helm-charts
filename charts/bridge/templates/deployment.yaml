@@ -117,7 +117,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: config
-              mountPath: /etc/bridge/
+              mountPath: /etc/bridge/config/
               readOnly: true
             {{- if eq .Values.config.claimTxManager.privateKey.keyName "" }}
             - name: keystores

@@ -30,7 +30,7 @@ image:
   pullPolicy: IfNotPresent
   tag: "v0.6.3-RC4"
   command: ["/app/zkevm-bridge"]
-  args: ["run", "--cfg", "/etc/bridge/bridge-config.toml"]
+  args: ["run", "--cfg", "/etc/bridge/config/bridge-config.toml"]
 
 serviceAccount:
   create: true
