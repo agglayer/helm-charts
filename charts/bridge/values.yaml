@@ -1,11 +1,27 @@
-env: bali
+---
+metadata:
+  env: bali
+  costCenter: agglayer
 
-podLabels:
-  name: myname
-  business_unit: agglayer
-  role: myrole
-  partner: Polygon
-  network: mynetwork
+onePasswordSecrets:
+  # bridge: "vaults/myvault/items/myitem"
+
+# Enable to replace $ENV_VARS in the configmap from a Kubernetes secret
+  # Secret names are derived from onePasswordSecrets keys
+envSubstitution:
+  enabled: true
+
+# Pod annotations (e.g. ad.datadoghq.com/tags for Datadog)
+podAnnotations: {}
+# podAnnotations:
+#   ad.datadoghq.com/tags: '{"network": "mynetwork"}'
+
+nodeSelector: {}
+tolerations: []
+initContainers: []
+extraVolumes: []
+extraVolumeMounts: []
+topologySpreadConstraints: []
 
 replicaCount: 1
 
@@ -26,27 +42,74 @@ service:
   type: ClusterIP
   port: 8080
 
+# GKE HealthCheckPolicy (used when httpRoutes.rest.create is true)
+healthCheck:
+  requestPath: /healthz
+  timeoutSec: 1
+  # checkIntervalSec: 10
+  # healthyThreshold: 1
+  # unhealthyThreshold: 3
+
 ingress:
-  hostname: something.dev.polygon
+  create: false
+  hostname: domain.example
+
+httpRoutes:
+  rest:
+    create: false
+    hostname: domain.example
+    gateway:
+      name: gateway
+      namespace: gateways
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /healthz
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 3
 
 resources:
   limits:
-    memory: 1G
+    memory: 8Gi
   requests:
-    cpu: 1
-    memory: 512M
+    cpu: 2
+    memory: 8Gi
 
 config:
   log:
     environment: development # "production" or "development"
     level: info
+  db:
+    user: bridge
+    password: bridge
+    name: bridge
+    host: postgres
+    port: "5432"
+  etherman:
+    l1Url: ""
+    l2Url: "http://cdk-erigon-rpc:8123"
   bridgeServer:
     finalizedGEREnabled: true
-  etherman:
-    l2Url: "http://cdk-erigon-rpc:8123"
   claimTxManager:
-    path: /etc/bridge/claimtx.keystore
     areClaimsBetweenL2sEnabled: false
+    privateKey:
+      keyName: "" # if this string is not empty, bridge will try to use KMS
+      keystoreFileName: "claimtx.keystore"
+      keystoreFilePassword: "claimTxKeystorePassword"
   network:
     l1GenBlockNumber: 0
     polygonBridgeAddress: "0x0000000000000000000000000000000000000000"
@@ -59,8 +122,3 @@ config:
     requireSovereignChainSmcs: true
   synchronizer:
     forceL2SyncChunk: true
-
-existingSecret: "secretName"
-secretItem:
-  key: "claimtx.keystore"
-  path: "claimtx.keystore"

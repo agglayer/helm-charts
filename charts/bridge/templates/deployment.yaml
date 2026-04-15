@@ -31,6 +31,52 @@ spec:
         fsGroupChangePolicy: Always
         seccompProfile:
           type: RuntimeDefault
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.envSubstitution.enabled .Values.initContainers }}
+      initContainers:
+        {{- if .Values.envSubstitution.enabled }}
+        - name: config-env-substitution
+          image: alpine:latest
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - |
+              apk add gettext > /dev/null 2>&1
+              envsubst < /config-raw/bridge-config.toml > /config/bridge-config.toml
+          envFrom:
+            {{- range $name, $_ := $.Values.onePasswordSecrets }}
+            - secretRef:
+                name: {{ $name }}
+            {{- end }}
+          volumeMounts:
+            - name: config-raw
+              mountPath: /config-raw
+              readOnly: true
+            - name: config
+              mountPath: /config
+        {{- end }}
+        {{- with .Values.initContainers }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
+      {{- end }}
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range $constraint := . }}
+        - {{ toYaml $constraint | nindent 10 | trim }}
+            {{- if not $constraint.labelSelector }}
+          labelSelector:
+            matchLabels:
+              {{- include "bridge.selectorLabels" $ | nindent 14 }}
+            {{- end }}
+        {{- end }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -46,52 +92,60 @@ spec:
             seccompProfile:
               type: RuntimeDefault
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          {{ if .Values.image.command }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.image.command }}
           command: {{- range .Values.image.command }}
             - {{ . }} {{- end}}
-          {{- end}}
-          {{ if .Values.image.args }}
+          {{- end }}
+          {{- if .Values.image.args }}
           args: {{- range .Values.image.args }}
             - {{ . }} {{- end}}
-          {{- end}}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          {{- with .Values.livenessProbe }}
           livenessProbe:
-            {{- toYaml .Values.livenessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
           readinessProbe:
-            {{- toYaml .Values.readinessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - name: bridge-config
+            - name: config
               mountPath: /etc/bridge/
-              readOnly: false
+              readOnly: true
+            {{- if eq .Values.config.claimTxManager.privateKey.keyName "" }}
+            - name: keystores
+              mountPath: /etc/bridge/keystores/
+              readOnly: true
+            {{- end }}
+            {{- with .Values.extraVolumeMounts }}
+            {{- . | toYaml | nindent 12 }}
+            {{- end }}
       volumes:
-        - name: bridge-config
-          projected:
-            sources:
-            - configMap:
-                name: {{ include "bridge.fullname" . }}
-                items:
-                  - key: "bridge-config.toml"
-                    path: "bridge-config.toml"
-            - secret:
-                name: {{ .Values.existingSecret }}
-                items:
-                  - key: {{ .Values.secretItem.key }}
-                    path: {{ .Values.secretItem.path }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: {{ ternary "config-raw" "config" .Values.envSubstitution.enabled }}
+          configMap:
+            name: {{ include "bridge.fullname" . }}
+            items:
+              - key: "bridge-config.toml"
+                path: "bridge-config.toml"
+        {{- if .Values.envSubstitution.enabled }}
+        - name: config
+          emptyDir: {}
+        {{- end }}
+        {{- if eq .Values.config.claimTxManager.privateKey.keyName "" }}
+        - name: keystores
+          secret:
+            secretName: {{ include "bridge.fullname" . }}
+            items:
+              - key: {{ .Values.config.claimTxManager.privateKey.keystoreFileName }}
+                path: {{ .Values.config.claimTxManager.privateKey.keystoreFileName }}
+        {{- end }}
+        {{- with .Values.extraVolumes }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
