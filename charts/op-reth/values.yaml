@@ -55,7 +55,7 @@ serviceAccount:
   annotations: {}
 
 config:
-  extraOptions: {}
+  extraOptions: []
 
   http:
     api: admin,net,eth,web3,debug,miner

@@ -52,7 +52,7 @@ serviceAccount:
   annotations: {}
 
 config:
-  extraOptions: {}
+  extraOptions: []
 
   nodeType: archive # "archive" or "full"
 

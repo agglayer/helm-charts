@@ -39,7 +39,7 @@ securityContext: {}
 existingSecret: "secretName"
 
 config:
-  extraOptions: {}
+  extraOptions: []
 
   sequencer:
     enabled: true
