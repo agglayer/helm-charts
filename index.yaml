@@ -670,6 +670,16 @@ entries:
   op-geth:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-04-16T08:20:03.605924422Z"
+    description: A Helm chart for op-geth
+    digest: 0677d26ab1516325f44222bddbf7acc57dc8b119015cf68072ea1ce290cdc48f
+    name: op-geth
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-geth-0.7.1/op-geth-0.7.1.tgz
+    version: 0.7.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-03-27T14:12:49.682494813Z"
     description: A Helm chart for op-geth
     digest: 542788f5509046b12433e56641498c22e34d781163c13c0086bdbacb666182f0
@@ -720,6 +730,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/op-geth-generic-1.0.0/op-geth-generic-1.0.0.tgz
     version: 1.0.0
   op-node:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-04-16T08:20:03.809904497Z"
+    description: A Helm chart for op-node
+    digest: 25e148f7ffca02a4d6ab1063644f2924dadd152b1f3c6ddc9664beb8eeb94399
+    name: op-node
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-node-0.6.2/op-node-0.6.2.tgz
+    version: 0.6.2
   - apiVersion: v2
     appVersion: 1.0.0
     created: "2026-03-26T10:58:35.728734547Z"
@@ -782,6 +802,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/op-node-generic-1.0.0/op-node-generic-1.0.0.tgz
     version: 1.0.0
   op-reth:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-04-16T08:20:03.964251248Z"
+    description: A Helm chart for op-reth
+    digest: 4e4ead36160e166f1daf09d74d278b25bc341a494c20644d8ed9182871fe9f70
+    name: op-reth
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-reth-0.7.1/op-reth-0.7.1.tgz
+    version: 0.7.1
   - apiVersion: v2
     appVersion: 1.0.0
     created: "2026-03-27T14:12:49.85869513Z"
@@ -1056,4 +1086,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2026-03-27T14:12:49.858911092Z"
+generated: "2026-04-16T08:20:03.964459794Z"
