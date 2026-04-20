@@ -39,7 +39,7 @@ helm.sh/chart: {{ include "bridge.chart" . }}
 app.kubernetes.io/version: {{ .Values.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 tags.datadoghq.com/env: {{ .Values.metadata.env }}
-tags.datadoghq.com/service: bridge
+tags.datadoghq.com/service: zkevm-bridge
 tags.datadoghq.com/version: {{ .Values.image.tag }}
 polygon.technology/cost-center: {{ .Values.metadata.costCenter }}
 {{- end }}
