@@ -61,6 +61,7 @@ data:
     RequireNoFEPBlockGap = true
     DryRun = {{ .Values.config.aggsender.dryRun }}
     MaxL2BlockNumber = {{ .Values.config.aggsender.maxL2BlockNumber | int }}
+    UnsetClaimsMaxLogBlockRange = {{ .Values.config.aggsender.unsetClaimsMaxLogBlockRange | int }}
 
     {{ if .Values.config.aggsender.optimisticModeEnabled }}
     [AggSender.OptimisticModeConfig]
@@ -140,6 +141,7 @@ data:
     [L2GERSync]
     BlockFinality = {{ .Values.config.l2GERSync.blockFinality | quote }}
     InitialBlockNum = {{ .Values.config.l2.initialBlockNum | int }}
+    SyncBlockChunkSize={{ .Values.config.l2GERSync.syncBlockChunkSize | int }}
 
     {{- if or (has "aggsender-validator" .Values.config.components) (has "aggsender" .Values.config.components) }}
 
@@ -190,3 +192,4 @@ data:
     InitialBlockNum = {{ .Values.config.l2.initialBlockNum | int }}
     BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
     BlockFinality = {{ .Values.config.bridgeL2Sync.blockFinality | quote }}
+    SyncBlockChunkSize={{ .Values.config.bridgeL2Sync.syncBlockChunkSize | int }}
