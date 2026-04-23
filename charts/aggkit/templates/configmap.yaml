@@ -141,7 +141,7 @@ data:
     [L2GERSync]
     BlockFinality = {{ .Values.config.l2GERSync.blockFinality | quote }}
     InitialBlockNum = {{ .Values.config.l2.initialBlockNum | int }}
-    SyncBlockChunkSize={{ .Values.config.l2.l2GERSync.syncBlockChunkSize | int }}
+    SyncBlockChunkSize={{ .Values.config.l2GERSync.syncBlockChunkSize | int }}
 
     {{- if or (has "aggsender-validator" .Values.config.components) (has "aggsender" .Values.config.components) }}
 
@@ -192,4 +192,4 @@ data:
     InitialBlockNum = {{ .Values.config.l2.initialBlockNum | int }}
     BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
     BlockFinality = {{ .Values.config.bridgeL2Sync.blockFinality | quote }}
-    SyncBlockChunkSize={{ .Values.config.l2.bridgeL2Sync.syncBlockChunkSize | int }}
+    SyncBlockChunkSize={{ .Values.config.bridgeL2Sync.syncBlockChunkSize | int }}
