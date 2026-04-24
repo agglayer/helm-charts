@@ -121,11 +121,13 @@ spec:
         - name: secret
           projected:
             sources:
+              {{- range $name, $_ := .Values.onePasswordSecrets }}
               - secret:
-                  name: {{ .Values.existingSecret }}
+                  name: {{ $name }}
                   items:
                     - key: "jwt"
                       path: "jwt.txt"
+              {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: data
