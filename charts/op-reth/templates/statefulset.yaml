@@ -35,7 +35,8 @@ spec:
       serviceAccountName: {{ include "op-reth.serviceAccountName" . }}
       initContainers:
         - name: download-genesis
-          image: google/cloud-sdk:latest
+          image: "gcr.io/google.com/cloudsdktool/google-cloud-cli:stable"
+          imagePullPolicy: Always
           command: ["sh", "-c"]
           args:
           - |
