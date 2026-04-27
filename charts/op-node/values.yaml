@@ -78,8 +78,8 @@ config:
     opRethAuthUrl: http://op-reth:8551
 
   log:
-    environment: development # "production" or "development"
-    level: info
+    level: info # trace, debug, info, warn, error, crit
+    format: json # text, terminal, logfmt, terminal-color, json, json-pretty
 
   rollupJson: |
     {}
