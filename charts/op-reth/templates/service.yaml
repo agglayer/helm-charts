@@ -1,28 +1,13 @@
-{{- if .Values.service.metrics.enabled }}
-apiVersion: cloud.google.com/v1
-kind: BackendConfig
-metadata:
-  name: {{ include "op-reth.fullname" . }}-health
-spec:
-  healthCheck:
-    type: HTTP
-    requestPath: /
-    port: {{ .Values.service.metrics.port }}
-{{- end }}
----
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "op-reth.fullname" . }}
   labels:
     {{- include "op-reth.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
   annotations:
-    {{- if .Values.service.metrics.enabled }}
-    cloud.google.com/backend-config: '{"ports": {"http": "{{ include "op-reth.fullname" . }}-health"}}'
-    {{- end }}
-    {{- with .Values.service.annotations }}
     {{- toYaml . | nindent 4 }}
-    {{- end }}
+  {{- end }}
 spec:
   type: {{ .Values.service.type }}
   ports:
