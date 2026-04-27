@@ -57,8 +57,8 @@ config:
     opNodeUrl: http://op-node:9545
 
   log:
-    environment: development # "production" or "development"
-    level: info
+    level: info # trace, debug, info, warn, error, crit
+    format: json # text, terminal, logfmt, terminal-color, json, json-pretty
 
 resources:
   limits:

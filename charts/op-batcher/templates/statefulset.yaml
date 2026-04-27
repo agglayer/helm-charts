@@ -74,6 +74,8 @@ spec:
                 --max-channel-duration=50 \
                 --l1-eth-rpc="${L1_RPC_URL}" \
                 --private-key="${BATCHER_PRIVATE_KEY}" \
+                --log.level={{ .Values.config.log.level }} \
+                --log.format={{ .Values.config.log.format }} \
                 {{- range .Values.config.extraOptions }}
                 --{{ . }} \
                 {{- end }}
