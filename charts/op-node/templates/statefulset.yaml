@@ -72,7 +72,7 @@ spec:
                 {{- end }}
                 {{- if .Values.config.sequencer.enabled }}
                 --sequencer.l1-confs={{ .Values.config.sequencer.l1Confs }} \
-                --p2p.sequencer.key="${BATCHER_PRIVATE_KEY}" \
+                --p2p.sequencer.key="${AGGSENDER_PRIVATE_KEY}" \
                 {{- end }}
                 --verifier.l1-confs={{ .Values.config.verifier.l1Confs }} \
                 {{- if and (not .Values.config.sequencer.enabled) .Values.config.verifier.sequencerHttp }}
