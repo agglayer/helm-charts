@@ -183,7 +183,6 @@ config:
     syncBlockChunkSize: 1000
 
   l2:
-    agglayerAddress: "0x123"
     bridgeAddress: "0x123"
     chainId: 123
     globalExitRootAddress: "0x123"

@@ -1,3 +1,16 @@
+---
+metadata:
+  env: bali
+  costCenter: agglayer
+
+onePasswordSecrets:
+  # aggkit-prover: "vaults/myvault/items/myitem"
+
+# Enable to replace $ENV_VARS in the config TOML from a Kubernetes secret
+# at init time. Secret names are derived from onePasswordSecrets keys.
+envSubstitution:
+  enabled: true
+
 replicaCount: 1
 
 image:
@@ -6,8 +19,6 @@ image:
   tag: "1.4.2"
   command: ["/usr/local/bin/aggkit-prover"]
   args: ["run", "--config-path", "/etc/aggkit/aggkit-prover-config.toml"]
-
-existingSecret: op-secrets
 
 imagePullSecrets: []
 nameOverride: ""
@@ -28,8 +39,9 @@ config:
   l2ExecutionLayerRpcEndpoint: "http://op-geth:8545"
   l2ConsensusLayerRpcEndpoint: "http://op-node:9545"
   mock: false
+  sp1ClusterEndpoint: "https://rpc.production.succinct.xyz"
   polygonRollupManager: "0x0000000000000000000000000000000000000000"
-  globalExitRootManagerV2SovereignChain: "0x0000000000000000000000000000000000000000"
+  globalExitRootManagerV2SovereignChain: "0xa40d5f56745a118d0906a34e69aec8c0db1cb8fa"
   proposerEndpoint: "http://op-succinct-proposer:50001"
   genesis: |
     {}
@@ -37,12 +49,23 @@ config:
 podAnnotations: {}
 podLabels: {}
 
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+topologySpreadConstraints: []
+
 podSecurityContext: {}
 securityContext: {}
 
 service:
   type: ClusterIP
   port: 4446
+
+livenessProbe: {}
+readinessProbe: {}
 
 resources:
   limits:

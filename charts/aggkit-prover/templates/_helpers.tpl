@@ -38,6 +38,10 @@ helm.sh/chart: {{ include "aggkit-prover.chart" . }}
 {{ include "aggkit-prover.selectorLabels" . }}
 app.kubernetes.io/version: {{ .Values.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+tags.datadoghq.com/env: {{ .Values.metadata.env }}
+tags.datadoghq.com/service: aggkit-prover
+tags.datadoghq.com/version: {{ .Values.image.tag }}
+polygon.technology/cost-center: {{ .Values.metadata.costCenter }}
 {{- end }}
 
 {{/*
@@ -46,7 +50,6 @@ Selector labels
 {{- define "aggkit-prover.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "aggkit-prover.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/version: {{ .Values.image.tag }}
 {{- end }}
 
 {{/*
