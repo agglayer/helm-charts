@@ -18,7 +18,6 @@ data:
   MAX_CONCURRENT_WITNESS_GEN: {{ .Values.config.maxConcurrentWitnessGen | quote }}
   METRICS_ENABLED: {{ .Values.config.metricsEnabled | quote }}
   METRICS_PORT: {{ .Values.ports.metrics | quote }}
-  NETWORK_PRIVATE_KEY: {{ .Values.config.sp1NetworkPrivateKey | quote }}
   NETWORK_RPC_URL: {{ .Values.config.sp1NetworkRpcURL | quote }}
   OP_SUCCINCT_MOCK: {{ .Values.config.opSuccinctMock | quote }}
   POLL_INTERVAL: {{ .Values.config.pollInterval | quote }}

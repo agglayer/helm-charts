@@ -73,6 +73,12 @@ spec:
                   name: {{ $name }}
                   key: L1_RPC_URL
                   optional: true
+            - name: NETWORK_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $name }}
+                  key: SP1_NETWORK_PRIVATE_KEY
+                  optional: true
             {{- end }}
           envFrom:
             - configMapRef:
