@@ -55,6 +55,25 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          # Map a single L1_RPC_URL secret field to the two env vars the binary
+          # actually reads (L1_RPC and L1_BEACON_RPC). `optional: true` lets the
+          # configmap defaults below act as a fallback when the secret is absent
+          # or the key is missing (e.g. dev / CI without a 1P-backed secret).
+          env:
+            {{- range $name, $_ := .Values.onePasswordSecrets }}
+            - name: L1_RPC
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $name }}
+                  key: L1_RPC_URL
+                  optional: true
+            - name: L1_BEACON_RPC
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $name }}
+                  key: L1_RPC_URL
+                  optional: true
+            {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ include "op-succinct-proposer.fullname" . }}-config

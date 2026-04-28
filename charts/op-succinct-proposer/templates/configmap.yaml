@@ -11,8 +11,6 @@ data:
   DATABASE_URL: {{ .Values.config.databaseUrl | quote }}
   DB_PATH: {{ .Values.storage.path | quote }}
   GRPC_ADDRESS: {{ .Values.config.grpcAddress | quote }}
-  L1_BEACON_RPC: ""
-  L1_RPC: ""
   L2_NODE_RPC: {{ .Values.config.l2NodeRpcURL | quote }}
   L2_RPC: {{ .Values.config.l2RpcURL | quote }}
   L2OO_ADDRESS: {{ .Values.config.rollupAddress | quote }}
