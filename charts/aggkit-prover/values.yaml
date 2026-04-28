@@ -36,6 +36,7 @@ serviceAccount:
 
 config:
   networkId: 0
+  l1RpcURL: ""
   l2ExecutionLayerRpcEndpoint: "http://op-geth:8545"
   l2ConsensusLayerRpcEndpoint: "http://op-node:9545"
   mock: false

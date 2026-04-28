@@ -97,6 +97,15 @@ spec:
               type: RuntimeDefault
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- range $name, $_ := .Values.onePasswordSecrets }}
+            - name: NETWORK_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $name }}
+                  key: SP1_NETWORK_PRIVATE_KEY
+                  optional: true
+            {{- end }}
           {{- if .Values.onePasswordSecrets }}
           envFrom:
             {{- range $name, $_ := .Values.onePasswordSecrets }}

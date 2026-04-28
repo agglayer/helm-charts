@@ -39,7 +39,7 @@ data:
     proving-timeout = "1h"
 
     [aggchain-proof-service.aggchain-proof-builder.contracts]
-    l1-rpc-endpoint = "${L1_RPC_URL}"
+    l1-rpc-endpoint = {{ .Values.config.l1RpcURL | quote }}
     l2-execution-layer-rpc-endpoint = {{ .Values.config.l2ExecutionLayerRpcEndpoint | quote }}
     l2-consensus-layer-rpc-endpoint = {{ .Values.config.l2ConsensusLayerRpcEndpoint | quote }}
     polygon-rollup-manager = {{ .Values.config.polygonRollupManager | quote }}
@@ -47,7 +47,7 @@ data:
     evm-sketch-genesis="/etc/aggkit/genesis.json"
 
     [aggchain-proof-service.proposer-service]
-    l1-rpc-endpoint = "${L1_RPC_URL}"
+    l1-rpc-endpoint = {{ .Values.config.l1RpcURL | quote }}
     mock = {{ .Values.config.mock }}
 
     [aggchain-proof-service.proposer-service.client]
