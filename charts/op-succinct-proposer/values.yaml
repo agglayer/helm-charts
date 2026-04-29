@@ -69,6 +69,11 @@ config:
   proverAddress: "0x0000000000000000000000000000000000000000"
   rangeProofInterval: "1800"
   rustLog: "info"
+  # When true, the proposer derives the safe head from L1 itself instead of
+  # asking op-node's safedb. Necessary on chains where op-node didn't have
+  # safedb enabled from genesis (it's a forward-only ledger and won't return
+  # results for L1 blocks predating its first run). Slower per request.
+  safeDbFallback: true
   sp1NetworkPrivateKey: "0x0000000000000000000000000000000000000000000000000000000000000000"
   sp1NetworkRpcURL: "http://sp1-cluster:8545"
   useCachedDB: false
