@@ -102,6 +102,7 @@ config:
     dryRun: false
     maxCertSize: 8388608
     maxL2BlockNumber: 0
+    unsetClaimsMaxLogBlockRange: 100
     mode: "PessimisticProof" # PessimisticProof (PP) or AggchainProof (FEP)
     retryCertAfterInError: true
     saveCertificatesToFilesPath: /tmp
