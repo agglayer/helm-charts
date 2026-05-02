@@ -80,6 +80,7 @@ spec:
             - --ws.port={{ .Values.service.ws.port }}
             - --ws.origins=*
             - --ws.api={{ .Values.config.ws.api }}
+            - --storage.v2
             - --rpc.eth-proof-window=1209600
             - --log.stdout.format=json
             - --disable-discovery
