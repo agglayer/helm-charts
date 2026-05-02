@@ -78,7 +78,6 @@ spec:
                 {{- if and (not .Values.config.sequencer.enabled) .Values.config.verifier.sequencerHttp }}
                 --rollup.sequencer-http={{ .Values.config.verifier.sequencerHttp }} \
                 {{- end }}
-                --l2.engine-timeout=600s \
                 --rollup.config=/chainconfig/rollup.json \
                 --rpc.addr=0.0.0.0 \
                 --rpc.enable-admin \
