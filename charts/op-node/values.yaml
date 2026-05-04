@@ -7,9 +7,7 @@ onePasswordSecrets:
   # op-node: "vaults/myvault/items/myitem"
 
 # Pod annotations (e.g. ad.datadoghq.com/tags for Datadog)
-podAnnotations:
-  config.linkerd.io/skip-outbound-ports: "8551"
-# podAnnotations:
+podAnnotations: {}
 #   ad.datadoghq.com/tags: '{"network": "mynetwork"}'
 
 podLabels: {}
