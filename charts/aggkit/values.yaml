@@ -27,7 +27,7 @@ extraVolumes: []
 
 topologySpreadConstraints: []
 
-replicas: 1
+replicaCount: 1
 
 container:
   extraVolumeMounts: []
