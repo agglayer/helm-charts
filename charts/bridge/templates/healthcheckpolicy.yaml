@@ -1,0 +1,25 @@
+{{- if .Values.httpRoutes.rest.create -}}
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: {{ include "bridge.fullname" . }}
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true
+  labels:
+    {{- include "bridge.labels" . | nindent 4 }}
+spec:
+  default:
+    checkIntervalSec: {{ .Values.healthCheck.checkIntervalSec | default 10 }}
+    timeoutSec: {{ .Values.healthCheck.timeoutSec | default 1 }}
+    healthyThreshold: {{ .Values.healthCheck.healthyThreshold | default 1 }}
+    unhealthyThreshold: {{ .Values.healthCheck.unhealthyThreshold | default 3 }}
+    config:
+      type: HTTP
+      httpHealthCheck:
+        port: {{ .Values.service.port }}
+        requestPath: {{ .Values.healthCheck.requestPath | default "/healthz" }}
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "bridge.fullname" . }}
+{{- end }}

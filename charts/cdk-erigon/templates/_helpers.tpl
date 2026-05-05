@@ -38,9 +38,10 @@ helm.sh/chart: {{ include "cdk-erigon.chart" . }}
 {{ include "cdk-erigon.selectorLabels" . }}
 app.kubernetes.io/version: {{ .Values.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-tags.datadoghq.com/env: {{ .Values.env }}
+tags.datadoghq.com/env: {{ .Values.metadata.env }}
 tags.datadoghq.com/service: cdk-erigon
 tags.datadoghq.com/version: {{ .Values.image.tag }}
+polygon.technology/cost-center: {{ .Values.metadata.costCenter }}
 {{- end }}
 
 {{/*

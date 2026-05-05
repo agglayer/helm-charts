@@ -1,5 +1,4 @@
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
-
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -8,12 +7,8 @@ metadata:
 data:
   config.toml: |
     PathRWData = {{ .Values.storage.path | quote }}
-    {{- if .Values.config.l1.rpcUrl }}
-    L1URL = {{ .Values.config.l1.rpcUrl | quote }}
-    {{- else }}
-    L1URL = {{ index $opSecrets.data "l1RpcURL" | b64dec | quote }}
-    {{- end }}
-    L2URL = {{ .Values.config.l2.rpcURL | quote }}
+    L1URL = {{ .Values.config.l1.RPCURL | quote }}
+    L2URL = {{ .Values.config.l2.RPCURL | quote }}
 
     SequencerPrivateKeyPath = ""
     SequencerPrivateKeyPassword = ""
@@ -48,7 +43,7 @@ data:
     {{ if .Values.config.aggsender.privateKey.keyName }}
     AggsenderPrivateKey = {Method ="GCP", KeyName={{ .Values.config.aggsender.privateKey.keyName | quote }}}
     {{ else }}
-    AggsenderPrivateKey = {Path = "/etc/aggkit/{{ .Values.config.aggsender.privateKey.keystoreFileName }}", Password = {{ index $opSecrets.data (.Values.config.aggsender.privateKey.keystoreFilePasswordSecretFieldName) | b64dec | quote }}}
+    AggsenderPrivateKey = {Path = "/etc/aggkit/keystores/{{ .Values.config.aggsender.privateKey.keystoreFileName }}", Password = {{ .Values.config.aggsender.privateKey.keystoreFilePassword | quote }}}
     {{ end }}
 
     CertificateSendInterval = {{ .Values.config.aggsender.certificateSendInterval | quote }}
@@ -70,7 +65,7 @@ data:
     {{ if .Values.config.aggsender.privateKey.keyName }}
     TrustedSequencerKey = {Method ="GCP", KeyName={{ .Values.config.aggsender.privateKey.keyName | quote }}}
     {{ else }}
-    TrustedSequencerKey = {Path = "/etc/aggkit/{{ .Values.config.aggsender.privateKey.keystoreFileName }}", Password = {{ index $opSecrets.data (.Values.config.aggsender.privateKey.keystoreFilePasswordSecretFieldName) | b64dec | quote }}}
+    TrustedSequencerKey = {Path = "/etc/aggkit/keystores/{{ .Values.config.aggsender.privateKey.keystoreFileName }}", Password = {{ .Values.config.aggsender.privateKey.keystoreFilePassword | quote }}}
     {{ end }}
     OpNodeURL = "http://op-node:9545"
     RequireKeyMatchTrustedSequencer = true
@@ -108,7 +103,7 @@ data:
     {{ if .Values.config.aggoracle.privateKey.keyName }}
     PrivateKeys = [{Method ="GCP", KeyName={{ .Values.config.aggoracle.privateKey.keyName | quote }}}]
     {{ else }}
-    PrivateKeys = [{Path = "/etc/aggkit/{{ .Values.config.aggoracle.privateKey.keystoreFileName }}", Password = {{ index $opSecrets.data (.Values.config.aggoracle.privateKey.keystoreFilePasswordSecretFieldName) | b64dec | quote }}}]
+    PrivateKeys = [{Path = "/etc/aggkit/keystores/{{ .Values.config.aggoracle.privateKey.keystoreFileName }}", Password = {{ .Values.config.aggoracle.privateKey.keystoreFilePassword | quote }}}]
     {{ end }}
 
     [AggOracle.EVMSender.EthTxManager.Etherman]
@@ -152,7 +147,7 @@ data:
     {{ if $pk.keyName }}
     Signer = {Method ="GCP", KeyName={{ $pk.keyName | quote }}}
     {{ else }}
-    Signer = {Path = "/etc/aggkit/{{ $pk.keystoreFileName }}", Password = {{ index $opSecrets.data ($pk.keystoreFilePasswordSecretFieldName) | b64dec | quote }}}
+    Signer = {Path = "/etc/aggkit/keystores/{{ $pk.keystoreFileName }}", Password = {{ $pk.keystoreFilePassword | quote }}}
     {{ end }}
     Mode={{ $mode | quote }}
 

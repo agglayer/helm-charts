@@ -1,22 +1,21 @@
-# For use in clusters with the 1P operator
-# onePasswordSecrets:
-#   <name>: <item-path>
-
-# Used as a backwards-compatible stopgap to do environment interpolation in the config until the aggkit supports config from the environment
-mountRawConfig: true
-
-env: bali
+---
 metadata:
+  env: bali
+  costCenter: agglayer
   service: aggkit
 
-podLabels:
-  name: myname
-  business_unit: agglayer
-  role: myrole
-  partner: Polygon
-  network: mynetwork
+onePasswordSecrets:
+  # aggkit: "vaults/myvault/items/myitem"
 
-existingSecret: op-secrets
+# Enable to replace $ENV_VARS in the configmap from a Kubernetes secret
+  # Secret names are derived from onePasswordSecrets keys
+envSubstitution:
+  enabled: true
+
+# Pod annotations (e.g. ad.datadoghq.com/tags for Datadog)
+podAnnotations: {}
+# podAnnotations:
+#   ad.datadoghq.com/tags: '{"role": "aggsender", "network": "mynetwork"}'
 
 nodeSelector: {}
 
@@ -28,7 +27,7 @@ extraVolumes: []
 
 topologySpreadConstraints: []
 
-replicas: 1
+replicaCount: 1
 
 container:
   extraVolumeMounts: []
@@ -60,10 +59,22 @@ ingresses:
     hostname: "something-else-else.dev.polygon"
 
 httpRoutes:
+  aggsender:
+    create: false
+    hostname: domain.example
+    gateway:
+      name: gateway
+      namespace: gateways
+  bridge:
+    create: false
+    hostname: domain.example
+    gateway:
+      name: gateway
+      namespace: gateways
   aggsenderValidator:
     create: false
     hostname: domain.example
-    parentRef:
+    gateway:
       name: gateway
       namespace: gateways
 
@@ -87,13 +98,13 @@ config:
   aggsender:
     certificateSendInterval: 1m
     checkSettledInterval: 5s
-    checkStatusCertificateInterval: 5m
+    checkStatusCertificateInterval: 1m
     dryRun: false
     maxCertSize: 8388608
     maxL2BlockNumber: 0
-    unsetClaimsMaxLogBlockRange: 0
+    unsetClaimsMaxLogBlockRange: 100
     mode: "PessimisticProof" # PessimisticProof (PP) or AggchainProof (FEP)
-    retryCertAfterInError: false
+    retryCertAfterInError: true
     saveCertificatesToFilesPath: /tmp
 
     # Set this if aggsender.mode is AggchainProof
@@ -112,7 +123,7 @@ config:
     privateKey:
       keyName: "" # if this string is not empty, aggsender will try to use KMS
       keystoreFileName: "aggsender.keystore"
-      keystoreFilePasswordSecretFieldName: "aggsenderKeystorePassword"
+      keystoreFilePassword: "aggsenderKeystorePassword"
 
     optimisticModeEnabled: false
 
@@ -126,7 +137,7 @@ config:
     privateKey:
       keyName: "" # if this string is not empty, aggsender-validator will try to use KMS
       keystoreFileName: "aggsenderValidator.keystore"
-      keystoreFilePasswordSecretFieldName: "aggsenderValidatorKeystorePassword"
+      keystoreFilePassword: "aggsenderValidatorKeystorePassword"
 
   aggoracle:
     enableAggoracleCommittee: false
@@ -135,7 +146,7 @@ config:
     privateKey:
       keyName: "" # if this string is not empty, aggoracle will try to use KMS
       keystoreFileName: "aggoracle.keystore"
-      keystoreFilePasswordSecretFieldName: "aggoracleKeystorePassword"
+      keystoreFilePassword: "aggoracleKeystorePassword"
 
   l1InfoTreeSync:
     blockFinality: "FinalizedBlock" # "LatestBlock/-6" for fast L1 deposits
@@ -165,17 +176,17 @@ config:
     globalExitRootAddress: "0x123"
     polTokenAddress: "0x123"
     rollupAddress: "0x123"
-    rollupBlockNumber: "0x123"
+    rollupBlockNumber: 123
     rollupManagerAddress: "0x123"
     rollupManagerBlockNumber: 123
+    RPCURL: http://example.com
     syncBlockChunkSize: 1000
 
   l2:
-    agglayerAddress: "0x123"
     bridgeAddress: "0x123"
     chainId: 123
     globalExitRootAddress: "0x123"
-    rpcURL: http://localhost:8545
+    RPCURL: http://localhost:8545
     initialBlockNum: 0
 
   log:

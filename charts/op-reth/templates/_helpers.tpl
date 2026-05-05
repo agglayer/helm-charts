@@ -38,9 +38,10 @@ helm.sh/chart: {{ include "op-reth.chart" . }}
 {{ include "op-reth.selectorLabels" . }}
 app.kubernetes.io/version: {{ .Values.container.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-tags.datadoghq.com/env: {{ .Values.env }}
+tags.datadoghq.com/env: {{ .Values.metadata.env }}
 tags.datadoghq.com/service: op-reth
 tags.datadoghq.com/version: {{ .Values.container.image.tag }}
+polygon.technology/cost-center: {{ .Values.metadata.costCenter }}
 {{- end }}
 
 {{/*

@@ -1,12 +1,66 @@
-{{- if .Values.httpRoutes.aggsenderValidator.create -}}
+{{- if .Values.httpRoutes.aggsender.create -}}
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: {{ include "aggkit.fullname" . }}-aggsender
+  labels:
+    {{- include "aggkit.labels" . | nindent 4 }}
+spec:
+  parentRefs:
+    - kind: Gateway
+      {{- with .Values.httpRoutes.aggsender.gateway }}
+      name: {{ .name }}
+      namespace: {{ .namespace }}
+      {{- end }}
+  hostnames:
+    - {{ .Values.httpRoutes.aggsender.hostname }}
+  rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /
+      backendRefs:
+        - name: {{ include "aggkit.fullname" . }}
+          port: {{ .Values.container.ports.aggsender }}
+{{- end }}
+{{- if .Values.httpRoutes.bridge.create }}
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: {{ include "aggkit.fullname" . }}-bridge
+  labels:
+    {{- include "aggkit.labels" . | nindent 4 }}
+spec:
+  parentRefs:
+    - kind: Gateway
+      {{- with .Values.httpRoutes.bridge.gateway }}
+      name: {{ .name }}
+      namespace: {{ .namespace }}
+      {{- end }}
+  hostnames:
+    - {{ .Values.httpRoutes.bridge.hostname }}
+  rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /
+      backendRefs:
+        - name: {{ include "aggkit.fullname" . }}
+          port: {{ .Values.container.ports.bridge }}
+{{- end }}
+{{- if .Values.httpRoutes.aggsenderValidator.create }}
+---
 apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
 metadata:
   name: {{ include "aggkit.fullname" . }}-aggsender-validator
+  labels:
+    {{- include "aggkit.labels" . | nindent 4 }}
 spec:
   parentRefs:
     - kind: Gateway
-      {{- with .Values.httpRoutes.aggsenderValidator.parentRef }}
+      {{- with .Values.httpRoutes.aggsenderValidator.gateway }}
       name: {{ .name }}
       namespace: {{ .namespace }}
       {{- end }}
@@ -21,11 +75,16 @@ spec:
         - name: {{ include "aggkit.fullname" . }}
           port: {{ .Values.container.ports.validator }}
 {{- end }}
+{{- if or .Values.httpRoutes.aggsender.create .Values.httpRoutes.bridge.create .Values.httpRoutes.aggsenderValidator.create }}
 ---
 apiVersion: networking.gke.io/v1
 kind: HealthCheckPolicy
 metadata:
   name: {{ include "aggkit.fullname" . }}-health
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true
+  labels:
+    {{- include "aggkit.labels" . | nindent 4 }}
 spec:
   default:
     checkIntervalSec: 30
@@ -41,3 +100,4 @@ spec:
     group: ""
     kind: Service
     name: {{ include "aggkit.fullname" . }}
+{{- end }}
