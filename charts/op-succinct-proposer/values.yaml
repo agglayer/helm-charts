@@ -66,6 +66,7 @@ config:
   opSuccinctMock: false
   opSuccinctServerURL: http://op-succinct-server:3000
   pollInterval: 20s
+  # This should typically be the sequencer address
   proverAddress: "0x0000000000000000000000000000000000000000"
   rangeProofInterval: "1800"
   rustLog: "info"
