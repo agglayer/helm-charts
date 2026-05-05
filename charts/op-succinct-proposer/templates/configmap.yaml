@@ -21,6 +21,7 @@ data:
   NETWORK_RPC_URL: {{ .Values.config.sp1NetworkRpcURL | quote }}
   OP_SUCCINCT_MOCK: {{ .Values.config.opSuccinctMock | quote }}
   POLL_INTERVAL: {{ .Values.config.pollInterval | quote }}
+  PROVER_ADDRESS: {{ .Values.config.proverAddress | quote }}
   PRIVATE_KEY: 0xc797616a567ffd3f7d80f110f4c19900e55258ac2aa96d96ded790e0bd727458
   RANGE_PROOF_INTERVAL: {{ .Values.config.rangeProofInterval | quote }}
   RUST_LOG: {{ .Values.config.rustLog | quote }}
