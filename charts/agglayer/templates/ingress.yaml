@@ -11,6 +11,10 @@ metadata:
   annotations:
     ingressClassName: "gce"
     ingress.kubernetes.io/healthcheck-path: "/metrics"
+    # Suppress the HTTP (port 80) target proxy on the GCP HTTP(S) load
+    # balancer so it only accepts HTTPS connections (Security Health
+    # Analytics: HTTP(S) CLBs must reject HTTP).
+    kubernetes.io/ingress.allow-http: "false"
 spec:
   tls:
     - hosts:
@@ -45,6 +49,10 @@ metadata:
     {{- end }}
   annotations:
     ingressClassName: "gce"
+    # Suppress the HTTP (port 80) target proxy on the GCP HTTP(S) load
+    # balancer so it only accepts HTTPS connections (Security Health
+    # Analytics: HTTP(S) CLBs must reject HTTP).
+    kubernetes.io/ingress.allow-http: "false"
 spec:
   tls:
     - hosts:
