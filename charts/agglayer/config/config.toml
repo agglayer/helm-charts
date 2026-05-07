@@ -65,7 +65,6 @@
 {{- end }}
 
 debug-mode = {{ .Values.config.debugMode }}
-prover-entrypoint = {{ .Values.config.agglayerProverEndpoint | quote }}
 
 [full-node-rpcs]
 {{- range $key, $value := .Values.config.fullNodeRPCs }}
@@ -79,6 +78,10 @@ prover-entrypoint = {{ .Values.config.agglayerProverEndpoint | quote }}
             {{ $signer._0 }}={{ $signer._1 | quote }}
     {{- end }}
 {{- end }}
+
+[prover.network-prover]
+proving-timeout = "5m"
+sp1-cluster-endpoint = "{{ .Values.config.prover.networkProver.sp1ClusterEndpoint }}"
 
 [rpc]
 host = "0.0.0.0"
@@ -100,13 +103,6 @@ max-request-body-size = {{ .Values.config.rpc.maxRequestBodySize | int }}
 # default value is equal to 4MB
 max-decoding-message-size = {{ .Values.config.grpc.maxDecodingMessageSize | int }}
 max-encoding-message-size = {{ .Values.config.grpc.maxEncodingMessageSize | int }}
-
-[prover.grpc]
-# size is define in bytes e.g. 100 * 1024 * 1024
-# same for `max-encoding-message-size`
-# default value is equal to 4MB
-max-decoding-message-size = {{ .Values.config.prover.grpc.maxDecodingMessageSize | int }}
-max-encoding-message-size = {{ .Values.config.prover.grpc.maxEncodingMessageSize | int }}
 
 [outbound.rpc.settle]
 max-retries = {{ .Values.config.outbound.rpc.settle.maxRetries | int }}
