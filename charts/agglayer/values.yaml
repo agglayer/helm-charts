@@ -9,7 +9,7 @@ podLabels:
 image:
   repository: ghcr.io/agglayer/agglayer
   pullPolicy: IfNotPresent
-  tag: 0.4.0-rc.16
+  tag: 0.5.0-rc.2
 
 ports:
   grpc: 9089
@@ -31,8 +31,11 @@ ingress:
   nginxProxyBodySize: 10m
 
 config:
-  agglayerProverEndpoint: http://localhost:4445
   debugMode: false
+
+  prover:
+    networkProver:
+      sp1ClusterEndpoint: https://rpc.production.succinct.xyz
 
   epoch:
     blockClock:
@@ -71,11 +74,6 @@ config:
   grpc:
     maxDecodingMessageSize: 10485760 # 10MB
     maxEncodingMessageSize: 10485760 # 10MB
-
-  prover:
-    grpc:
-      maxDecodingMessageSize: 10485760 # 10MB
-      maxEncodingMessageSize: 10485760 # 10MB
 
 command: agglayer run --cfg /etc/agglayer/config.toml
 
