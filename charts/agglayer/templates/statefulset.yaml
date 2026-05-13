@@ -1,3 +1,11 @@
+{{- $networkPrivateKey := "" }}
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace "op-secrets") }}
+{{- if $opSecrets.data }}
+    {{- if (index $opSecrets.data "NETWORK_PRIVATE_KEY") }}
+        {{- $networkPrivateKey = index $opSecrets.data "NETWORK_PRIVATE_KEY" | b64dec }}
+    {{- end }}
+{{- end }}
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -83,6 +91,9 @@ spec:
             - name: backup
               mountPath: {{ .Values.backup.path | quote }}
               readOnly: false
+          env:
+            - name: NETWORK_PRIVATE_KEY
+              value: {{ $networkPrivateKey }}
       tolerations:
       - key: group
         operator: Equal
