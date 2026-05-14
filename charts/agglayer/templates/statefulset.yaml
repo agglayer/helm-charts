@@ -83,6 +83,8 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
             - mountPath: "/etc/agglayer"
               name: config
               readOnly: true
@@ -102,6 +104,10 @@ spec:
       nodeSelector:
         group: "agglayer"
       volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: {{ .Values.dshm.sizeLimit }}
         - name: config
           configMap:
             name: agglayer-config

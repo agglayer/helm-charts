@@ -120,7 +120,7 @@ resources:
     memory: 16Gi
   requests:
     cpu: 1
-    memory: 4Gi
+    memory: 16Gi
 
 autoscaling:
   enabled: false
@@ -128,3 +128,6 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
+
+dshm:
+  sizeLimit: 4Gi
