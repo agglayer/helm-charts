@@ -36,6 +36,7 @@ config:
   prover:
     networkProver:
       sp1ClusterEndpoint: https://rpc.production.succinct.xyz
+      provingTimeout: 15m
 
   epoch:
     blockClock:
