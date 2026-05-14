@@ -75,3 +75,6 @@ resources:
   requests:
     cpu: 1
     memory: 4Gi
+
+dshm:
+  sizeLimit: 4Gi

@@ -139,6 +139,8 @@ spec:
             - name: datadir
               mountPath: {{ .Values.datadir.path }}
               readOnly: false
+            - name: dshm
+              mountPath: /dev/shm
             {{- if .Values.envSubstitution.enabled }}
             - name: config
               mountPath: /etc/aggkit/
@@ -149,6 +151,10 @@ spec:
               readOnly: true
             {{- end }}
       volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: {{ .Values.dshm.sizeLimit }}
         {{- if .Values.envSubstitution.enabled }}
         - name: config-raw
           configMap:
