@@ -9,7 +9,7 @@ podLabels:
 image:
   repository: ghcr.io/agglayer/agglayer
   pullPolicy: IfNotPresent
-  tag: 0.5.0-rc.2
+  tag: 0.5.0-rc.4
 
 ports:
   grpc: 9089
@@ -36,6 +36,7 @@ config:
   prover:
     networkProver:
       sp1ClusterEndpoint: https://rpc.production.succinct.xyz
+      provingTimeout: 15m
 
   epoch:
     blockClock:
@@ -120,7 +121,7 @@ resources:
     memory: 16Gi
   requests:
     cpu: 1
-    memory: 4Gi
+    memory: 16Gi
 
 autoscaling:
   enabled: false
@@ -128,3 +129,6 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
+
+dshm:
+  sizeLimit: 4Gi

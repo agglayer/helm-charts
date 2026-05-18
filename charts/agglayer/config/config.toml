@@ -80,7 +80,7 @@ debug-mode = {{ .Values.config.debugMode }}
 {{- end }}
 
 [prover.network-prover]
-proving-timeout = "5m"
+proving-timeout = {{ .Values.config.prover.networkProver.provingTimeout | quote }}
 sp1-cluster-endpoint = "{{ .Values.config.prover.networkProver.sp1ClusterEndpoint }}"
 
 [rpc]
