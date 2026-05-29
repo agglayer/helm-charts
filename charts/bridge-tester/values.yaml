@@ -29,3 +29,24 @@ config:
         destinationAddress: "0x123"
       bridgeAmount: "123000000000000"  # Amount in wei
 
+# Datadog monitor that alerts when one or more bridge-tested networks fails
+# to settle a certificate within the evaluation window. Requires the Datadog
+# Operator + DatadogMonitor CRD (datadoghq.com/v1alpha1) to be installed.
+datadogMonitor:
+  create: false
+  # Lookback window for the settlement check. The bridge-tester runs hourly;
+  # the aggsender usually settles within minutes. "2h" guarantees at least
+  # one settled certificate per network per bridge-tester cycle.
+  evaluationWindow: "2h"
+  # Mention(s) appended to the alert message (Slack/PagerDuty/email handles).
+  notify: "@slack-agglayer-alerts"
+  # Additional tags attached to the monitor.
+  extraTags: []
+  # Override the Datadog `network` tag value for a bridge-tester network if
+  # the value the aggsender emits in metrics differs from this chart's
+  # `config.networks[].name`. Keys are bridge-tester network names; values
+  # are the corresponding Datadog tag values.
+  networkTagOverrides: {}
+  # networkTagOverrides:
+  #   network-1: real-network-tag
+
