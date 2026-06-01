@@ -21,9 +21,9 @@ metadata:
     {{- include "bridgeTester.labels" . | nindent 4 }}
 spec:
   type: "metric alert"
-  name: "[{{ .Values.env }}] bridge-tester: aggsender did not settle a certificate within {{ .Values.datadogMonitor.evaluationWindow }} on {{ "{{" }}network.name{{ "}}" }}"
+  name: "bridge-tester: aggsender did not settle a certificate within {{ .Values.datadogMonitor.evaluationWindow }} on {{ "{{" }}network.name{{ "}}" }}"
   query: >-
-    sum(last_{{ .Values.datadogMonitor.evaluationWindow }}):sum:aggkit.aggsender_number_of_certificates_settled.count{env:{{ .Values.env }},network IN ({{ join "," $networkTags }})} by {network}.as_count() < 1
+    sum(last_{{ .Values.datadogMonitor.evaluationWindow }}):sum:aggkit.aggsender_number_of_certificates_settled.count{env:{{ .Values.metadata.env }},network IN ({{ join "," $networkTags }})} by {network}.as_count() < 1
   message: |
     The aggsender on network `{{ "{{" }}network.name{{ "}}" }}` has not settled a
     certificate in the last {{ .Values.datadogMonitor.evaluationWindow }},
@@ -33,7 +33,6 @@ spec:
     {{ .Values.datadogMonitor.notify }}
   tags:
     - "service:bridge-tester"
-    - "env:{{ .Values.env }}"
     {{- range .Values.datadogMonitor.extraTags }}
     - {{ . | quote }}
     {{- end }}

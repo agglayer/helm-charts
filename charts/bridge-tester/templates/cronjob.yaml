@@ -55,7 +55,7 @@ spec:
                     printf '{"timestamp":"%s","level":"%s","message":"%s"' "$timestamp" "$level" "$(json_escape "$message")"
                     [ -n "$network" ] && printf ',"network":"%s"' "$(json_escape "$network")"
                     [ -n "$step" ] && printf ',"step":"%s"' "$(json_escape "$step")"
-                    printf ',"service":"bridge-tester","env":"{{ $.Values.env }}"}\n'
+                    printf ',"service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n'
                   }
 
                   log_json "info" "Starting bridge-tester script" "" "init"
@@ -126,7 +126,7 @@ spec:
                   bridge_amount="{{ $network.bridgeAmount }}"
 
                   # Log configuration details
-                  printf '{"timestamp":"%s","level":"info","message":"Network configuration","network":"{{ $network.name }}","step":"prepare_env","l1_bridge":"%s","l2_network_id":%s,"destination":"%s","amount":"%s","service":"bridge-tester","env":"{{ $.Values.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$l1_bridge_address" "$destination_network" "$destination_address" "$bridge_amount"
+                  printf '{"timestamp":"%s","level":"info","message":"Network configuration","network":"{{ $network.name }}","step":"prepare_env","l1_bridge":"%s","l2_network_id":%s,"destination":"%s","amount":"%s","service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$l1_bridge_address" "$destination_network" "$destination_address" "$bridge_amount"
 
                   log_json "info" "Executing bridge operation" "{{ $network.name }}" "bridge_asset"
 
@@ -154,7 +154,7 @@ spec:
 
                   # Log polycli output as JSON (one event per line)
                   echo "$BRIDGE_OUTPUT" | while IFS= read -r line; do
-                    [ -n "$line" ] && printf '{"timestamp":"%s","level":"%s","message":"%s","network":"{{ $network.name }}","step":"bridge_asset","source":"polycli","service":"bridge-tester","env":"{{ $.Values.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$POLYCLI_LOG_LEVEL" "$(json_escape "$line")"
+                    [ -n "$line" ] && printf '{"timestamp":"%s","level":"%s","message":"%s","network":"{{ $network.name }}","step":"bridge_asset","source":"polycli","service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$POLYCLI_LOG_LEVEL" "$(json_escape "$line")"
                   done
 
                   if [ $BRIDGE_EXIT_CODE -eq 0 ]; then
@@ -168,7 +168,7 @@ spec:
                     [ -z "$ERROR_SUMMARY" ] && ERROR_SUMMARY="polycli produced no output"
                     [ -z "$ERROR_TAIL" ] && ERROR_TAIL="$ERROR_SUMMARY"
 
-                    printf '{"timestamp":"%s","level":"error","message":"Bridge operation failed with exit code %d: %s","network":"%s","step":"bridge_asset","exit_code":%d,"error_summary":"%s","error_output":"%s","service":"bridge-tester","env":"{{ $.Values.env }}"}\n' \
+                    printf '{"timestamp":"%s","level":"error","message":"Bridge operation failed with exit code %d: %s","network":"%s","step":"bridge_asset","exit_code":%d,"error_summary":"%s","error_output":"%s","service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n' \
                       "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" \
                       "$BRIDGE_EXIT_CODE" \
                       "$(json_escape "$ERROR_SUMMARY")" \
@@ -193,7 +193,7 @@ spec:
                   FAILED_COUNT=${#FAILED_NETWORKS[@]}
                   SUCCESS_COUNT=$((TOTAL_NETWORKS - FAILED_COUNT))
 
-                  printf '{"timestamp":"%s","level":"info","message":"Job summary","step":"summary","total_networks":%d,"successful":%d,"failed":%d,"service":"bridge-tester","env":"{{ $.Values.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$TOTAL_NETWORKS" "$SUCCESS_COUNT" "$FAILED_COUNT"
+                  printf '{"timestamp":"%s","level":"info","message":"Job summary","step":"summary","total_networks":%d,"successful":%d,"failed":%d,"service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$TOTAL_NETWORKS" "$SUCCESS_COUNT" "$FAILED_COUNT"
 
                   if [ $FAILED_COUNT -gt 0 ]; then
                     for i in "${!FAILED_NETWORKS[@]}"; do
