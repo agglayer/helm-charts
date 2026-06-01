@@ -1,4 +1,7 @@
-env: bali
+---
+metadata:
+  env: multi
+  costCenter: agglayer
 
 onePasswordSecrets:
   # bridge-tester: "vaults/myvault/items/myitem"

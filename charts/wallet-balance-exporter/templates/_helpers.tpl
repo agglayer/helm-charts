@@ -36,9 +36,10 @@ helm.sh/chart: {{ include "wallet-balance-exporter.chart" . }}
 {{ include "wallet-balance-exporter.selectorLabels" . }}
 app.kubernetes.io/version: {{ .Chart.Version | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-tags.datadoghq.com/env: {{ .Values.env }}
+tags.datadoghq.com/env: {{ .Values.metadata.env }}
 tags.datadoghq.com/service: {{ include "wallet-balance-exporter.fullname" . }}
 tags.datadoghq.com/version: {{ .Chart.Version | quote }}
+polygon.technology/cost-center: {{ .Values.metadata.costCenter }}
 {{- end }}
 
 {{/*
