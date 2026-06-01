@@ -24,6 +24,14 @@ failedJobsHistoryLimit: 1
 successfulJobsHistoryLimit: 1
 backoffLimit: 1
 
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+
 config:
   # Bridge configuration for multiple networks
   # Each entry represents a bridge operation from L1 to a specific L2
