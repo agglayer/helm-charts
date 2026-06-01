@@ -1,12 +1,31 @@
 env: bali
 
+onePasswordSecrets:
+  # wallet-balance-exporter: "vaults/myvault/items/myitem"
+  #
+  # The referenced 1Password item must expose this field (uppercase, env-var
+  # naming):
+  #   - L1_RPC_URL  RPC URL used to query wallet balances
+
+# Accounts whose ETH balance should be exported as Prometheus metrics. All
+# accounts share the same RPC URL (sourced from L1_RPC_URL, provided by the
+# onePasswordSecrets-provisioned secret). If you need to monitor accounts on
+# different L1s, deploy multiple releases of this chart, one per RPC URL.
+#
+# Each account requires:
+#   - address: 0x... (any casing; auto-checksummed by web3.py)
+#   - label: human-readable identifier (used as a metric label and in alert text)
+#   - min_balance_eth: optional minimum threshold (omit to skip the
+#     wallet_balance_below_minimum metric for this account)
+accounts: []
+# accounts:
+#   - address: "0x23e90adc43b96f87cbae25293b7ed2b5b7cca634"
+#     label: "spec-12-op op-batcher"
+#     min_balance_eth: 1.0
+
 config:
   checkInterval:
     seconds: 300
-
-existingSecret:
-  name: "op-secrets"
-  field: "wallet-balance-exporter"
 
 ports:
   metrics: 8080

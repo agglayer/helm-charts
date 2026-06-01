@@ -1,5 +1,3 @@
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
-
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -88,7 +86,11 @@ spec:
                   fi
 
                   log_json "info" "Loading shared private key" "" "load_credentials"
-                  private_key="{{ index $opSecrets.data "bridgeTesterPrivateKey" | b64dec }}"
+                  private_key="${BRIDGE_TESTER_PRIVATE_KEY}"
+                  if [ -z "$private_key" ]; then
+                    log_json "error" "BRIDGE_TESTER_PRIVATE_KEY is not set in the environment (expected from the onePasswordSecrets-provisioned secret)" "" "load_credentials"
+                    exit 1
+                  fi
                   log_json "info" "Private key loaded successfully" "" "load_credentials"
 
                   {{- $networks := .Values.config.networks }}
@@ -112,7 +114,11 @@ spec:
                   log_json "info" "Starting network $CURRENT_NETWORK/$TOTAL_NETWORKS" "{{ $network.name }}" "network_start"
 
                   log_json "info" "Preparing environment" "{{ $network.name }}" "prepare_env"
-                  l1_rpc_url="{{ index $opSecrets.data "l1RpcURL" | b64dec }}"
+                  l1_rpc_url="${L1_RPC_URL}"
+                  if [ -z "$l1_rpc_url" ]; then
+                    log_json "error" "L1_RPC_URL is not set in the environment (expected from the onePasswordSecrets-provisioned secret)" "{{ $network.name }}" "prepare_env"
+                    exit 1
+                  fi
                   l1_bridge_address="{{ $network.l1.bridgeAddress }}"
                   token_address="{{ $network.l1.tokenAddress }}"
                   destination_network="{{ $network.l2.networkId }}"
@@ -201,6 +207,13 @@ spec:
                     log_json "info" "All bridge operations completed successfully" "" "summary"
                   fi
 
+              {{- if .Values.onePasswordSecrets }}
+              envFrom:
+                {{- range $name, $_ := .Values.onePasswordSecrets }}
+                - secretRef:
+                    name: {{ $name }}
+                {{- end }}
+              {{- end }}
               resources:
                 requests:
                   memory: "64Mi"
