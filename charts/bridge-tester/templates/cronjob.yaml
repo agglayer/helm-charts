@@ -143,13 +143,27 @@ spec:
                   BRIDGE_EXIT_CODE=$?
                   set -e
 
-                  # When the bridge call fails, surface polycli output at "error" level so
-                  # it isn't filtered out of Datadog error searches. On success, keep it at
-                  # "debug" to avoid log noise.
+                  # Determine actual on-chain success. polycli has a quirk where it can
+                  # exit non-zero (typically printing "Error: not found" trying to read
+                  # post-tx state that hasn't propagated yet) *after* the bridge tx was
+                  # successfully included on L1. Trust the on-chain signal ("Transaction
+                  # successful" in the output) over the exit code.
                   if [ $BRIDGE_EXIT_CODE -eq 0 ]; then
+                    TX_SUCCESS=true
                     POLYCLI_LOG_LEVEL="debug"
+                    QUIRK_HIT=false
+                  elif echo "$BRIDGE_OUTPUT" | grep -q "Transaction successful"; then
+                    # The bridge tx landed on chain but polycli exited non-zero after
+                    # the fact. Surface this at "warn" level so we can still see the
+                    # full output in Datadog without firing the per-network failure
+                    # alert / counting it as a failed network.
+                    TX_SUCCESS=true
+                    POLYCLI_LOG_LEVEL="warn"
+                    QUIRK_HIT=true
                   else
+                    TX_SUCCESS=false
                     POLYCLI_LOG_LEVEL="error"
+                    QUIRK_HIT=false
                   fi
 
                   # Log polycli output as JSON (one event per line)
@@ -157,7 +171,10 @@ spec:
                     [ -n "$line" ] && printf '{"timestamp":"%s","level":"%s","message":"%s","network":"{{ $network.name }}","step":"bridge_asset","source":"polycli","service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$POLYCLI_LOG_LEVEL" "$(json_escape "$line")"
                   done
 
-                  if [ $BRIDGE_EXIT_CODE -eq 0 ]; then
+                  if [ "$TX_SUCCESS" = "true" ]; then
+                    if [ "$QUIRK_HIT" = "true" ]; then
+                      log_json "warn" "Bridge transaction landed on L1 but polycli exited $BRIDGE_EXIT_CODE post-send (known polycli quirk, treating as success)" "{{ $network.name }}" "bridge_asset"
+                    fi
                     log_json "info" "Bridge operation successful" "{{ $network.name }}" "bridge_asset"
                   else
                     # Pull the last non-empty line for a quick at-a-glance reason,
