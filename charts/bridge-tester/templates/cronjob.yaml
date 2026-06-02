@@ -1,5 +1,3 @@
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
-
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -30,6 +28,22 @@ spec:
               args:
                 - -c
                 - |
+                  # Escape a string for safe embedding inside a JSON string value.
+                  # Handles backslash, double-quote, tab, carriage return, and newlines.
+                  json_escape() {
+                    printf '%s' "$1" | awk '
+                      BEGIN { ORS = "" }
+                      {
+                        gsub(/\\/, "\\\\")
+                        gsub(/"/, "\\\"")
+                        gsub(/\t/, "\\t")
+                        gsub(/\r/, "\\r")
+                        if (NR > 1) printf "\\n"
+                        printf "%s", $0
+                      }
+                    '
+                  }
+
                   # JSON logging function for Datadog
                   log_json() {
                     local level="$1"
@@ -38,10 +52,10 @@ spec:
                     local step="${4:-}"
                     local timestamp=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
 
-                    printf '{"timestamp":"%s","level":"%s","message":"%s"' "$timestamp" "$level" "$message"
-                    [ -n "$network" ] && printf ',"network":"%s"' "$network"
-                    [ -n "$step" ] && printf ',"step":"%s"' "$step"
-                    printf ',"service":"bridge-tester","env":"{{ $.Values.env }}"}\n'
+                    printf '{"timestamp":"%s","level":"%s","message":"%s"' "$timestamp" "$level" "$(json_escape "$message")"
+                    [ -n "$network" ] && printf ',"network":"%s"' "$(json_escape "$network")"
+                    [ -n "$step" ] && printf ',"step":"%s"' "$(json_escape "$step")"
+                    printf ',"service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n'
                   }
 
                   log_json "info" "Starting bridge-tester script" "" "init"
@@ -72,7 +86,11 @@ spec:
                   fi
 
                   log_json "info" "Loading shared private key" "" "load_credentials"
-                  private_key="{{ index $opSecrets.data "bridgeTesterPrivateKey" | b64dec }}"
+                  private_key="${BRIDGE_TESTER_PRIVATE_KEY}"
+                  if [ -z "$private_key" ]; then
+                    log_json "error" "BRIDGE_TESTER_PRIVATE_KEY is not set in the environment (expected from the onePasswordSecrets-provisioned secret)" "" "load_credentials"
+                    exit 1
+                  fi
                   log_json "info" "Private key loaded successfully" "" "load_credentials"
 
                   {{- $networks := .Values.config.networks }}
@@ -88,6 +106,7 @@ spec:
 
                   CURRENT_NETWORK=0
                   FAILED_NETWORKS=()
+                  FAILED_ERRORS=()
 
                   {{- range $index, $network := $enabledNetworks }}
 
@@ -95,7 +114,11 @@ spec:
                   log_json "info" "Starting network $CURRENT_NETWORK/$TOTAL_NETWORKS" "{{ $network.name }}" "network_start"
 
                   log_json "info" "Preparing environment" "{{ $network.name }}" "prepare_env"
-                  l1_rpc_url="{{ index $opSecrets.data "l1RpcURL" | b64dec }}"
+                  l1_rpc_url="${L1_RPC_URL}"
+                  if [ -z "$l1_rpc_url" ]; then
+                    log_json "error" "L1_RPC_URL is not set in the environment (expected from the onePasswordSecrets-provisioned secret)" "{{ $network.name }}" "prepare_env"
+                    exit 1
+                  fi
                   l1_bridge_address="{{ $network.l1.bridgeAddress }}"
                   token_address="{{ $network.l1.tokenAddress }}"
                   destination_network="{{ $network.l2.networkId }}"
@@ -103,7 +126,7 @@ spec:
                   bridge_amount="{{ $network.bridgeAmount }}"
 
                   # Log configuration details
-                  printf '{"timestamp":"%s","level":"info","message":"Network configuration","network":"{{ $network.name }}","step":"prepare_env","l1_bridge":"%s","l2_network_id":%s,"destination":"%s","amount":"%s","service":"bridge-tester","env":"{{ $.Values.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$l1_bridge_address" "$destination_network" "$destination_address" "$bridge_amount"
+                  printf '{"timestamp":"%s","level":"info","message":"Network configuration","network":"{{ $network.name }}","step":"prepare_env","l1_bridge":"%s","l2_network_id":%s,"destination":"%s","amount":"%s","service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$l1_bridge_address" "$destination_network" "$destination_address" "$bridge_amount"
 
                   log_json "info" "Executing bridge operation" "{{ $network.name }}" "bridge_asset"
 
@@ -120,16 +143,59 @@ spec:
                   BRIDGE_EXIT_CODE=$?
                   set -e
 
-                  # Log polycli output as JSON
+                  # Determine actual on-chain success. polycli has a quirk where it can
+                  # exit non-zero (typically printing "Error: not found" trying to read
+                  # post-tx state that hasn't propagated yet) *after* the bridge tx was
+                  # successfully included on L1. Trust the on-chain signal ("Transaction
+                  # successful" in the output) over the exit code.
+                  if [ $BRIDGE_EXIT_CODE -eq 0 ]; then
+                    TX_SUCCESS=true
+                    POLYCLI_LOG_LEVEL="debug"
+                    QUIRK_HIT=false
+                  elif echo "$BRIDGE_OUTPUT" | grep -q "Transaction successful"; then
+                    # The bridge tx landed on chain but polycli exited non-zero after
+                    # the fact. Surface this at "warn" level so we can still see the
+                    # full output in Datadog without firing the per-network failure
+                    # alert / counting it as a failed network.
+                    TX_SUCCESS=true
+                    POLYCLI_LOG_LEVEL="warn"
+                    QUIRK_HIT=true
+                  else
+                    TX_SUCCESS=false
+                    POLYCLI_LOG_LEVEL="error"
+                    QUIRK_HIT=false
+                  fi
+
+                  # Log polycli output as JSON (one event per line)
                   echo "$BRIDGE_OUTPUT" | while IFS= read -r line; do
-                    [ -n "$line" ] && printf '{"timestamp":"%s","level":"debug","message":"%s","network":"{{ $network.name }}","step":"bridge_asset","source":"polycli","service":"bridge-tester","env":"{{ $.Values.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$(echo "$line" | sed 's/"/\\"/g')"
+                    [ -n "$line" ] && printf '{"timestamp":"%s","level":"%s","message":"%s","network":"{{ $network.name }}","step":"bridge_asset","source":"polycli","service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$POLYCLI_LOG_LEVEL" "$(json_escape "$line")"
                   done
 
-                  if [ $BRIDGE_EXIT_CODE -eq 0 ]; then
+                  if [ "$TX_SUCCESS" = "true" ]; then
+                    if [ "$QUIRK_HIT" = "true" ]; then
+                      log_json "warn" "Bridge transaction landed on L1 but polycli exited $BRIDGE_EXIT_CODE post-send (known polycli quirk, treating as success)" "{{ $network.name }}" "bridge_asset"
+                    fi
                     log_json "info" "Bridge operation successful" "{{ $network.name }}" "bridge_asset"
                   else
-                    log_json "error" "Bridge operation failed with exit code $BRIDGE_EXIT_CODE" "{{ $network.name }}" "bridge_asset"
+                    # Pull the last non-empty line for a quick at-a-glance reason,
+                    # and the tail of the output so the consolidated error event carries
+                    # enough context to diagnose the failure without cross-referencing logs.
+                    ERROR_SUMMARY=$(echo "$BRIDGE_OUTPUT" | awk 'NF' | tail -n1)
+                    ERROR_TAIL=$(echo "$BRIDGE_OUTPUT" | tail -n 20)
+                    [ -z "$ERROR_SUMMARY" ] && ERROR_SUMMARY="polycli produced no output"
+                    [ -z "$ERROR_TAIL" ] && ERROR_TAIL="$ERROR_SUMMARY"
+
+                    printf '{"timestamp":"%s","level":"error","message":"Bridge operation failed with exit code %d: %s","network":"%s","step":"bridge_asset","exit_code":%d,"error_summary":"%s","error_output":"%s","service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n' \
+                      "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" \
+                      "$BRIDGE_EXIT_CODE" \
+                      "$(json_escape "$ERROR_SUMMARY")" \
+                      "$(json_escape "{{ $network.name }}")" \
+                      "$BRIDGE_EXIT_CODE" \
+                      "$(json_escape "$ERROR_SUMMARY")" \
+                      "$(json_escape "$ERROR_TAIL")"
+
                     FAILED_NETWORKS+=("{{ $network.name }}")
+                    FAILED_ERRORS+=("$ERROR_SUMMARY")
                   fi
 
                   # Wait between networks to avoid nonce conflicts
@@ -144,11 +210,13 @@ spec:
                   FAILED_COUNT=${#FAILED_NETWORKS[@]}
                   SUCCESS_COUNT=$((TOTAL_NETWORKS - FAILED_COUNT))
 
-                  printf '{"timestamp":"%s","level":"info","message":"Job summary","step":"summary","total_networks":%d,"successful":%d,"failed":%d,"service":"bridge-tester","env":"{{ $.Values.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$TOTAL_NETWORKS" "$SUCCESS_COUNT" "$FAILED_COUNT"
+                  printf '{"timestamp":"%s","level":"info","message":"Job summary","step":"summary","total_networks":%d,"successful":%d,"failed":%d,"service":"bridge-tester","env":"{{ $.Values.metadata.env }}"}\n' "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")" "$TOTAL_NETWORKS" "$SUCCESS_COUNT" "$FAILED_COUNT"
 
                   if [ $FAILED_COUNT -gt 0 ]; then
-                    for network in "${FAILED_NETWORKS[@]}"; do
-                      log_json "error" "Failed network in summary" "$network" "summary"
+                    for i in "${!FAILED_NETWORKS[@]}"; do
+                      network="${FAILED_NETWORKS[$i]}"
+                      reason="${FAILED_ERRORS[$i]:-unknown error}"
+                      log_json "error" "Failed network in summary: $reason" "$network" "summary"
                     done
                     log_json "error" "Job completed with failures" "" "summary"
                     exit 1
@@ -156,11 +224,13 @@ spec:
                     log_json "info" "All bridge operations completed successfully" "" "summary"
                   fi
 
+              {{- if .Values.onePasswordSecrets }}
+              envFrom:
+                {{- range $name, $_ := .Values.onePasswordSecrets }}
+                - secretRef:
+                    name: {{ $name }}
+                {{- end }}
+              {{- end }}
               resources:
-                requests:
-                  memory: "64Mi"
-                  cpu: "250m"
-                limits:
-                  memory: "128Mi"
-                  cpu: "500m"
+                {{- toYaml .Values.resources | nindent 16 }}
           restartPolicy: Never

@@ -1,45 +1,3 @@
-{{- $l1RpcURL := "" }}
-
-{{- $claimTxPrivateKeyPassword := "" }}
-
-{{- $bridgeDbName := "" }}
-{{- $dbUser := "" }}
-{{- $dbUserPassword := "" }}
-{{- $dbHost := "" }}
-{{- $dbPort := "" }}
-
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
-{{- if $opSecrets.data }}
-    {{- if (index $opSecrets.data "claimTxPrivateKeyPassword") }}
-        {{- $claimTxPrivateKeyPassword = index $opSecrets.data "claimTxPrivateKeyPassword" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "l1RpcURL") }}
-        {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
-    {{- end }}
-
-    {{- if (index $opSecrets.data "bridgeDbName") }}
-        {{- $bridgeDbName = index $opSecrets.data "bridgeDbName" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbUser") }}
-        {{- $dbUser = index $opSecrets.data "dbUser" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbUserPassword") }}
-        {{- $dbUserPassword = index $opSecrets.data "dbUserPassword" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbHost") }}
-        {{- $dbHost = index $opSecrets.data "dbHost" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "dbPort") }}
-        {{- $dbPort = index $opSecrets.data "dbPort" | b64dec }}
-    {{- end }}
-{{- end }}
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "bridge.fullname" . }}
-data:
-  config.json: |-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -54,15 +12,15 @@ data:
     [SyncDB]
     Database = "postgres"
       [SyncDB.PgStorage]
-      User = {{ $dbUser | quote }}
-      Password = {{ $dbUserPassword | quote }}
-      Name = {{ $bridgeDbName | quote }}
-      Host = {{ $dbHost | quote }}
-      Port = {{ $dbPort | quote }}
+      User = {{ .Values.config.db.user | quote }}
+      Password = {{ .Values.config.db.password | quote }}
+      Name = {{ .Values.config.db.name | quote }}
+      Host = {{ .Values.config.db.host | quote }}
+      Port = {{ .Values.config.db.port | quote }}
       MaxConns = 200
 
     [Etherman]
-    l1URL = {{ $l1RpcURL | quote }}
+    l1URL = {{ .Values.config.etherman.l1Url | quote }}
     L2URLs = [{{ .Values.config.etherman.l2Url | quote }}]
 
     [Synchronizer]
@@ -86,11 +44,11 @@ data:
     [BridgeServer.DB]
     Database = "postgres"
       [BridgeServer.DB.PgStorage]
-      User = {{ $dbUser | quote }}
-      Password = {{ $dbUserPassword | quote }}
-      Name = {{ $bridgeDbName | quote }}
-      Host = {{ $dbHost | quote }}
-      Port = {{ $dbPort | quote }}
+      User = {{ .Values.config.db.user | quote }}
+      Password = {{ .Values.config.db.password | quote }}
+      Name = {{ .Values.config.db.name | quote }}
+      Host = {{ .Values.config.db.host | quote }}
+      Port = {{ .Values.config.db.port | quote }}
       MaxConns = 200
 
     [NetworkConfig]
@@ -106,7 +64,11 @@ data:
 
     [ClaimTxManager]
     FrequencyToMonitorTxs = "5s"
-    PrivateKey = {Path = {{ .Values.config.claimTxManager.path | quote }}, Password = {{ $claimTxPrivateKeyPassword | quote }}}
+    {{ if .Values.config.claimTxManager.privateKey.keyName }}
+    PrivateKey = {Method = "GCP", KeyName = {{ .Values.config.claimTxManager.privateKey.keyName | quote }}}
+    {{ else }}
+    PrivateKey = {Path = "/etc/bridge/keystores/{{ .Values.config.claimTxManager.privateKey.keystoreFileName }}", Password = {{ .Values.config.claimTxManager.privateKey.keystoreFilePassword | quote }}}
+    {{ end }}
     Enabled = true
     RetryInterval = "1s"
     AreClaimsBetweenL2sEnabled = {{ .Values.config.claimTxManager.areClaimsBetweenL2sEnabled }}

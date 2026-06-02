@@ -40,8 +40,9 @@ helm.sh/chart: {{ include "bridgeTester.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-tags.datadoghq.com/env: {{ .Values.env }}
+tags.datadoghq.com/env: {{ .Values.metadata.env }}
 tags.datadoghq.com/service: bridge-tester
+polygon.technology/cost-center: {{ .Values.metadata.costCenter }}
 deployment: {{ htmlDateInZone (now) "UTC" }}
 {{- end }}
 

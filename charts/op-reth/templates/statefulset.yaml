@@ -24,10 +24,19 @@ spec:
     spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
       serviceAccountName: {{ include "op-reth.serviceAccountName" . }}
       initContainers:
         - name: download-genesis
-          image: google/cloud-sdk:latest
+          image: "gcr.io/google.com/cloudsdktool/google-cloud-cli:stable"
+          imagePullPolicy: Always
           command: ["sh", "-c"]
           args:
           - |
@@ -71,6 +80,8 @@ spec:
             - --ws.port={{ .Values.service.ws.port }}
             - --ws.origins=*
             - --ws.api={{ .Values.config.ws.api }}
+            - --storage.v2
+            - --rpc.eth-proof-window=1209600
             - --log.stdout.format=json
             - --disable-discovery
             {{- if .Values.service.p2p.enabled }}
@@ -121,15 +132,20 @@ spec:
         - name: secret
           projected:
             sources:
+              {{- range $name, $_ := .Values.onePasswordSecrets }}
               - secret:
-                  name: {{ .Values.existingSecret }}
+                  name: {{ $name }}
                   items:
                     - key: "jwt"
                       path: "jwt.txt"
+              {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: data
       spec:
+        {{- with .Values.storage.storageClass }}
+        storageClassName: {{ . }}
+        {{- end }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:

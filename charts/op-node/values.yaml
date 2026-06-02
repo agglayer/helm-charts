@@ -1,19 +1,40 @@
-env: bali
+---
+metadata:
+  env: bali
+  costCenter: agglayer
 
-podLabels:
-  name: myname
-  business_unit: agglayer
-  role: myrole
-  partner: Polygon
-  network: mynetwork
+onePasswordSecrets:
+  # op-node: "vaults/myvault/items/myitem"
 
-replicas: 1
+# Pod annotations (e.g. ad.datadoghq.com/tags for Datadog)
+podAnnotations: {}
+#   ad.datadoghq.com/tags: '{"network": "mynetwork"}'
+
+podLabels: {}
+# podLabels:
+#   network: mynetwork
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+topologySpreadConstraints: []
+
+replicaCount: 1
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
 
 container:
   image:
     pullPolicy: IfNotPresent
     repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-node
-    tag: v1.9.5
+    tag: v1.16.11
 
 storage:
   path: /data
@@ -29,14 +50,16 @@ service:
     port: 9222
   annotations: {}
 
-ingress:
-  create: true
-  hostname: domain.com
+httpRoutes:
+  rpc:
+    create: false
+    hostname: domain.example
+    gateway:
+      name: gateway
+      namespace: gateways
 
 podSecurityContext: {}
 securityContext: {}
-
-existingSecret: "secretName"
 
 config:
   extraOptions: []
@@ -51,11 +74,11 @@ config:
     sequencerHttp: ""
 
   l2:
-    opGethAuthUrl: http://op-geth:8551
+    opRethAuthUrl: http://op-reth:8551
 
   log:
-    environment: development # "production" or "development"
-    level: info
+    level: info # trace, debug, info, warn, error, crit
+    format: json # text, terminal, logfmt, terminal-color, json, json-pretty
 
   rollupJson: |
     {}

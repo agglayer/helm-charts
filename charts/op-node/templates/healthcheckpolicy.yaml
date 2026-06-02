@@ -1,0 +1,25 @@
+{{- if .Values.httpRoutes.rpc.create -}}
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: {{ include "op-node.fullname" . }}
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true
+  labels:
+    {{- include "op-node.labels" . | nindent 4 }}
+spec:
+  default:
+    {{- $probe := .Values.readinessProbe | default dict }}
+    checkIntervalSec: {{ $probe.periodSeconds | default 10 }}
+    timeoutSec: {{ $probe.timeoutSeconds | default 5 }}
+    healthyThreshold: {{ $probe.successThreshold | default 1 }}
+    unhealthyThreshold: {{ $probe.failureThreshold | default 3 }}
+    config:
+      type: TCP # op-node's JSON-RPC is POST-only; a bare HTTP GET / returns 405.
+      tcpHealthCheck:
+        port: {{ .Values.service.rpc.port }}
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "op-node.fullname" . }}
+{{- end }}

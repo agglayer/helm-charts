@@ -1,0 +1,51 @@
+{{- if .Values.datadogMonitor.create -}}
+{{- /*
+  Build the list of Datadog `network` tag values to scope the query on:
+  one entry per enabled bridge-tester network, optionally overridden via
+  .Values.datadogMonitor.networkTagOverrides.
+*/ -}}
+{{- $overrides := .Values.datadogMonitor.networkTagOverrides | default dict }}
+{{- $networkTags := list }}
+{{- range .Values.config.networks }}
+{{- if .enabled }}
+{{- $tag := get $overrides .name | default .name }}
+{{- $networkTags = append $networkTags $tag }}
+{{- end }}
+{{- end }}
+apiVersion: datadoghq.com/v1alpha1
+kind: DatadogMonitor
+metadata:
+  name: {{ include "bridgeTester.fullname" . }}-settle
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "bridgeTester.labels" . | nindent 4 }}
+spec:
+  type: "metric alert"
+  name: "bridge-tester: aggsender did not settle a certificate within {{ .Values.datadogMonitor.evaluationWindow }} on {{ "{{" }}network.name{{ "}}" }}"
+  query: >-
+    sum(last_{{ .Values.datadogMonitor.evaluationWindow }}):sum:aggkit.aggsender_number_of_certificates_settled.count{env:{{ .Values.metadata.env }},network IN ({{ join "," $networkTags }})} by {network}.as_count() < 1
+  message: |
+    The aggsender on network `{{ "{{" }}network.name{{ "}}" }}` has not settled a
+    certificate in the last {{ .Values.datadogMonitor.evaluationWindow }},
+    despite bridge-tester sending hourly bridge transactions to all configured
+    networks (`{{ join "`, `" $networkTags }}`).
+
+    {{ .Values.datadogMonitor.notify }}
+  tags:
+    - "service:bridge-tester"
+    {{- range .Values.datadogMonitor.extraTags }}
+    - {{ . | quote }}
+    {{- end }}
+  options:
+    thresholds:
+      critical: "1"
+    # Alert when the aggsender stops emitting the metric entirely (e.g., pod
+    # is down). 240 min = 2x the default 2h evaluation window, per Datadog's
+    # recommendation.
+    notifyNoData: true
+    noDataTimeframe: 240
+    # Small delay so the latest metric data has time to arrive before evaluation.
+    evaluationDelay: 60
+    # Re-alert every 2 hours until the network resumes settling.
+    renotifyInterval: 120
+{{- end }}

@@ -1,23 +1,41 @@
-env: bali
+---
+metadata:
+  env: bali
+  costCenter: agglayer
 
-podLabels:
-  name: myname
-  business_unit: agglayer
-  role: myrole
-  partner: Polygon
-  network: mynetwork
+onePasswordSecrets:
+  # op-batcher: "vaults/myvault/items/myitem"
 
-replicas: 1
+# Pod annotations (e.g. ad.datadoghq.com/tags for Datadog)
+podAnnotations: {}
+# podAnnotations:
+#   ad.datadoghq.com/tags: '{"network": "mynetwork"}'
+
+podLabels: {}
+# podLabels:
+#   network: mynetwork
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+topologySpreadConstraints: []
+
+replicaCount: 1
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
 
 container:
   image:
     pullPolicy: IfNotPresent
     repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-batcher
-    tag: v1.16.0
-
-# storage:
-#   path: /data
-#   size: 500Gi
+    tag: v1.16.6
 
 service:
   type: ClusterIP
@@ -29,8 +47,6 @@ service:
 podSecurityContext: {}
 securityContext: {}
 
-existingSecret: "secretName"
-
 config:
   extraOptions: {}
 
@@ -41,8 +57,8 @@ config:
     opNodeUrl: http://op-node:9545
 
   log:
-    environment: development # "production" or "development"
-    level: info
+    level: info # trace, debug, info, warn, error, crit
+    format: json # text, terminal, logfmt, terminal-color, json, json-pretty
 
 resources:
   limits:

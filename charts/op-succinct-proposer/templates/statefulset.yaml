@@ -1,5 +1,3 @@
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
-
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -9,6 +7,7 @@ metadata:
     {{- include "op-succinct-proposer.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  serviceName: {{ include "op-succinct-proposer.fullname" . }}
   selector:
     matchLabels:
       {{- include "op-succinct-proposer.selectorLabels" . | nindent 6 }}
@@ -26,15 +25,68 @@ spec:
     spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- range $constraint := . }}
+        - {{ toYaml $constraint | nindent 10 | trim }}
+            {{- if not $constraint.labelSelector }}
+          labelSelector:
+            matchLabels:
+              {{- include "op-succinct-proposer.selectorLabels" $ | nindent 14 }}
+            {{- end }}
+        {{- end }}
+      {{- end }}
+      serviceAccountName: {{ include "op-succinct-proposer.serviceAccountName" . }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          # Map a single L1_RPC_URL secret field to the two env vars the binary
+          # actually reads (L1_RPC and L1_BEACON_RPC). `optional: true` lets the
+          # configmap defaults below act as a fallback when the secret is absent
+          # or the key is missing (e.g. dev / CI without a 1P-backed secret).
+          env:
+            {{- range $name, $_ := .Values.onePasswordSecrets }}
+            - name: L1_RPC
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $name }}
+                  key: L1_RPC_URL
+                  optional: true
+            - name: L1_BEACON_RPC
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $name }}
+                  key: L1_RPC_URL
+                  optional: true
+            - name: NETWORK_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $name }}
+                  key: SP1_NETWORK_PRIVATE_KEY
+                  optional: true
+            {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ include "op-succinct-proposer.fullname" . }}-config
+            {{- range $name, $_ := .Values.onePasswordSecrets }}
+            - secretRef:
+                name: {{ $name }}
+            {{- end }}
           ports:
             - name: metrics
               containerPort: {{ .Values.ports.metrics }}
@@ -48,6 +100,9 @@ spec:
     - metadata:
         name: data
       spec:
+        {{- with .Values.storage.storageClass }}
+        storageClassName: {{ . }}
+        {{- end }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
