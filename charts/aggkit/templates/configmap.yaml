@@ -8,6 +8,8 @@ metadata:
 data:
   config.toml: |
     PathRWData = {{ .Values.storage.path | quote }}
+    defaultDBQueryTimeout = {{ .Values.config.defaultDBQueryTimeout | quote }}
+
     {{- if .Values.config.l1.rpcUrl }}
     L1URL = {{ .Values.config.l1.rpcUrl | quote }}
     {{- else }}
@@ -136,7 +138,9 @@ data:
     SyncBlockChunkSize={{ .Values.config.l1.syncBlockChunkSize | int }}
 
     [REST]
+    ReadTimeout = {{ .Values.config.rest.readTimeout | quote }}
     Port = {{ .Values.container.ports.bridge | quote }}
+    WriteTimeout = {{ .Values.config.rest.writeTimeout | quote }}
 
     [L2GERSync]
     BlockFinality = {{ .Values.config.l2GERSync.blockFinality | quote }}

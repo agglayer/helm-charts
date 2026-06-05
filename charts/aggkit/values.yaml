@@ -178,6 +178,12 @@ config:
     rpcURL: http://localhost:8545
     initialBlockNum: 0
 
+  defaultDBQueryTimeout: 5m
+
+  rest:
+    readTimeout: 5m
+    writeTimeout: 5m
+
   log:
     environment: development # "production" or "development"
     level: info
