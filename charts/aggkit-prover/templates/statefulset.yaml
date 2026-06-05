@@ -82,6 +82,11 @@ spec:
             - name: datadir
               mountPath: {{ .Values.datadir.path }}
               readOnly: false
+            - name: dshm
+              mountPath: /dev/shm
+            - name: config
+              mountPath: /etc/aggkit/
+              readOnly: true
             - name: aggkit-prover-config
               mountPath: /etc/aggkit/
               readOnly: true
@@ -98,6 +103,11 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: {{ .Values.dshm.sizeLimit }}
+
         - name: aggkit-prover-config
           projected:
             sources:
