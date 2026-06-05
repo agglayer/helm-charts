@@ -84,9 +84,6 @@ spec:
               readOnly: false
             - name: dshm
               mountPath: /dev/shm
-            - name: config
-              mountPath: /etc/aggkit/
-              readOnly: true
             - name: aggkit-prover-config
               mountPath: /etc/aggkit/
               readOnly: true
