@@ -135,8 +135,12 @@ data:
     BlockFinality = {{ .Values.config.l1InfoTreeSync.blockFinality | quote }}
     SyncBlockChunkSize={{ .Values.config.l1.syncBlockChunkSize | int }}
 
+    defaultDBQueryTimeout = {{ .Values.config.defaultDBQueryTimeout | quote }}
+
     [REST]
+    ReadTimeout = {{ .Values.config.rest.readTimeout | quote }}
     Port = {{ .Values.container.ports.bridge | quote }}
+    WriteTimeout = {{ .Values.config.rest.writeTimeout | quote }}
 
     [L2GERSync]
     BlockFinality = {{ .Values.config.l2GERSync.blockFinality | quote }}
