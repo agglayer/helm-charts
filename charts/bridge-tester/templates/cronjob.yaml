@@ -130,18 +130,54 @@ spec:
 
                   log_json "info" "Executing bridge operation" "{{ $network.name }}" "bridge_asset"
 
-                  # Execute polycli and capture output with exit code
-                  set +e
-                  BRIDGE_OUTPUT=$(polycli ulxly bridge asset \
-                          --bridge-address $l1_bridge_address \
-                          --destination-address $destination_address \
-                          --private-key $private_key \
-                          --value $bridge_amount \
-                          --destination-network $destination_network \
-                          --rpc-url $l1_rpc_url \
-                          --token-address $token_address 2>&1)
-                  BRIDGE_EXIT_CODE=$?
-                  set -e
+                  # Run polycli with a shell-level retry loop scoped to known
+                  # transient L1 RPC errors. polycli has no retry of its own,
+                  # so a single 408 from the gateway becomes a "failed bridge"
+                  # alert otherwise. We deliberately do NOT retry substantive
+                  # failures (reverts, insufficient funds, nonce errors) — we
+                  # never want to risk double-bridging funds.
+                  ATTEMPT=1
+                  MAX_ATTEMPTS={{ $.Values.bridgeRetry.maxAttempts | int }}
+                  RETRY_DELAY={{ $.Values.bridgeRetry.initialDelaySeconds | int }}
+
+                  while true; do
+                    set +e
+                    BRIDGE_OUTPUT=$(polycli ulxly bridge asset \
+                            --bridge-address $l1_bridge_address \
+                            --destination-address $destination_address \
+                            --private-key $private_key \
+                            --value $bridge_amount \
+                            --destination-network $destination_network \
+                            --rpc-url $l1_rpc_url \
+                            --token-address $token_address 2>&1)
+                    BRIDGE_EXIT_CODE=$?
+                    set -e
+
+                    # Success (either by exit code, or by the polycli quirk
+                    # where it exits non-zero AFTER printing "Transaction
+                    # successful"). Either way, stop retrying.
+                    if [ $BRIDGE_EXIT_CODE -eq 0 ] || echo "$BRIDGE_OUTPUT" | grep -q "Transaction successful"; then
+                      break
+                    fi
+
+                    # Retry only on well-known transient L1 RPC signals.
+                    # Anything else is a substantive failure (revert, gas,
+                    # nonce, bad address, ...) and must not be retried.
+                    if echo "$BRIDGE_OUTPUT" | grep -qiE "408 Request Timeout|-32009|\"request timeout\"|context deadline exceeded|i/o timeout|connection reset|EOF$"; then
+                      if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
+                        ERR_HINT=$(echo "$BRIDGE_OUTPUT" | awk 'NF' | tail -n1)
+                        log_json "warn" "Bridge attempt $ATTEMPT/$MAX_ATTEMPTS hit a transient L1 RPC error; retrying in ${RETRY_DELAY}s: $ERR_HINT" "{{ $network.name }}" "bridge_asset"
+                        sleep $RETRY_DELAY
+                        RETRY_DELAY=$((RETRY_DELAY * 2))
+                        ATTEMPT=$((ATTEMPT + 1))
+                        continue
+                      fi
+                      # Retries exhausted; fall through and let the normal
+                      # failure handler below mark the network as failed.
+                    fi
+
+                    break
+                  done
 
                   # Determine actual on-chain success. polycli has a quirk where it can
                   # exit non-zero (typically printing "Error: not found" trying to read

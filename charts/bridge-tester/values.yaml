@@ -32,6 +32,18 @@ resources:
     cpu: 1000m
     memory: 512Mi
 
+# Per-network retry config for the polycli bridge call. The L1 RPC
+# occasionally returns 408 / JSON-RPC -32009 "request timeout" under load,
+# which polycli surfaces as a hard failure with no retry of its own. We wrap
+# each call in a shell retry loop scoped to a small set of well-known
+# transient signals (HTTP 408, JSON-RPC -32009, context deadlines,
+# connection resets) so we stop generating false-positive alerts for these.
+# We intentionally do NOT retry on substantive errors (reverts, insufficient
+# funds, nonce issues, ...) so we never accidentally double-bridge funds.
+bridgeRetry:
+  maxAttempts: 3              # 1 initial + 2 retries. Set to 1 to disable retries.
+  initialDelaySeconds: 15     # doubles after each retry: 15s, 30s, 60s, ...
+
 config:
   # Bridge configuration for multiple networks
   # Each entry represents a bridge operation from L1 to a specific L2
