@@ -36,6 +36,11 @@ data:
     BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
     GlobalExitRootAddr = {{ .Values.config.l2.globalExitRootAddress | quote }}
 
+    {{- if .Values.config.l2.initialLER }}
+    [L2NetworkConfig]
+    InitialLER = {{ .Values.config.l2.initialLER | quote }}
+    {{- end }}
+
     [Log]
     Environment = {{ .Values.config.log.environment | quote }}
     Level = {{ .Values.config.log.level | quote }}

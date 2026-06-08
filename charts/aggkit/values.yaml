@@ -178,6 +178,9 @@ config:
     rpcURL: http://localhost:8545
     initialBlockNum: 0
 
+    # if not set, the initialLER will be taken from the AgglayerManager contract
+    # initialLER: "0x"
+
   defaultDBQueryTimeout: 5m
 
   rest:
