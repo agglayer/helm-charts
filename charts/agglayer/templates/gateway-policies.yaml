@@ -1,0 +1,115 @@
+{{- if .Values.gatewayAPI.enabled }}
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: {{ include "agglayer.name" . }}-grpc-healthcheck
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "agglayer.fullname" . }}-grpc
+  default:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 5
+    config:
+      type: HTTP
+      httpHealthCheck:
+        port: {{ .Values.ports.readrpc }}
+        requestPath: /health
+---
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: {{ include "agglayer.name" . }}-app-healthcheck
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "agglayer.fullname" . }}-app
+  default:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 5
+    config:
+      type: HTTP
+      httpHealthCheck:
+        port: {{ .Values.ports.readrpc }}
+        requestPath: /health
+---
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: {{ include "agglayer.name" . }}-admin-healthcheck
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "agglayer.fullname" . }}-admin
+  default:
+    checkIntervalSec: 30
+    timeoutSec: 5
+    healthyThreshold: 2
+    unhealthyThreshold: 5
+    config:
+      type: HTTP
+      httpHealthCheck:
+        port: {{ .Values.ports.readrpc }}
+        requestPath: /health
+---
+apiVersion: networking.gke.io/v1
+kind: GCPBackendPolicy
+metadata:
+  name: {{ include "agglayer.name" . }}-admin-iap-policy
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "agglayer.fullname" . }}-admin
+  default:
+    iap:
+      enabled: true
+      oauth2ClientSecret:
+        name: {{ include "agglayer.name" . }}-admin-oauth
+{{- if .Values.gatewayAPI.securityPolicy }}
+---
+apiVersion: networking.gke.io/v1
+kind: GCPBackendPolicy
+metadata:
+  name: {{ include "agglayer.name" . }}-grpc-policy
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "agglayer.fullname" . }}-grpc
+  default:
+    securityPolicy: {{ .Values.gatewayAPI.securityPolicy }}
+{{- end }}
+{{- end }}

@@ -62,3 +62,11 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Parent domain of .Values.gatewayAPI.hostname (everything after the first label).
+  agglayer.domain.com -> domain.com
+*/}}
+{{- define "agglayer.hostnameBase" -}}
+{{- .Values.gatewayAPI.hostname | splitList "." | rest | join "." -}}
+{{- end }}

@@ -1,0 +1,65 @@
+{{- if .Values.gatewayAPI.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "agglayer.name" . }}-grpc-route
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    - name: {{ include "agglayer.name" . }}-gateway
+  hostnames:
+    - "grpc-{{ .Values.gatewayAPI.hostname }}"
+  rules:
+    - backendRefs:
+        - name: {{ include "agglayer.fullname" . }}-grpc
+          port: 443
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "agglayer.name" . }}-app-route
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    - name: {{ include "agglayer.name" . }}-gateway
+  hostnames:
+    - {{ .Values.gatewayAPI.hostname }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /metrics
+      backendRefs:
+        - name: {{ include "agglayer.fullname" . }}-app
+          port: {{ .Values.ports.telemetry }}
+    - backendRefs:
+        - name: {{ include "agglayer.fullname" . }}-app
+          port: {{ .Values.ports.readrpc }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "agglayer.name" . }}-admin-route
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    - name: {{ include "agglayer.name" . }}-gateway
+  hostnames:
+    - "admin-{{ .Values.gatewayAPI.hostname }}"
+  rules:
+    - backendRefs:
+        - name: {{ include "agglayer.fullname" . }}-admin
+          port: {{ .Values.ports.admin }}
+{{- end }}

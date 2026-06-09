@@ -15,20 +15,29 @@ ports:
   grpc: 9089
   readrpc: 9090
   admin: 9091
+  # deprecated
   proxy: 9092
   telemetry: 2223
 
 existingSecret: op-secrets
 
 domain: agglayer-test.polygon.technology
+# deprecated
 createMigrationService: true
 
 tls:
   base64Cert: ""
   base64Key: ""
 
+# deprecated
 ingress:
   nginxProxyBodySize: 10m
+
+gatewayAPI:
+  enabled: false
+  gatewayClassName: gke-l7-global-external-managed
+  hostname: agglayer.domain.com
+  securityPolicy: ""
 
 config:
   debugMode: false
@@ -43,6 +52,7 @@ config:
       epochDuration: 50
       genesisBlock: 1
 
+  # deprecated
   proxiedNetworks:
     #- 1 # Commented out to avoid having it prepended to the list
 
