@@ -21,8 +21,8 @@ ports:
 
 existingSecret: op-secrets
 
-domain: agglayer-test.polygon.technology
 # deprecated
+domain: agglayer-test.polygon.technology
 createMigrationService: true
 
 tls:
