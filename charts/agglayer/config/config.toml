@@ -170,6 +170,7 @@ state_max_backup_count = 100
 pending_max_backup_count = 100
 
 
+# deprecated
 {{- if .Values.config.proxiedNetworks }}
 [proxied-networks]
 networks = [{{ join "," .Values.config.proxiedNetworks }}]
