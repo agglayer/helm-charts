@@ -316,6 +316,16 @@ entries:
   agglayer:
   - apiVersion: v2
     appVersion: 0.5.0-rc.4
+    created: "2026-06-10T12:18:49.704521235Z"
+    description: A Helm chart for Kubernetes
+    digest: a9f9d05e117a0b9a11436faaf1c6fe6c9f8d569130d970b2a312914acb854711
+    name: agglayer
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/agglayer-5.0.0/agglayer-5.0.0.tgz
+    version: 5.0.0
+  - apiVersion: v2
+    appVersion: 0.5.0-rc.4
     created: "2026-05-18T12:53:50.793886073Z"
     description: A Helm chart for Kubernetes
     digest: 1a161ae4a97be05ded00db5fd2f5bd8fc327f4697892b91dbcf5702289acac7f
@@ -1166,4 +1176,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2026-06-08T17:03:23.113951251Z"
+generated: "2026-06-10T12:18:49.704684508Z"
