@@ -1,4 +1,5 @@
 {{- if .Values.gatewayAPI.enabled }}
+{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
 apiVersion: networking.gke.io/v1
 kind: HealthCheckPolicy
 metadata:
@@ -91,8 +92,9 @@ spec:
   default:
     iap:
       enabled: true
+      clientID: {{ index $opSecrets.data "admin_api_oauth_client_id" | b64dec }}
       oauth2ClientSecret:
-        name: {{ include "agglayer.name" . }}-admin-oauth
+        name: {{ include "agglayer.name" . }}-admin-oauth-gateway
 {{- if .Values.gatewayAPI.securityPolicy }}
 ---
 apiVersion: networking.gke.io/v1
