@@ -26,10 +26,23 @@ spec:
     spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- . | toYaml | nindent 8 }}
+      {{- end }}
       serviceAccountName: {{ include "op-geth.serviceAccountName" . }}
       initContainers:
         - name: download-genesis
-          image: google/cloud-sdk:latest
+          image: "gcr.io/google.com/cloudsdktool/google-cloud-cli:stable"
+          imagePullPolicy: Always
           command: ["sh", "-c"]
           args:
           - |
@@ -134,6 +147,9 @@ spec:
     - metadata:
         name: data
       spec:
+        {{- with .Values.storage.storageClass }}
+        storageClassName: {{ . }}
+        {{- end }}
         accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
