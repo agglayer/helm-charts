@@ -7,6 +7,8 @@ metadata:
 data:
   config.toml: |
     PathRWData = {{ .Values.storage.path | quote }}
+    defaultDBQueryTimeout = {{ .Values.config.defaultDBQueryTimeout | quote }}
+
     L1URL = {{ .Values.config.l1.RPCURL | quote }}
     L2URL = {{ .Values.config.l2.RPCURL | quote }}
 
@@ -28,6 +30,11 @@ data:
     [L2Config]
     BridgeAddr = {{ .Values.config.l2.bridgeAddress | quote }}
     GlobalExitRootAddr = {{ .Values.config.l2.globalExitRootAddress | quote }}
+
+    {{- if .Values.config.l2.initialLER }}
+    [L2NetworkConfig]
+    InitialLER = {{ .Values.config.l2.initialLER | quote }}
+    {{- end }}
 
     [Log]
     Environment = {{ .Values.config.log.environment | quote }}
@@ -131,7 +138,9 @@ data:
     SyncBlockChunkSize={{ .Values.config.l1.syncBlockChunkSize | int }}
 
     [REST]
+    ReadTimeout = {{ .Values.config.rest.readTimeout | quote }}
     Port = {{ .Values.container.ports.bridge | quote }}
+    WriteTimeout = {{ .Values.config.rest.writeTimeout | quote }}
 
     [L2GERSync]
     BlockFinality = {{ .Values.config.l2GERSync.blockFinality | quote }}

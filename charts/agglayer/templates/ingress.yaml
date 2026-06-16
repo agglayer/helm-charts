@@ -1,3 +1,4 @@
+# deprecated
 # App and metrics
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -11,6 +12,10 @@ metadata:
   annotations:
     ingressClassName: "gce"
     ingress.kubernetes.io/healthcheck-path: "/metrics"
+    # Suppress the HTTP (port 80) target proxy on the GCP HTTP(S) load
+    # balancer so it only accepts HTTPS connections (Security Health
+    # Analytics: HTTP(S) CLBs must reject HTTP).
+    kubernetes.io/ingress.allow-http: "false"
 spec:
   tls:
     - hosts:
@@ -33,6 +38,7 @@ spec:
       port:
         number: {{ .Values.ports.readrpc }}
 ---
+# deprecated
 # Admin
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -45,6 +51,10 @@ metadata:
     {{- end }}
   annotations:
     ingressClassName: "gce"
+    # Suppress the HTTP (port 80) target proxy on the GCP HTTP(S) load
+    # balancer so it only accepts HTTPS connections (Security Health
+    # Analytics: HTTP(S) CLBs must reject HTTP).
+    kubernetes.io/ingress.allow-http: "false"
 spec:
   tls:
     - hosts:
@@ -62,6 +72,7 @@ spec:
                 port:
                   number: {{ .Values.ports.admin }}
 ---
+# deprecated
 # gRPC API
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -93,6 +104,7 @@ spec:
                 port:
                   number: 443
 ---
+# deprecated
 # gRPC API
 apiVersion: networking.k8s.io/v1
 kind: Ingress

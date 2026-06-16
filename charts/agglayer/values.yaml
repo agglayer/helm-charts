@@ -9,17 +9,19 @@ podLabels:
 image:
   repository: ghcr.io/agglayer/agglayer
   pullPolicy: IfNotPresent
-  tag: 0.4.0-rc.16
+  tag: 0.5.1
 
 ports:
   grpc: 9089
   readrpc: 9090
   admin: 9091
+  # deprecated
   proxy: 9092
   telemetry: 2223
 
 existingSecret: op-secrets
 
+# deprecated
 domain: agglayer-test.polygon.technology
 createMigrationService: true
 
@@ -27,18 +29,30 @@ tls:
   base64Cert: ""
   base64Key: ""
 
+# deprecated
 ingress:
   nginxProxyBodySize: 10m
 
+gatewayAPI:
+  enabled: false
+  gatewayClassName: gke-l7-global-external-managed
+  hostname: agglayer.domain.com
+  securityPolicy: ""
+
 config:
-  agglayerProverEndpoint: http://localhost:4445
   debugMode: false
+
+  prover:
+    networkProver:
+      sp1ClusterEndpoint: https://rpc.production.succinct.xyz
+      provingTimeout: 15m
 
   epoch:
     blockClock:
       epochDuration: 50
       genesisBlock: 1
 
+  # deprecated
   proxiedNetworks:
     #- 1 # Commented out to avoid having it prepended to the list
 
@@ -71,11 +85,6 @@ config:
   grpc:
     maxDecodingMessageSize: 10485760 # 10MB
     maxEncodingMessageSize: 10485760 # 10MB
-
-  prover:
-    grpc:
-      maxDecodingMessageSize: 10485760 # 10MB
-      maxEncodingMessageSize: 10485760 # 10MB
 
 command: agglayer run --cfg /etc/agglayer/config.toml
 
@@ -122,7 +131,7 @@ resources:
     memory: 16Gi
   requests:
     cpu: 1
-    memory: 4Gi
+    memory: 16Gi
 
 autoscaling:
   enabled: false
@@ -130,3 +139,6 @@ autoscaling:
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
+
+dshm:
+  sizeLimit: 4Gi

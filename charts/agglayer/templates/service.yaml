@@ -1,6 +1,76 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ include "agglayer.fullname" . }}-grpc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agglayer.labels" . | nindent 4 }}
+  annotations:
+    {{- if not .Values.gatewayAPI.enabled }}
+    cloud.google.com/backend-config: '{ "ports": {
+      "grpc": "readrpc-backendconfig"
+    }}'
+    {{- end }}
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ports:
+    - name: grpc
+      protocol: TCP
+      port: 443
+      targetPort: {{ .Values.ports.grpc }}
+      {{- if .Values.gatewayAPI.enabled }}
+      appProtocol: kubernetes.io/h2c
+      {{- end }}
+    - name: proxy
+      protocol: TCP
+      port: {{ .Values.ports.proxy }}
+      targetPort: {{ .Values.ports.proxy }}
+  selector:
+    {{- include "agglayer.selectorLabels" . | nindent 4 }}
+{{- if .Values.gatewayAPI.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "agglayer.fullname" . }}-admin
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agglayer.labels" . | nindent 4 }}
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ports:
+    - name: admin-port
+      protocol: TCP
+      port: {{ .Values.ports.admin }}
+  selector:
+    {{- include "agglayer.selectorLabels" . | nindent 4 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "agglayer.fullname" . }}-app
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "agglayer.labels" . | nindent 4 }}
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ports:
+    - name: readrpc-port
+      protocol: TCP
+      port: {{ .Values.ports.readrpc }}
+    - name: metrics-port
+      protocol: TCP
+      port: {{ .Values.ports.telemetry }}
+  selector:
+    {{- include "agglayer.selectorLabels" . | nindent 4 }}
+{{- end }}
+---
+# deprecated
+apiVersion: v1
+kind: Service
+metadata:
   name: {{ include "agglayer.fullname" . }}
   namespace: {{ .Release.Namespace }}
   labels:
@@ -24,33 +94,8 @@ spec:
       port: {{ .Values.ports.admin }}
   selector:
     {{- include "agglayer.selectorLabels" . | nindent 4 }}
-
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "agglayer.fullname" . }}-grpc
-  namespace: {{ .Release.Namespace }}
-  labels:
-    {{- include "agglayer.labels" . | nindent 4 }}
-  annotations:
-    cloud.google.com/backend-config: '{ "ports": {
-      "grpc": "readrpc-backendconfig"
-    }}'
-    cloud.google.com/neg: '{"ingress": true}'
-spec:
-  ports:
-    - name: grpc
-      protocol: TCP
-      port: 443
-      targetPort: {{ .Values.ports.grpc }}
-    - name: proxy
-      protocol: TCP
-      port: {{ .Values.ports.proxy }}
-      targetPort: {{ .Values.ports.proxy }}
-  selector:
-    {{- include "agglayer.selectorLabels" . | nindent 4 }}
----
+# deprecated
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
@@ -66,6 +111,7 @@ spec:
     port: {{ .Values.ports.readrpc }}
 
 ---
+# deprecated
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
@@ -80,6 +126,7 @@ spec:
     requestPath: /metrics
     port: {{ .Values.ports.telemetry }}
 ---
+# deprecated
 apiVersion: cloud.google.com/v1
 kind: BackendConfig
 metadata:
@@ -97,8 +144,9 @@ spec:
     type: HTTP
     requestPath: /health
     port: {{ .Values.ports.readrpc }}
+{{- if .Values.createMigrationService }}
 ---
-{{- if .Values.createMigrationService -}}
+# deprecated
 apiVersion: v1
 kind: Service
 metadata:

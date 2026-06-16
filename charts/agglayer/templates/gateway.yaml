@@ -1,0 +1,38 @@
+{{- if .Values.gatewayAPI.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "agglayer.fullname" . }}-certificate
+  namespace: {{ .Release.Namespace }}
+type: kubernetes.io/tls
+data:
+  tls.crt: {{ .Values.tls.base64Cert }}
+  tls.key: {{ .Values.tls.base64Key }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ include "agglayer.name" . }}-gateway
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  gatewayClassName: {{ .Values.gatewayAPI.gatewayClassName }}
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.{{ include "agglayer.hostnameBase" . }}"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: {{ include "agglayer.fullname" . }}-certificate
+      allowedRoutes:
+        namespaces:
+          from: Same
+        kinds:
+          - kind: HTTPRoute
+{{- end }}
