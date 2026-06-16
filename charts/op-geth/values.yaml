@@ -33,9 +33,13 @@ service:
     port: 30303
   annotations: {}
 
-ingress:
-  create: true
-  hostname: something.dev.polygon
+httpRoutes:
+  http:
+    create: false
+    hostname: domain.example
+    gateway:
+      name: gateway
+      namespace: gateways
 
 podSecurityContext: {}
 securityContext: {}
