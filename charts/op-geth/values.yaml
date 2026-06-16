@@ -40,7 +40,8 @@ ingress:
 podSecurityContext: {}
 securityContext: {}
 
-existingSecret: "secretName"
+onePasswordSecrets:
+  # op-geth: "vaults/myvault/items/myitem"
 
 genesisFileGCP:
   bucket: "bucket-name"

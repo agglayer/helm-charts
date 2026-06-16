@@ -1,5 +1,3 @@
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
-
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -138,11 +136,13 @@ spec:
         - name: config
           projected:
             sources:
+              {{- range $name, $_ := .Values.onePasswordSecrets }}
               - secret:
-                  name: {{ .Values.existingSecret }}
+                  name: {{ $name }}
                   items:
                     - key: "jwt"
                       path: "jwt.txt"
+              {{- end }}
   volumeClaimTemplates:
     - metadata:
         name: data
