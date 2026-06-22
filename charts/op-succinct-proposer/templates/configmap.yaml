@@ -1,24 +1,3 @@
-{{- $l1RpcURL := "" }}
-{{- $sp1NetworkRpcURL := "" }}
-{{- $sp1NetworkPrivateKey := "" }}
-{{- $databaseUrl := "" }}
-
-{{- $opSecrets := (lookup "v1" "Secret" .Release.Namespace .Values.existingSecret) }}
-{{- if $opSecrets.data }}
-    {{- if (index $opSecrets.data "l1RpcURL") }}
-        {{- $l1RpcURL = index $opSecrets.data "l1RpcURL" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "sp1NetworkPrivateKey") }}
-        {{- $sp1NetworkPrivateKey = index $opSecrets.data "sp1NetworkPrivateKey" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "sp1NetworkRpcURL") }}
-        {{- $sp1NetworkRpcURL = index $opSecrets.data "sp1NetworkRpcURL" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "databaseUrl") }}
-        {{- $databaseUrl = index $opSecrets.data "databaseUrl" | b64dec }}
-    {{- end }}
-{{- end }}
-
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -29,27 +8,25 @@ metadata:
 data:
   AGG_PROOF_MODE: {{ .Values.config.aggProofMode | quote }}
   AGGLAYER: {{ .Values.config.agglayer | quote }}
-  DATABASE_URL: {{ $databaseUrl | quote }}
+  DATABASE_URL: {{ .Values.config.databaseUrl | quote }}
   DB_PATH: {{ .Values.storage.path | quote }}
   GRPC_ADDRESS: {{ .Values.config.grpcAddress | quote }}
-  L1_BEACON_RPC: {{ $l1RpcURL | quote }}
-  L1_RPC: {{ $l1RpcURL | quote }}
   L2_NODE_RPC: {{ .Values.config.l2NodeRpcURL | quote }}
   L2_RPC: {{ .Values.config.l2RpcURL | quote }}
-  L2OO_ADDRESS: {{ .Values.config.l2OOAddress | quote }}
+  L2OO_ADDRESS: {{ .Values.config.rollupAddress | quote }}
   MAX_CONCURRENT_PROOF_REQUESTS: {{ .Values.config.maxConcurrentProofRequests | quote }}
   MAX_CONCURRENT_WITNESS_GEN: {{ .Values.config.maxConcurrentWitnessGen | quote }}
   METRICS_ENABLED: {{ .Values.config.metricsEnabled | quote }}
   METRICS_PORT: {{ .Values.ports.metrics | quote }}
-  NETWORK_PRIVATE_KEY: {{ $sp1NetworkPrivateKey | quote }}
+  NETWORK_RPC_URL: {{ .Values.config.sp1NetworkRpcURL | quote }}
   OP_SUCCINCT_MOCK: {{ .Values.config.opSuccinctMock | quote }}
   POLL_INTERVAL: {{ .Values.config.pollInterval | quote }}
-  PRIVATE_KEY: 0xc797616a567ffd3f7d80f110f4c19900e55258ac2aa96d96ded790e0bd727458
   PROVER_ADDRESS: {{ .Values.config.proverAddress | quote }}
+  PRIVATE_KEY: 0xc797616a567ffd3f7d80f110f4c19900e55258ac2aa96d96ded790e0bd727458
   RANGE_PROOF_INTERVAL: {{ .Values.config.rangeProofInterval | quote }}
   RUST_LOG: {{ .Values.config.rustLog | quote }}
+  SAFE_DB_FALLBACK: {{ .Values.config.safeDbFallback | quote }}
   USE_CACHED_DB: {{ .Values.config.useCachedDB | quote }}
   WITNESS_GEN_TIMEOUT: {{ .Values.config.witnessGenTimeout | quote }}
-  NETWORK_RPC_URL: {{ $sp1NetworkRpcURL | quote }}
   OP_SUCCINCT_CONFIG_NAME: {{ .Values.config.opSuccinctConfigName | quote }}
   LOG_FORMAT: {{ .Values.config.logFormat | quote }}

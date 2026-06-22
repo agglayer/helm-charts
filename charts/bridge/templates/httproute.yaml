@@ -1,0 +1,25 @@
+{{- if .Values.httpRoutes.rest.create -}}
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: {{ include "bridge.fullname" . }}-rest
+  labels:
+    {{- include "bridge.labels" . | nindent 4 }}
+spec:
+  parentRefs:
+    - kind: Gateway
+      {{- with .Values.httpRoutes.rest.gateway }}
+      name: {{ .name }}
+      namespace: {{ .namespace }}
+      {{- end }}
+  hostnames:
+    - {{ .Values.httpRoutes.rest.hostname }}
+  rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /
+      backendRefs:
+        - name: {{ include "bridge.fullname" . }}
+          port: {{ .Values.service.port }}
+{{- end }}

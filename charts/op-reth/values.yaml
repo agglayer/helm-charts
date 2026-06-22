@@ -1,11 +1,22 @@
-env: bali
+---
+metadata:
+  env: bali
+  costCenter: agglayer
 
-podLabels:
-  name: myname
-  business_unit: agglayer
-  role: myrole
-  partner: Polygon
-  network: mynetwork
+onePasswordSecrets:
+  # op-reth: "vaults/myvault/items/myitem"
+
+# Pod annotations (e.g. ad.datadoghq.com/tags for Datadog)
+podAnnotations: {}
+#   ad.datadoghq.com/tags: '{"network": "mynetwork"}'
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+topologySpreadConstraints: []
 
 replicaCount: 1
 
@@ -13,7 +24,7 @@ container:
   image:
     pullPolicy: IfNotPresent
     repository: us-docker.pkg.dev/oplabs-tools-artifacts/images/op-reth
-    tag: v1.11.0
+    tag: v1.11.5
 
 storage:
   path: /data
@@ -36,14 +47,16 @@ service:
     port: 9001
   annotations: {}
 
-ingress:
-  create: true
-  hostname: domain.example
+httpRoutes:
+  http:
+    create: false
+    hostname: domain.example
+    gateway:
+      name: gateway
+      namespace: gateways
 
 podSecurityContext: {}
 securityContext: {}
-
-existingSecret: "secretName"
 
 genesisFileGCP:
   bucket: "bucket-name"
@@ -65,13 +78,7 @@ config:
 
 resources:
   limits:
-    memory: 8Gi
+    memory: 16Gi
   requests:
-    cpu: 1
-    memory: 8Gi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+    cpu: 2
+    memory: 16Gi

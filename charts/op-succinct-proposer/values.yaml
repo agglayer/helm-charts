@@ -1,13 +1,35 @@
-env: bali
+---
+metadata:
+  env: bali
+  costCenter: agglayer
 
-podLabels:
-  name: myname
-  business_unit: agglayer
-  role: myrole
-  partner: Polygon
-  network: mynetwork
+onePasswordSecrets:
+  # op-succinct-proposer: "vaults/myvault/items/myitem"
 
-replicas: 1
+# Pod annotations (e.g. ad.datadoghq.com/tags for Datadog)
+podAnnotations: {}
+# podAnnotations:
+#   ad.datadoghq.com/tags: '{"network": "mynetwork"}'
+
+podLabels: {}
+# podLabels:
+#   network: mynetwork
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+topologySpreadConstraints: []
+
+replicaCount: 1
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
 
 container:
   image:
@@ -30,25 +52,27 @@ service:
 podSecurityContext: {}
 securityContext: {}
 
-existingSecret: "secretName"
-
 config:
   agglayer: true
   aggProofMode: "compressed"
   databaseUrl: postgres://user:password@op-succinct-proposer-db-postgresql:5432/op_succinct_db
   grpcAddress: 0.0.0.0:50001
   l2NodeRpcURL: http://op-node:9545
-  l2RpcURL: http://op-geth:9545
-  l2OOAddress: "0x0000000000000000000000000000000000000000"
+  l2RpcURL: http://op-reth:8545
+  rollupAddress: "0x0000000000000000000000000000000000000000"
   maxConcurrentProofRequests: 1
   maxConcurrentWitnessGen: 1
   metricsEnabled: true
   opSuccinctMock: false
   opSuccinctServerURL: http://op-succinct-server:3000
   pollInterval: 20s
+  # This should typically be the sequencer address
   proverAddress: "0x0000000000000000000000000000000000000000"
   rangeProofInterval: "1800"
   rustLog: "info"
+  safeDbFallback: false
+  sp1NetworkPrivateKey: "0x0000000000000000000000000000000000000000000000000000000000000000"
+  sp1NetworkRpcURL: "http://sp1-cluster:8545"
   useCachedDB: false
   witnessGenTimeout: "1200"
   opSuccinctConfigName: "opsuccinct_genesis"

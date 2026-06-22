@@ -1,0 +1,25 @@
+{{- if .Values.httpRoutes.http.create -}}
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: {{ include "op-reth.fullname" . }}-http
+  labels:
+    {{- include "op-reth.labels" . | nindent 4 }}
+spec:
+  parentRefs:
+    - kind: Gateway
+      {{- with .Values.httpRoutes.http.gateway }}
+      name: {{ .name }}
+      namespace: {{ .namespace }}
+      {{- end }}
+  hostnames:
+    - {{ .Values.httpRoutes.http.hostname }}
+  rules:
+    - matches:
+      - path:
+          type: PathPrefix
+          value: /
+      backendRefs:
+        - name: {{ include "op-reth.fullname" . }}
+          port: {{ .Values.service.http.port }}
+{{- end }}

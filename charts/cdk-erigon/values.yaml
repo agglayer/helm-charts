@@ -1,21 +1,64 @@
-env: bali
+---
+metadata:
+  env: bali
+  costCenter: agglayer
 
-podLabels:
-  name: myname
-  business_unit: agglayer
-  role: myrole
-  partner: Polygon
-  network: mynetwork
+onePasswordSecrets:
+  # cdk-erigon: "vaults/myvault/items/myitem"
 
-# General config
-replicaCount: 1
+# Enable to replace $ENV_VARS in the configmap from a Kubernetes secret
+  # Secret names are derived from onePasswordSecrets keys
+envSubstitution:
+  enabled: true
+
+# Pod annotations (e.g. ad.datadoghq.com/tags for Datadog)
+podAnnotations: {}
+# podAnnotations:
+#   ad.datadoghq.com/tags: '{"role": "sequencer", "network": "mynetwork"}'
+
+nodeSelector: {}
+
+tolerations: []
+
+initContainers: []
+
+# extraContainers:
+#   - name: mitmproxy
+#     image: mitmproxy/mitmproxy:latest
+#     command:
+#       - mitmweb
+#     args:
+#       - --mode
+#       - "reverse:https://sepolia.gateway.tenderly.co"
+#       - --listen-host
+#       - "0.0.0.0"
+#       - --web-host
+#       - "0.0.0.0"
+#       - --set
+#       - "web_password=password"
+#       - --no-web-open-browser
+#     ports:
+#       - name: proxy
+#         containerPort: 8080
+#         protocol: TCP
+#       - name: web
+#         containerPort: 8081
+#         protocol: TCP
+#     resources: {}
+
+extraVolumes: []
+extraVolumeMounts: []
+
+topologySpreadConstraints: []
+
+replicas: 1
 
 image:
   repository: ghcr.io/0xpolygon/cdk-erigon
   pullPolicy: IfNotPresent
   tag: "v2.61.24"
   command: ["cdk-erigon"]
-  args: ["--config=/etc/cdk-erigon/erigon.yaml", "--metrics", "--metrics.addr=0.0.0.0", "--metrics.port=9090"]
+  args: ["--config=/etc/cdk-erigon/erigon.yaml"]
 
 serviceAccount:
   create: true
@@ -35,38 +78,104 @@ service:
   annotations: {}
 
 ingress:
-  create: true
-  hostname: something.dev.polygon
+  rpc:
+    create: false
+    hostname: something.dev.polygon
+    annotations: {}
+
+httpRoutes:
+  rpc:
+    create: false
+    hostname: domain.example
+    gateway:
+      name: gateway
+      namespace: gateways
+
+# Note: Erigon's /health endpoint expects POST with JSON body
+livenessProbe:
+  exec:
+    command:
+      - curl
+      - -sf
+      - -X
+      - POST
+      - http://localhost:8123/health
+      - -H
+      - "Content-Type: application/json"
+      - -d
+      - '{}'
+  initialDelaySeconds: 120
+  periodSeconds: 30
+  timeoutSeconds: 10
+  successThreshold: 1
+  failureThreshold: 5
+
+readinessProbe:
+  exec:
+    command:
+      - curl
+      - -sf
+      - -X
+      - POST
+      - http://localhost:8123/health
+      - -H
+      - "Content-Type: application/json"
+      - -d
+      - '{}'
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
 
 resources:
   limits:
+    cpu: 2
     memory: 10Gi
   requests:
     cpu: 1
     memory: 2Gi
 
-datadir:
+storage:
   path: /data/
   size: 750Gi
 
-# cdk-erigon config
-chainName: network
+config:
+  allowFreeTransactions: true
+  isSequencer: false
 
-# Enable sequencer
-# ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#sequencer-wip
-# enable: 1; disable: 0
-is_sequencer: 0
+  l1:
+    blockRange: 9999
+    accountAddresses:
+      admin: "0x123"
+      sequencer: "0x123"
+      agglayerManager: "0x123" # Formerly known as RollupManager contract
+      aggchain: "0x123" # Formerly known as Rollup contract
+      GERManager: "0x123"
+      POLToken: "0x123"
+    agglayerManagerBlockNumber: 123 # Commonly known as upgradeToULxLyBlockNumber
+    chainId: 11155111
+    RPCURL: http://example.com
 
-# cdk-erigon config file
-# ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#config
-existingSecret: "secretName"
-secretItem:
-  key: "erigon.yaml"
-  path: "erigon.yaml"
+  l2:
+    allocs: |
+      {}
+    chainId: 123123
+    firstBatchL2Data: "0x123"
+    genesis:
+      globalExitRoot: "0x123"
+      l1BlockNumber: 123
+      l1BlockHash: "0x123"
+      l1ParentBlockHash: "0x123"
+      root: "0x0000000000000000000000000000000000000000000000000000000000000000"
+      timestamp: 1234567890
+    networkName: mynetwork
+    networkId: 123
+    poolManagerURL: "http://pool-manager:8545"
+    ## If isSequencer is false ##
+    sequencerRPCURL: "http://cdk-erigon-sequencer:8123"
+    sequencerDatastreamerURL: "cdk-erigon-sequencer:6900"
+    ##
 
-# cdk-erigon dynamic configuration
-# ref: https://github.com/0xPolygonHermez/cdk-erigon?tab=readme-ov-file#dynamic-chain-configuration
-dynamicIntegrationAllocs: ""
-dynamicIntegrationChainspec: ""
-dynamicIntegrationConf: ""
-firstBatchConf: ""
+  log:
+    level: info

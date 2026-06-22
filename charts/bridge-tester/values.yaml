@@ -1,4 +1,15 @@
-env: bali
+---
+metadata:
+  env: multi
+  costCenter: agglayer
+
+onePasswordSecrets:
+  # bridge-tester: "vaults/myvault/items/myitem"
+  #
+  # The referenced 1Password item must expose these fields (uppercase, env-var
+  # naming):
+  #   - BRIDGE_TESTER_PRIVATE_KEY  hex private key used to sign bridge txs
+  #   - L1_RPC_URL                 RPC URL used to submit bridge txs on L1
 
 podLabels:
   name: myname
@@ -7,13 +18,31 @@ podLabels:
   partner: Polygon
   network: mynetwork
 
-existingSecret: op-secrets
-
 schedule: "0 * * * *" # Run every hour
 concurrencyPolicy: Forbid
 failedJobsHistoryLimit: 1
 successfulJobsHistoryLimit: 1
 backoffLimit: 1
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+
+# Per-network retry config for the polycli bridge call. The L1 RPC
+# occasionally returns 408 / JSON-RPC -32009 "request timeout" under load,
+# which polycli surfaces as a hard failure with no retry of its own. We wrap
+# each call in a shell retry loop scoped to a small set of well-known
+# transient signals (HTTP 408, JSON-RPC -32009, context deadlines,
+# connection resets) so we stop generating false-positive alerts for these.
+# We intentionally do NOT retry on substantive errors (reverts, insufficient
+# funds, nonce issues, ...) so we never accidentally double-bridge funds.
+bridgeRetry:
+  maxAttempts: 3              # 1 initial + 2 retries. Set to 1 to disable retries.
+  initialDelaySeconds: 15     # doubles after each retry: 15s, 30s, 60s, ...
 
 config:
   # Bridge configuration for multiple networks
@@ -28,4 +57,25 @@ config:
         networkId: 123
         destinationAddress: "0x123"
       bridgeAmount: "123000000000000"  # Amount in wei
+
+# Datadog monitor that alerts when one or more bridge-tested networks fails
+# to settle a certificate within the evaluation window. Requires the Datadog
+# Operator + DatadogMonitor CRD (datadoghq.com/v1alpha1) to be installed.
+datadogMonitor:
+  create: false
+  # Lookback window for the settlement check. The bridge-tester runs hourly;
+  # the aggsender usually settles within minutes. "2h" guarantees at least
+  # one settled certificate per network per bridge-tester cycle.
+  evaluationWindow: "2h"
+  # Mention(s) appended to the alert message (Slack/PagerDuty/email handles).
+  notify: "@slack-agglayer-alerts"
+  # Additional tags attached to the monitor.
+  extraTags: []
+  # Override the Datadog `network` tag value for a bridge-tester network if
+  # the value the aggsender emits in metrics differs from this chart's
+  # `config.networks[].name`. Keys are bridge-tester network names; values
+  # are the corresponding Datadog tag values.
+  networkTagOverrides: {}
+  # networkTagOverrides:
+  #   network-1: real-network-tag
 

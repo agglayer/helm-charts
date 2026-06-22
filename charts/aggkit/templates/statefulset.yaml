@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "aggkit.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicas }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       {{- include "aggkit.selectorLabels" . | nindent 6 }}
@@ -14,21 +14,6 @@ spec:
     metadata:
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        {{- if .Values.config.prometheus.enabled }}
-        ad.datadoghq.com/{{ .Chart.Name }}.checks: |
-          {
-            "openmetrics": {
-              "init_config": {},
-              "instances": [
-                {
-                  "openmetrics_endpoint": "http://%%host%%:{{ .Values.container.ports.prometheus }}/metrics",
-                  "namespace": "aggkit",
-                  "metrics": ["^aggsender_.*", "^aggoracle_.*", "^bridge_.*"]
-                }
-              ]
-            }
-          }
-        {{- end }}
         {{- with .Values.podAnnotations }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -52,10 +37,6 @@ spec:
       nodeSelector:
         {{- . | toYaml | nindent 8 }}
       {{- end }}
-      {{- with .Values.initContainers }}
-      initContainers:
-        {{- . | toYaml | nindent 8 }}
-      {{- end }}
       {{- with .Values.topologySpreadConstraints }}
       topologySpreadConstraints:
         {{- range $constraint := . }}
@@ -65,6 +46,33 @@ spec:
             matchLabels:
               {{- include "aggkit.selectorLabels" $ | nindent 14 }}
             {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- if or .Values.envSubstitution.enabled .Values.initContainers }}
+      initContainers:
+        {{- if .Values.envSubstitution.enabled }}
+        - name: config-env-substitution
+          image: alpine:latest
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - |
+              apk add gettext > /dev/null 2>&1
+              envsubst < /config-raw/config.toml > /config/config.toml
+          envFrom:
+            {{- range $name, $_ := $.Values.onePasswordSecrets }}
+            - secretRef:
+                name: {{ $name }}
+            {{- end }}
+          volumeMounts:
+            - name: config-raw
+              mountPath: /config-raw
+              readOnly: true
+            - name: config
+              mountPath: /config
+        {{- end }}
+        {{- with .Values.initContainers }}
+        {{- . | toYaml | nindent 8 }}
         {{- end }}
       {{- end }}
       containers:
@@ -77,7 +85,7 @@ spec:
             - aggkit
           args:
             - run
-            - --cfg=/etc/aggkit/config.toml
+            - --cfg=/etc/aggkit/config/config.toml
             - --components={{ .Values.config.components | join "," }}
           ports:
             - name: aggsender
@@ -100,41 +108,47 @@ spec:
             {{- with .Values.container.extraVolumeMounts }}
             {{- . | toYaml | nindent 12 }}
             {{- end }}
-            {{- if .Values.mountRawConfig }}
-            - mountPath: "/etc/aggkit"
+            - mountPath: "/etc/aggkit/config"
               name: config
+              readOnly: true
+            {{- if or (and (has "aggsender" .Values.config.components) (eq .Values.config.aggsender.privateKey.keyName "")) (and (has "aggsender-validator" .Values.config.components) (eq .Values.config.aggsenderValidator.privateKey.keyName "")) (and (has "aggoracle" .Values.config.components) (eq .Values.config.aggoracle.privateKey.keyName "")) }}
+            - mountPath: "/etc/aggkit/keystores"
+              name: keystores
               readOnly: true
             {{- end }}
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
       volumes:
+        - name: {{ ternary "config-raw" "config" .Values.envSubstitution.enabled }}
+          configMap:
+            name: {{ include "aggkit.fullname" . }}
+            items:
+              - key: "config.toml"
+                path: "config.toml"
+        {{- if .Values.envSubstitution.enabled }}
+        - name: config
+          emptyDir: {}
+        {{- end }}
+        {{- if or (and (has "aggsender" .Values.config.components) (eq .Values.config.aggsender.privateKey.keyName "")) (and (has "aggsender-validator" .Values.config.components) (eq .Values.config.aggsenderValidator.privateKey.keyName "")) (and (has "aggoracle" .Values.config.components) (eq .Values.config.aggoracle.privateKey.keyName "")) }}
+        - name: keystores
+          secret:
+            secretName: {{ include "aggkit.fullname" . }}
+            items:
+              {{- if and (has "aggsender" .Values.config.components) (eq .Values.config.aggsender.privateKey.keyName "") }}
+              - key: {{ .Values.config.aggsender.privateKey.keystoreFileName }}
+                path: {{ .Values.config.aggsender.privateKey.keystoreFileName }}
+              {{- end }}
+              {{- if and (has "aggsender-validator" .Values.config.components) (eq .Values.config.aggsenderValidator.privateKey.keyName "") }}
+              - key: {{ .Values.config.aggsenderValidator.privateKey.keystoreFileName }}
+                path: {{ .Values.config.aggsenderValidator.privateKey.keystoreFileName }}
+              {{- end }}
+              {{- if and (has "aggoracle" .Values.config.components) (eq .Values.config.aggoracle.privateKey.keyName "") }}
+              - key: {{ .Values.config.aggoracle.privateKey.keystoreFileName }}
+                path: {{ .Values.config.aggoracle.privateKey.keystoreFileName }}
+              {{- end }}
+        {{- end }}
         {{- with .Values.extraVolumes }}
           {{- . | toYaml | nindent 8 }}
-        {{- end }}
-        {{- if .Values.mountRawConfig }}
-        - name: config
-          projected:
-            sources:
-            - configMap:
-                name: {{ include "aggkit.fullname" . }}
-                items:
-                  - key: "config.toml"
-                    path: "config.toml"
-            - secret:
-                name: {{ .Values.existingSecret }}
-                items:
-                  {{- if and (has "aggsender" .Values.config.components) (eq .Values.config.aggsender.privateKey.keyName "") }}
-                  - key: {{ .Values.config.aggsender.privateKey.keystoreFileName }}
-                    path: {{ .Values.config.aggsender.privateKey.keystoreFileName }}
-                  {{- end }}
-                  {{- if and (has "aggsender-validator" .Values.config.components) (eq .Values.config.aggsenderValidator.privateKey.keyName "") }}
-                  - key: {{ .Values.config.aggsenderValidator.privateKey.keystoreFileName }}
-                    path: {{ .Values.config.aggsenderValidator.privateKey.keystoreFileName }}
-                  {{- end }}
-                  {{- if and (has "aggoracle" .Values.config.components) (eq .Values.config.aggoracle.privateKey.keyName "") }}
-                  - key: {{ .Values.config.aggoracle.privateKey.keystoreFileName }}
-                    path: {{ .Values.config.aggoracle.privateKey.keystoreFileName }}
-                  {{- end }}
         {{- end }}
   volumeClaimTemplates:
     - metadata:

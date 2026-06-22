@@ -7,7 +7,7 @@ podLabels:
   partner: Polygon
   network: mynetwork
 
-replicas: 1
+replicaCount: 1
 
 container:
   image:
@@ -33,14 +33,19 @@ service:
     port: 30303
   annotations: {}
 
-ingress:
-  create: true
-  hostname: something.dev.polygon
+httpRoutes:
+  http:
+    create: false
+    hostname: domain.example
+    gateway:
+      name: gateway
+      namespace: gateways
 
 podSecurityContext: {}
 securityContext: {}
 
-existingSecret: "secretName"
+onePasswordSecrets:
+  # op-geth: "vaults/myvault/items/myitem"
 
 genesisFileGCP:
   bucket: "bucket-name"

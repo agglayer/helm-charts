@@ -1,0 +1,32 @@
+{{- if .Values.httpRoutes.http.create -}}
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: {{ include "op-reth.fullname" . }}
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true
+  labels:
+    {{- include "op-reth.labels" . | nindent 4 }}
+spec:
+  default:
+    {{- $probe := .Values.readinessProbe | default dict }}
+    checkIntervalSec: {{ $probe.periodSeconds | default 10 }}
+    timeoutSec: {{ $probe.timeoutSeconds | default 5 }}
+    healthyThreshold: {{ $probe.successThreshold | default 1 }}
+    unhealthyThreshold: {{ $probe.failureThreshold | default 3 }}
+    config:
+      {{- if .Values.service.metrics.enabled }}
+      type: HTTP
+      httpHealthCheck:
+        port: {{ .Values.service.metrics.port }}
+        requestPath: /
+      {{- else }}
+      type: TCP
+      tcpHealthCheck:
+        port: {{ .Values.service.http.port }}
+      {{- end }}
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "op-reth.fullname" . }}
+{{- end }}
