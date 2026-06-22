@@ -42,6 +42,9 @@ service:
   clusterIP: None
   rpc:
     port: 8548
+  metrics:
+    enabled: true
+    port: 7300
   annotations: {}
 
 podSecurityContext: {}

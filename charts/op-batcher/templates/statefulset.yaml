@@ -76,6 +76,11 @@ spec:
                 --private-key="${BATCHER_PRIVATE_KEY}" \
                 --log.level={{ .Values.config.log.level }} \
                 --log.format={{ .Values.config.log.format }} \
+                {{- if .Values.service.metrics.enabled }}
+                --metrics.enabled \
+                --metrics.addr=0.0.0.0 \
+                --metrics.port={{ .Values.service.metrics.port }} \
+                {{- end }}
                 {{- range .Values.config.extraOptions }}
                 --{{ . }} \
                 {{- end }}
@@ -91,5 +96,10 @@ spec:
             - name: rpc
               containerPort: {{ .Values.service.rpc.port }}
               protocol: TCP
+            {{- if .Values.service.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.service.metrics.port }}
+              protocol: TCP
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
