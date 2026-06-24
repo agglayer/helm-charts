@@ -125,7 +125,7 @@ spec:
             - --proofs-history
             - --proofs-history.storage-path={{ .Values.storageProofs.path }}
             - --proofs-history.storage-version=v2
-            - --proofs-history.window={{ .Values.storageProofs.window }}
+            - --proofs-history.window={{ .Values.storageProofs.window | int }}
             {{- end }}
             {{- range .Values.config.extraOptions }}
             - --{{ . }}
