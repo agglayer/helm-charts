@@ -20,6 +20,12 @@ topologySpreadConstraints: []
 
 replicaCount: 1
 
+initContainers: []
+# initContainers:
+#   - name: my-init
+#     image: busybox:latest
+#     command: ["sh", "-c", "echo hello"]
+
 container:
   image:
     pullPolicy: IfNotPresent
