@@ -33,28 +33,25 @@ spec:
           image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.container.image.pullPolicy }}
           command:
-            - /bin/sh
-            - -c
+            - op-batcher
           args:
-            - |
-              op-batcher \
-                --l2-eth-rpc={{ .Values.config.l2.opGethUrl }} \
-                --rollup-rpc={{ .Values.config.l2.opNodeUrl }} \
-                --poll-interval=1s \
-                --sub-safety-margin=6 \
-                --num-confirmations=1 \
-                --safe-abort-nonce-too-low-count=3 \
-                --resubmission-timeout=30s \
-                --rpc.addr=0.0.0.0 \
-                --rpc.port=8548 \
-                --rpc.enable-admin \
-                --max-channel-duration=50 \
-                --l1-eth-rpc={{ index $opSecrets.data "l1RpcURL" | b64dec }} \
-                --private-key={{ index $opSecrets.data "batcher_private_key" | b64dec }} \
-                {{- range .Values.config.extraOptions }}
-                --{{ . }} \
-                {{- end }}
-                --data-availability-type={{ .Values.config.dataAvailabilityType }}
+            - --l2-eth-rpc={{ .Values.config.l2.opGethUrl }}
+            - --rollup-rpc={{ .Values.config.l2.opNodeUrl }}
+            - --poll-interval=1s
+            - --sub-safety-margin=6
+            - --num-confirmations=1
+            - --safe-abort-nonce-too-low-count=3
+            - --resubmission-timeout=30s
+            - --rpc.addr=0.0.0.0
+            - --rpc.port=8548
+            - --rpc.enable-admin
+            - --max-channel-duration=50
+            - --l1-eth-rpc={{ index $opSecrets.data "l1RpcURL" | b64dec }}
+            - --private-key={{ index $opSecrets.data "batcher_private_key" | b64dec }}
+            {{- range .Values.config.extraOptions }}
+            - --{{ . }}
+            {{- end }}
+            - --data-availability-type={{ .Values.config.dataAvailabilityType }}
           ports:
             - name: rpc
               containerPort: {{ .Values.service.rpc.port }}
