@@ -718,6 +718,16 @@ entries:
     version: 0.1.0
   op-batcher:
   - apiVersion: v2
+    appVersion: v1.16.10
+    created: "2026-06-24T13:05:31.618412556Z"
+    description: A Helm chart for op-batcher
+    digest: 7ccb019de5b24c05406723f47a14e7ebad260500e40581ff762101ad472bc87b
+    name: op-batcher
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-batcher-1.2.0/op-batcher-1.2.0.tgz
+    version: 1.2.0
+  - apiVersion: v2
     appVersion: v1.16.0
     created: "2025-11-10T07:35:31.701383287Z"
     description: A Helm chart for op-batcher
@@ -830,6 +840,16 @@ entries:
     - https://github.com/agglayer/helm-charts/releases/download/op-geth-generic-1.0.0/op-geth-generic-1.0.0.tgz
     version: 1.0.0
   op-node:
+  - apiVersion: v2
+    appVersion: v1.19.0
+    created: "2026-06-24T13:05:31.909482597Z"
+    description: A Helm chart for op-node
+    digest: dd868d71314b0decf206a2d3d7f55a656fef0ac36aafaa6f103046b30b91f449
+    name: op-node
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-node-0.7.0/op-node-0.7.0.tgz
+    version: 0.7.0
   - apiVersion: v2
     appVersion: 1.0.0
     created: "2026-04-16T08:20:03.809904497Z"
@@ -1186,4 +1206,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2026-06-11T09:52:04.529424678Z"
+generated: "2026-06-24T13:05:31.909671654Z"
