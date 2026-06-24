@@ -36,6 +36,12 @@ storage:
   path: /data
   size: 500Gi
 
+storageProofs:
+  enabled: false
+  path: /data-proofs
+  size: 1Ti
+  window: 1209600 # 15 days for 1s block time
+
 service:
   type: ClusterIP
   clusterIP: None

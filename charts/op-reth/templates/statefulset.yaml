@@ -58,6 +58,27 @@ spec:
           volumeMounts:
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
+        {{- if .Values.storageProofs.enabled }}
+        - name: init-datadir-proofs
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          command:
+            - op-reth
+            - proofs
+            - init
+          args:
+            - --datadir={{ .Values.storage.path }}
+            - --chain={{ .Values.storage.path }}/genesis.json
+            - --proofs-history.storage-path={{ .Values.storageProofs.path }}
+            - --proofs-history.storage-version=v2
+          volumeMounts:
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+            - mountPath: {{ .Values.storageProofs.path | quote }}
+              name: data-proofs
+        {{- end }}
         {{- with .Values.initContainers }}
         {{- . | toYaml | nindent 8 }}
         {{- end }}
@@ -100,6 +121,12 @@ spec:
             {{- if .Values.service.metrics.enabled }}
             - --metrics=0.0.0.0:{{ .Values.service.metrics.port }}
             {{- end }}
+            {{- if .Values.storageProofs.enabled }}
+            - --proofs-history
+            - --proofs-history.storage-path={{ .Values.storageProofs.path }}
+            - --proofs-history.storage-version=v2
+            - --proofs-history.window={{ .Values.storageProofs.window }}
+            {{- end }}
             {{- range .Values.config.extraOptions }}
             - --{{ . }}
             {{- end }}
@@ -131,6 +158,10 @@ spec:
               readOnly: true
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
+            {{- if .Values.storageProofs.enabled }}
+            - mountPath: {{ .Values.storageProofs.path | quote }}
+              name: data-proofs
+            {{- end }}
       volumes:
         - name: secret
           projected:
@@ -153,3 +184,15 @@ spec:
         resources:
           requests:
             storage: {{ .Values.storage.size }}
+    {{- if .Values.storageProofs.enabled }}
+    - metadata:
+        name: data-proofs
+      spec:
+        {{- with .Values.storageProofs.storageClass }}
+        storageClassName: {{ . }}
+        {{- end }}
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: {{ .Values.storageProofs.size }}
+    {{- end }}
