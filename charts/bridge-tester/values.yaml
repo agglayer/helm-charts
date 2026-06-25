@@ -38,8 +38,13 @@ resources:
 # each call in a shell retry loop scoped to a small set of well-known
 # transient signals (HTTP 408, JSON-RPC -32009, context deadlines,
 # connection resets) so we stop generating false-positive alerts for these.
-# We intentionally do NOT retry on substantive errors (reverts, insufficient
-# funds, nonce issues, ...) so we never accidentally double-bridge funds.
+#
+# We also retry the specific "nonce too low ... tx nonce 0" case: the L1 RPC
+# sometimes returns a bogus 0 from eth_getTransactionCount, polycli builds a
+# tx with nonce 0, and the node rejects it. A rejected tx moves no funds, so
+# this is safe to retry (the next attempt re-reads the nonce). We intentionally
+# do NOT retry on any other substantive error (reverts, insufficient funds,
+# real nonce conflicts, ...) so we never accidentally double-bridge funds.
 bridgeRetry:
   maxAttempts: 3              # 1 initial + 2 retries. Set to 1 to disable retries.
   initialDelaySeconds: 15     # doubles after each retry: 15s, 30s, 60s, ...

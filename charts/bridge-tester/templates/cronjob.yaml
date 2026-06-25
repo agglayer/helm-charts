@@ -162,8 +162,21 @@ spec:
 
                     # Retry only on well-known transient L1 RPC signals.
                     # Anything else is a substantive failure (revert, gas,
-                    # nonce, bad address, ...) and must not be retried.
-                    if echo "$BRIDGE_OUTPUT" | grep -qiE "408 Request Timeout|-32009|\"request timeout\"|context deadline exceeded|i/o timeout|connection reset|EOF$"; then
+                    # real nonce conflict, bad address, ...) and must not be
+                    # retried.
+                    #
+                    # The "tx nonce 0" case is a special, provably-safe retry:
+                    # polycli reads the account nonce via eth_getTransactionCount
+                    # and the L1 RPC occasionally returns a bogus 0 (same flaky
+                    # behaviour we see on eth_getBalance). polycli then submits
+                    # with nonce 0, which the node REJECTS ("nonce too low: next
+                    # nonce N, tx nonce 0"). A rejected tx moves no funds, so
+                    # there is zero double-bridge risk, and "tx nonce 0" against
+                    # an account that has already sent N>0 txs can only be a
+                    # spurious read (never a genuine ordering conflict). We do
+                    # NOT retry any other nonce error.
+                    if echo "$BRIDGE_OUTPUT" | grep -qiE "408 Request Timeout|-32009|\"request timeout\"|context deadline exceeded|i/o timeout|connection reset|EOF$" \
+                       || echo "$BRIDGE_OUTPUT" | grep -qiE "nonce too low.*tx nonce 0([^0-9]|$)"; then
                       if [ $ATTEMPT -lt $MAX_ATTEMPTS ]; then
                         ERR_HINT=$(echo "$BRIDGE_OUTPUT" | awk 'NF' | tail -n1)
                         log_json "warn" "Bridge attempt $ATTEMPT/$MAX_ATTEMPTS hit a transient L1 RPC error; retrying in ${RETRY_DELAY}s: $ERR_HINT" "{{ $network.name }}" "bridge_asset"
