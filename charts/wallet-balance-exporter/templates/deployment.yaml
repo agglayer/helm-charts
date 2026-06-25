@@ -56,7 +56,7 @@ spec:
             import time
             import logging
             from decimal import Decimal
-            from prometheus_client import start_http_server, Gauge, Info
+            from prometheus_client import start_http_server, Gauge, Info, Counter
             from web3 import Web3
             from web3.exceptions import Web3Exception
 
@@ -70,6 +70,15 @@ spec:
             NAMESPACE = "{{ .Release.Namespace }}"
             CHECK_INTERVAL = int(os.environ.get('CHECK_INTERVAL', 300))
             METRICS_PORT = int(os.environ.get('METRICS_PORT', 8080))
+
+            # Retries for transient RPC failures.
+            RETRY_ATTEMPTS = max(1, int(os.environ.get('RETRY_ATTEMPTS', 3)))
+            RETRY_DELAY = max(0.0, float(os.environ.get('RETRY_DELAY_SECONDS', 2)))
+
+            # A reported balance of exactly 0 is almost always a flaky RPC
+            # response for a funded account, so confirm it before trusting it.
+            ZERO_RECHECK_ATTEMPTS = max(0, int(os.environ.get('ZERO_RECHECK_ATTEMPTS', 3)))
+            ZERO_RECHECK_DELAY = max(0.0, float(os.environ.get('ZERO_RECHECK_DELAY_SECONDS', 5)))
 
             balance_wei_gauge = Gauge(
                 'wallet_balance_wei',
@@ -113,6 +122,12 @@ spec:
                 ['release', 'namespace']
             )
 
+            flaky_zero_counter = Counter(
+                'wallet_balance_flaky_zero_reads',
+                'Number of times a 0 balance reading was discarded after a non-zero recheck (flaky RPC response)',
+                ['address', 'label', 'network', 'release', 'namespace']
+            )
+
             exporter_info = Info(
                 'wallet_balance_exporter',
                 'Wallet balance exporter version info'
@@ -127,6 +142,65 @@ spec:
                 except Exception:
                     return 'unknown'
 
+            def fetch_balance_wei(w3, address, label, network_name):
+                # Query eth_getBalance, retrying transient RPC errors. Raises the
+                # last exception if every attempt fails so the caller can mark the
+                # check as failed (as opposed to a confirmed 0 balance).
+                last_exc = None
+                for attempt in range(1, RETRY_ATTEMPTS + 1):
+                    try:
+                        return w3.eth.get_balance(address)
+                    except Exception as e:
+                        last_exc = e
+                        logger.warning(
+                            f"get_balance attempt {attempt}/{RETRY_ATTEMPTS} failed for "
+                            f"{label} ({address}) on {network_name}: {e}"
+                        )
+                        if attempt < RETRY_ATTEMPTS:
+                            time.sleep(RETRY_DELAY)
+                raise last_exc
+
+            def get_confirmed_balance_wei(w3, address, label, network_name):
+                # A successful RPC call that returns exactly 0 is treated as
+                # suspicious: for a funded account it is almost always a flaky
+                # response rather than a real drain. Re-query a few times; the
+                # first non-zero re-read wins and the 0 is discarded. A 0 that
+                # survives every recheck is returned as a genuine 0 balance.
+                balance_wei = fetch_balance_wei(w3, address, label, network_name)
+                if balance_wei != 0 or ZERO_RECHECK_ATTEMPTS == 0:
+                    return balance_wei
+
+                logger.warning(
+                    f"Got 0 balance for {label} ({address}) on {network_name}; re-querying "
+                    f"up to {ZERO_RECHECK_ATTEMPTS} time(s) to rule out a flaky RPC response"
+                )
+                for attempt in range(1, ZERO_RECHECK_ATTEMPTS + 1):
+                    if ZERO_RECHECK_DELAY > 0:
+                        time.sleep(ZERO_RECHECK_DELAY)
+                    recheck_wei = fetch_balance_wei(w3, address, label, network_name)
+                    if recheck_wei != 0:
+                        logger.warning(
+                            f"Recheck {attempt}/{ZERO_RECHECK_ATTEMPTS} for {label} returned "
+                            f"{recheck_wei} wei; discarding the earlier 0 as a flaky reading"
+                        )
+                        flaky_zero_counter.labels(
+                            address=address,
+                            label=label,
+                            network=network_name,
+                            release=RELEASE_NAME,
+                            namespace=NAMESPACE
+                        ).inc()
+                        return recheck_wei
+                    logger.warning(
+                        f"Recheck {attempt}/{ZERO_RECHECK_ATTEMPTS} for {label} still 0"
+                    )
+
+                logger.warning(
+                    f"Balance for {label} ({address}) on {network_name} confirmed 0 after "
+                    f"{ZERO_RECHECK_ATTEMPTS} recheck(s); treating as a genuine 0 balance"
+                )
+                return 0
+
             def check_wallet_balance(w3, rpc_url, wallet, network_name):
                 address = wallet['address']
                 label = wallet['label']
@@ -138,7 +212,7 @@ spec:
 
                     logger.info(f"Checking balance for {label} ({address}) on {network_name}")
 
-                    balance_wei = w3.eth.get_balance(address)
+                    balance_wei = get_confirmed_balance_wei(w3, address, label, network_name)
                     balance_eth = Decimal(balance_wei) / Decimal(10**18)
 
                     logger.info(f"Balance for {label}: {balance_eth} ETH ({balance_wei} wei)")
@@ -334,6 +408,14 @@ spec:
             value: {{ .Values.config.checkInterval.seconds | quote }}
           - name: METRICS_PORT
             value: {{ .Values.ports.metrics | quote }}
+          - name: RETRY_ATTEMPTS
+            value: {{ .Values.config.retry.attempts | quote }}
+          - name: RETRY_DELAY_SECONDS
+            value: {{ .Values.config.retry.delaySeconds | quote }}
+          - name: ZERO_RECHECK_ATTEMPTS
+            value: {{ .Values.config.zeroBalanceRecheck.attempts | quote }}
+          - name: ZERO_RECHECK_DELAY_SECONDS
+            value: {{ .Values.config.zeroBalanceRecheck.delaySeconds | quote }}
           {{- with .Values.extraEnv }}
           {{- toYaml . | nindent 10 }}
           {{- end }}

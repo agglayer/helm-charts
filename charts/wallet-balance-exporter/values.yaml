@@ -29,6 +29,20 @@ accounts: []
 config:
   checkInterval:
     seconds: 300
+  # Every RPC call is retried this many times (with the delay below between
+  # attempts) before it is treated as a real failure. Guards against transient
+  # network/RPC errors.
+  retry:
+    attempts: 3
+    delaySeconds: 2
+  # A reported balance of exactly 0 is almost always a flaky RPC response for a
+  # funded account (the call succeeds but returns a bogus 0), which would
+  # otherwise trip the below-minimum alert. Before trusting a 0, re-query the
+  # balance this many extra times; a single non-zero re-read overrides the 0.
+  # Only a 0 that survives every recheck is reported as a genuine 0 balance.
+  zeroBalanceRecheck:
+    attempts: 3
+    delaySeconds: 5
 
 ports:
   metrics: 8080
