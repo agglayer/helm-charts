@@ -42,6 +42,18 @@ gatewayAPI:
 config:
   debugMode: false
 
+  auth:
+    authgpc:
+      projectId: "projectId"
+      location: "location"
+      keyring: "keyring"
+      ppSettlement:
+        keyName: "key"
+        keyVersion: 1
+      txSettlement:
+        keyName: "key"
+        keyVersion: 1
+
   prover:
     networkProver:
       sp1ClusterEndpoint: https://rpc.production.succinct.xyz

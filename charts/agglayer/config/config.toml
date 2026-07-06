@@ -6,12 +6,6 @@
 {{- $l1RollupManagerContract := "" }}
 {{- $l1GlobalExitRootContract := "" }}
 {{- $datadogApiKey := "" }}
-{{- $kmsKeyName := "" }}
-{{- $projectId := "" }}
-{{- $location := "" }}
-{{- $keyring := "" }}
-{{- $keyName := "" }}
-{{- $keyVersion := "" }}
 {{- $fullNodeRPCs := "" }}
 {{- $proofSigners := "" }}
 
@@ -40,24 +34,6 @@
     {{- end }}
     {{- if (index $opSecrets.data "datadog_api_key") }}
         {{- $datadogApiKey = index $opSecrets.data "datadog_api_key" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "DATA_NODE_KMSKEYNAME") }}
-        {{- $kmsKeyName = index $opSecrets.data "DATA_NODE_KMSKEYNAME" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "DATA_NODE_PROJECTID") }}
-        {{- $projectId = index $opSecrets.data "DATA_NODE_PROJECTID" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "DATA_NODE_LOCATION") }}
-        {{- $location = index $opSecrets.data "DATA_NODE_LOCATION" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "DATA_NODE_KEYRING") }}
-        {{- $keyring = index $opSecrets.data "DATA_NODE_KEYRING" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "DATA_NODE_KEYNAME") }}
-        {{- $keyName = index $opSecrets.data "DATA_NODE_KEYNAME" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "DATA_NODE_KEYVERSION") }}
-        {{- $keyVersion = index $opSecrets.data "DATA_NODE_KEYVERSION" | b64dec }}
     {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_PROOFSIGNERS") }}
         {{- $proofSigners = index $opSecrets.data "DATA_NODE_PROOFSIGNERS" | b64dec }}
@@ -135,11 +111,13 @@ outputs = ["stderr"]
 format = "json"
 
 [auth.gcpkms]
-ProjectId = {{ $projectId | quote }}
-Location = {{ $location | quote }}
-Keyring = {{ $keyring | quote }}
-KeyName = {{ $keyName | quote }}
-KeyVersion = {{ $keyVersion | atoi }}
+project-id = {{ .Values.config.auth.gcpkms.projectId | quote }}
+location = {{ .Values.config.auth.gcpkms.location | quote }}
+keyring = {{ .Values.config.auth.gcpkms.keyring | quote }}
+pp-settlement-key-name = {{ .Values.config.auth.gcpkms.ppSettlement.keyName | quote }}
+pp-settlement-key-version = {{ .Values.config.auth.gcpkms.ppSettlement.keyVersion | atoi }}
+tx-settlement-key-name = {{ .Values.config.auth.gcpkms.txSettlement.keyName | quote }}
+tx-settlement-key-version = {{ .Values.config.auth.gcpkms.txSettlement.keyVersion | quote }}
 
 [l1]
 chain-id = {{ $l1ChainID | atoi }}
