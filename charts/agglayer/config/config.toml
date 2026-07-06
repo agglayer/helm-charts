@@ -104,6 +104,8 @@ max-request-body-size = {{ .Values.config.rpc.maxRequestBodySize | int }}
 max-decoding-message-size = {{ .Values.config.grpc.maxDecodingMessageSize | int }}
 max-encoding-message-size = {{ .Values.config.grpc.maxEncodingMessageSize | int }}
 
+# Legacy send-tx path (Kernel `sendTx` / verify-batches). Independent of the
+# settlement service below; keep for networks that still settle via signed txs.
 [outbound.rpc.settle]
 max-retries = {{ .Values.config.outbound.rpc.settle.maxRetries | int }}
 retry-interval = {{ .Values.config.outbound.rpc.settle.retryInterval | quote }}
@@ -115,6 +117,16 @@ gas-multiplier-factor = {{ .Values.config.outbound.rpc.settle.gasMultiplierFacto
 multiplier = {{ .Values.config.outbound.rpc.settle.gasPrice.multiplier | float64 }}
 floor = {{ .Values.config.outbound.rpc.settle.gasPrice.floor | quote }}
 ceiling = {{ .Values.config.outbound.rpc.settle.gasPrice.ceiling | quote }}
+
+[settlement.pessimistic-proof-tx-config]
+confirmations = {{ .Values.config.settlement.pessimisticProofTxConfig.confirmations | int }}
+settlement-policy = {{ .Values.config.settlement.pessimisticProofTxConfig.settlementPolicy | quote }}
+gas-limit-multiplier-factor = {{ .Values.config.settlement.pessimisticProofTxConfig.gasLimitMultiplierFactor | float64 }}
+max-fee-per-gas-floor = {{ .Values.config.settlement.pessimisticProofTxConfig.maxFeePerGas.floor | quote }}
+max-fee-per-gas-ceiling = {{ .Values.config.settlement.pessimisticProofTxConfig.maxFeePerGas.ceiling | quote }}
+max-fee-per-gas-multiplier-factor = {{ .Values.config.settlement.pessimisticProofTxConfig.maxFeePerGas.multiplierFactor | float64 }}
+max-priority-fee-per-gas-ceiling = {{ .Values.config.settlement.pessimisticProofTxConfig.maxPriorityFeePerGas.ceiling | quote }}
+max-priority-fee-per-gas-multiplier-factor = {{ .Values.config.settlement.pessimisticProofTxConfig.maxPriorityFeePerGas.multiplierFactor | float64 }}
 
 [log]
 environment = {{ .Values.config.log.environment | quote }} # "production" or "development"
