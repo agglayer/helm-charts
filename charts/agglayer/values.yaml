@@ -66,6 +66,20 @@ config:
     environment: development
     level: info
 
+  # Legacy send-tx (Kernel) settlement — independent of the pp settlement service.
+  outbound:
+    rpc:
+      settle:
+        gasMultiplierFactor: 130
+        maxRetries: 3
+        retryInterval: "60s"
+        confirmations: 1
+        settlementTimeout: "20m"
+        gasPrice:
+          multiplier: 1.5
+          floor: "1gwei"
+          ceiling: "100gwei"
+
   settlement:
     pessimisticProofTxConfig:
       confirmations: 1
