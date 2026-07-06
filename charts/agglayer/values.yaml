@@ -43,7 +43,7 @@ config:
   debugMode: false
 
   auth:
-    authgpc:
+    gcpkms:
       projectId: "projectId"
       location: "location"
       keyring: "keyring"
