@@ -117,7 +117,7 @@ keyring = {{ .Values.config.auth.gcpkms.keyring | quote }}
 pp-settlement-key-name = {{ .Values.config.auth.gcpkms.ppSettlement.keyName | quote }}
 pp-settlement-key-version = {{ .Values.config.auth.gcpkms.ppSettlement.keyVersion | atoi }}
 tx-settlement-key-name = {{ .Values.config.auth.gcpkms.txSettlement.keyName | quote }}
-tx-settlement-key-version = {{ .Values.config.auth.gcpkms.txSettlement.keyVersion | quote }}
+tx-settlement-key-version = {{ .Values.config.auth.gcpkms.txSettlement.keyVersion | atoi }}
 
 [l1]
 chain-id = {{ $l1ChainID | atoi }}
