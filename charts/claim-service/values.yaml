@@ -1,0 +1,46 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/agglayer/aggkit
+  pullPolicy: IfNotPresent
+  tag: "feat-exit-ceritificate-tool-docker-claimer_2026_07_08_08_44_e73ec6e-dev"
+  command: ["/usr/local/bin/exit_certificate_claimer"]
+  args: ["--exit-certificate-config", "/data/config.toml", "--address", "0.0.0.0", "--port", "8080"]
+
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+service:
+  type: ClusterIP
+  clusterIP: None
+  http:
+    port: 8080
+  annotations: {}
+
+existingSecret: "secretName"
+secretItem:
+  key: "config.toml"
+  path: "config.toml"
+
+data:
+  path: /data
+  size: 100Gi
+  bucket: "bucket-name"
+
+resources: {}
+
+volumes: []
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
