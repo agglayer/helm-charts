@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       {{- include "claim-service.selectorLabels" . | nindent 6 }}
-  serviceName: {{ include "claim-service.fullname" . }}
+  serviceName: {{ include "claim-service.fullname" . }}-headless
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -41,7 +41,7 @@ spec:
               - ALL
             privileged: false
             readOnlyRootFilesystem: false
-            runAsGroup: 0
+            runAsGroup: 1001
             runAsNonRoot: true
             runAsUser: 1001
             seccompProfile:
@@ -69,7 +69,7 @@ spec:
               - ALL
             privileged: false
             readOnlyRootFilesystem: false
-            runAsGroup: 0
+            runAsGroup: 1001
             runAsNonRoot: true
             runAsUser: 1001
             seccompProfile:

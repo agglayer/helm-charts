@@ -22,7 +22,6 @@ service:
   clusterIP: None
   http:
     port: 8080
-  annotations: {}
 
 existingSecret: "secretName"
 secretItem:
@@ -35,9 +34,6 @@ data:
   bucket: "bucket-name"
 
 resources: {}
-
-volumes: []
-volumeMounts: []
 
 nodeSelector: {}
 
