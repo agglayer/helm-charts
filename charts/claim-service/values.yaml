@@ -19,7 +19,6 @@ podLabels: {}
 
 service:
   type: ClusterIP
-  clusterIP: None
   http:
     port: 8080
 
