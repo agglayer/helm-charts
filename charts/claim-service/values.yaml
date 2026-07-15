@@ -7,6 +7,18 @@ image:
   command: ["/usr/local/bin/exit_certificate_claimer"]
   args: ["--exit-certificate-config", "/data/config.toml", "--address", "0.0.0.0", "--port", "8080"]
 
+gatewayAPI:
+  enabled: false
+  gatewayClassName: ""
+  hostname: ""
+
+httpRoute:
+  create: false
+  hostname: domain.example
+  healthCheckPath: /claimer/v1/health
+  parentRef:
+    name: gateway
+    namespace: gateways
 
 serviceAccount:
   create: true
