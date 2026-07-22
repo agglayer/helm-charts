@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/agglayer/aggkit-prover
   pullPolicy: IfNotPresent
-  tag: "2.0.0-rc.6"
+  tag: "2.1.0"
   command: ["/usr/local/bin/aggkit-prover"]
   args: ["run", "--config-path", "/etc/aggkit/aggkit-prover-config.toml"]
 
@@ -31,6 +31,19 @@ config:
   polygonRollupManager: "0x0000000000000000000000000000000000000000"
   globalExitRootManagerV2SovereignChain: "0x0000000000000000000000000000000000000000"
   proposerEndpoint: "http://op-succinct-proposer:50001"
+  # Optional override of the op-succinct verification keys embedded in the
+  # aggkit-prover image at build time (from op-succinct-elfs). Setting these
+  # lets an op-succinct upgrade be rolled out by config change only, without a
+  # new aggkit-prover release/image. When both are left empty, the embedded
+  # values are used and the [aggchain-proof-service.op-succinct] section is
+  # omitted from the config. Each value is independent.
+  # Generate them with the aggkit-prover CLI:
+  #   aggkit-prover op-succinct-vkey --elf-dir /path/to/elf/directory/
+  opSuccinct:
+    # Bincode-serialized aggregation SP1VerifyingKey, hex-encoded (0x-prefixed).
+    aggregationVkey: ""
+    # Range vkey commitment, hex-encoded 32 bytes (0x-prefixed).
+    rangeVkeyCommitment: ""
   genesis: |
     {}
 

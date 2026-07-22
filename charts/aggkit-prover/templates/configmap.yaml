@@ -64,6 +64,17 @@ data:
     sp1-cluster-endpoint = {{ $sp1NetworkRpcURL | quote }}
     request-timeout = 3600
     proving-timeout = 3600
+    {{- if or .Values.config.opSuccinct.aggregationVkey .Values.config.opSuccinct.rangeVkeyCommitment }}
+
+    # Optional override of the op-succinct vkeys embedded in the aggkit-prover image.
+    [aggchain-proof-service.op-succinct]
+    {{- if .Values.config.opSuccinct.aggregationVkey }}
+    aggregation-vkey = {{ .Values.config.opSuccinct.aggregationVkey | quote }}
+    {{- end }}
+    {{- if .Values.config.opSuccinct.rangeVkeyCommitment }}
+    range-vkey-commitment = {{ .Values.config.opSuccinct.rangeVkeyCommitment | quote }}
+    {{- end }}
+    {{- end }}
 
     [primary-prover.network-prover]
     proving-timeout = "1h"
