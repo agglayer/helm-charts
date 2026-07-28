@@ -1,3 +1,7 @@
+# For use in clusters with the 1P operator
+# onePasswordSecrets:
+#   <name>: <item-path>
+
 replicaCount: 1
 
 image:

@@ -117,7 +117,11 @@ spec:
       volumes:
         - name: claim-service-config
           secret:
+            {{- if .Values.onePasswordSecrets }}
+            secretName: {{ keys .Values.onePasswordSecrets | first }}
+            {{- else }}
             secretName: {{ .Values.existingSecret }}
+            {{- end }}
             items:
               - key: {{ .Values.secretItem.key }}
                 path: {{ .Values.secretItem.path }}
