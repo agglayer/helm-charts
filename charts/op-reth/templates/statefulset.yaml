@@ -31,6 +31,8 @@ spec:
           command: ["sh", "-c"]
           args:
           - |
+            mkdir -p {{ .Values.storage.path }}/datadir
+            mkdir -p {{ .Values.storage.path }}/proofs_history
             gsutil cp gs://{{ .Values.genesisFileGCP.bucket }}/{{ .Values.genesisFileGCP.object }} {{ .Values.storage.path }}/genesis.json
           volumeMounts:
             - mountPath: {{ .Values.storage.path | quote }}
@@ -44,8 +46,25 @@ spec:
             - op-reth
             - init
           args:
-            - --datadir={{ .Values.storage.path }}
             - --chain={{ .Values.storage.path }}/genesis.json
+            - --datadir={{ .Values.storage.path }}/datadir
+          volumeMounts:
+            - mountPath: {{ .Values.storage.path | quote }}
+              name: data
+        - name: init-proofs-history
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.container.image.repository }}:{{ .Values.container.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.container.image.pullPolicy }}
+          command:
+            - op-reth
+            - proofs
+            - init
+          args:
+            - --chain={{ .Values.storage.path }}/genesis.json
+            - --datadir={{ .Values.storage.path }}/datadir
+            - --proofs-history.storage-path={{ .Values.storage.path }}/proofs_history
+            - --proofs-history.storage-version=v2
           volumeMounts:
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
@@ -59,7 +78,7 @@ spec:
             - op-reth
             - node
           args:
-            - --datadir={{ .Values.storage.path }}
+            - --datadir={{ .Values.storage.path }}/datadir
             - --chain={{ .Values.storage.path }}/genesis.json
             - --http
             - --http.corsdomain=*
@@ -86,6 +105,10 @@ spec:
             {{- if .Values.service.metrics.enabled }}
             - --metrics=0.0.0.0:{{ .Values.service.metrics.port }}
             {{- end }}
+            - --proofs-history
+            - --proofs-history.storage-version=v2
+            - --proofs-history.storage-path={{ .Values.storage.path }}/proofs_history
+            - --proofs-history.window=1209600
             {{- range .Values.config.extraOptions }}
             - --{{ . }}
             {{- end }}
