@@ -79,12 +79,15 @@ podSecurityContext: {}
 securityContext: {}
 
 config:
+  l1Multidownloader:
+    enabled: true
   # list of components: aggsender, aggsender-validator, aggoracle, bridge
   components:
     - aggsender
     - aggoracle
 
   aggsender:
+    triggerCertMode: "Auto" # EpochBased/ASAP/Auto
     certificateSendInterval: 1m
     checkSettledInterval: 5s
     checkStatusCertificateInterval: 5m
