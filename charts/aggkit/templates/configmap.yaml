@@ -148,7 +148,7 @@ data:
     Enabled = {{ .Values.config.l1Multidownloader.enabled }}
     BlockFinality = {{ .Values.config.l1InfoTreeSync.blockFinality | quote }}
 
-    [REST]
+    [PublicREST]
     ReadTimeout = {{ .Values.config.rest.readTimeout | quote }}
     Port = {{ .Values.container.ports.bridge | quote }}
     WriteTimeout = {{ .Values.config.rest.writeTimeout | quote }}
