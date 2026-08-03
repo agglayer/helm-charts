@@ -51,6 +51,7 @@ spec:
           volumeMounts:
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
+        {{- if .Values.config.proof.enabled }}
         - name: init-proofs-history
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -68,6 +69,7 @@ spec:
           volumeMounts:
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
+            {{- else }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -105,10 +107,12 @@ spec:
             {{- if .Values.service.metrics.enabled }}
             - --metrics=0.0.0.0:{{ .Values.service.metrics.port }}
             {{- end }}
+            {{- if .Values.config.proof.enabled }}
             - --proofs-history
             - --proofs-history.storage-version=v2
             - --proofs-history.storage-path={{ .Values.storage.path }}/proofs_history
             - --proofs-history.window=1209600
+            {{- end }}
             {{- range .Values.config.extraOptions }}
             - --{{ . }}
             {{- end }}

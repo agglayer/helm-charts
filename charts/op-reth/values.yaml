@@ -55,6 +55,8 @@ serviceAccount:
   annotations: {}
 
 config:
+  proof:
+    enabled: false
   extraOptions: []
 
   http:
