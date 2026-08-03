@@ -953,6 +953,16 @@ entries:
     version: 1.0.0
   op-reth:
   - apiVersion: v2
+    appVersion: v2.3.3
+    created: "2026-08-03T15:09:32.198561873Z"
+    description: A Helm chart for op-reth
+    digest: 2764499933abb2978824674f545918a402a00633036bcf73f64a24aeebd65e33
+    name: op-reth
+    type: application
+    urls:
+    - https://github.com/agglayer/helm-charts/releases/download/op-reth-0.8.0/op-reth-0.8.0.tgz
+    version: 0.8.0
+  - apiVersion: v2
     appVersion: 1.0.0
     created: "2026-04-16T08:20:03.964251248Z"
     description: A Helm chart for op-reth
@@ -1236,4 +1246,4 @@ entries:
     urls:
     - https://github.com/agglayer/helm-charts/releases/download/zkevm-prover-1.0.0/zkevm-prover-1.0.0.tgz
     version: 1.0.0
-generated: "2026-08-03T14:47:56.002806827Z"
+generated: "2026-08-03T15:09:32.198650476Z"
