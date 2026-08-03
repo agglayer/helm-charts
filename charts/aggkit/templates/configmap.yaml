@@ -52,6 +52,8 @@ data:
     {{- if has "aggsender" .Values.config.components }}
 
     [AggSender]
+    TriggerCertMode = {{ .Values.config.aggsender.triggerCertMode | quote }}
+    BlockFinalityForL1InfoTree = {{ .Values.config.l1InfoTreeSync.blockFinality | quote }}
     {{ if .Values.config.aggsender.privateKey.keyName }}
     AggsenderPrivateKey = {Method ="GCP", KeyName={{ .Values.config.aggsender.privateKey.keyName | quote }}}
     {{ else }}
@@ -142,7 +144,11 @@ data:
     BlockFinality = {{ .Values.config.l1InfoTreeSync.blockFinality | quote }}
     SyncBlockChunkSize={{ .Values.config.l1.syncBlockChunkSize | int }}
 
-    [REST]
+    [L1Multidownloader]
+    Enabled = {{ .Values.config.l1Multidownloader.enabled }}
+    BlockFinality = {{ .Values.config.l1InfoTreeSync.blockFinality | quote }}
+
+    [PublicREST]
     ReadTimeout = {{ .Values.config.rest.readTimeout | quote }}
     Port = {{ .Values.container.ports.bridge | quote }}
     WriteTimeout = {{ .Values.config.rest.writeTimeout | quote }}
