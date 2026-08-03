@@ -69,7 +69,7 @@ spec:
           volumeMounts:
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
-            {{- else }}
+          {{- else }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
