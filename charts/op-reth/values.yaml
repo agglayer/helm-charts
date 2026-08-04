@@ -57,6 +57,7 @@ serviceAccount:
 config:
   proof:
     enabled: false
+    historyWindow: 1296000
   extraOptions: []
 
   http:

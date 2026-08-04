@@ -111,7 +111,7 @@ spec:
             - --proofs-history
             - --proofs-history.storage-version=v2
             - --proofs-history.storage-path={{ .Values.storage.path }}/proofs_history
-            - --proofs-history.window=1209600
+            - --proofs-history.window={{ .Values.config.proof.historyWindow }}
             {{- end }}
             {{- range .Values.config.extraOptions }}
             - --{{ . }}
