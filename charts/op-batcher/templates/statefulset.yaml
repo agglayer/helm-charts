@@ -38,10 +38,11 @@ spec:
             - --l2-eth-rpc={{ .Values.config.l2.opGethUrl }}
             - --rollup-rpc={{ .Values.config.l2.opNodeUrl }}
             - --poll-interval=1s
-            - --sub-safety-margin=6
-            - --num-confirmations=1
+            - --sub-safety-margin={{ .Values.config.subSafetyMargin }}
+            - --num-confirmations={{ .Values.config.numConfirmations }}
+            - --check-recent-txs-depth={{ .Values.config.checkRecentTxsDepth }}
+            - --resubmission-timeout={{ .Values.config.resubmissionTimeout }}
             - --safe-abort-nonce-too-low-count=3
-            - --resubmission-timeout=30s
             - --rpc.addr=0.0.0.0
             - --rpc.port=8548
             - --rpc.enable-admin
@@ -52,6 +53,7 @@ spec:
             - --{{ . }}
             {{- end }}
             - --data-availability-type={{ .Values.config.dataAvailabilityType }}
+            - --wait-node-sync
           ports:
             - name: rpc
               containerPort: {{ .Values.service.rpc.port }}
