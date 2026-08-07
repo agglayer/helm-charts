@@ -36,6 +36,11 @@ config:
 
   dataAvailabilityType: blobs
 
+  subSafetyMargin: 10
+  numConfirmations: 10
+  checkRecentTxsDepth: 10
+  resubmissionTimeout: 48s
+
   l2:
     opGethUrl: http://op-geth:8545
     opNodeUrl: http://op-node:9545
