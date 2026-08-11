@@ -23,7 +23,6 @@ vault into your k8s namespace. See [1password/vault.yaml](./1password/vault.yaml
 
 Creates the deployment spec; Pretty standard deployment, uses the autoscaling parameters from `values.yaml`. Some noteworthy stuff:
 
-- `template.metadata.annotations`: instructs Datadog to scrape the metrics endpoint for metrics, filtered to desired metrics
 - `labels`: uses [\_helpers.tpl](./templates/_helpers.tpl) to annotate labels on pods for cost tracking
 
 ### ingress.yaml

@@ -5,7 +5,6 @@
 {{- $l1NodeURLWS := "" }}
 {{- $l1RollupManagerContract := "" }}
 {{- $l1GlobalExitRootContract := "" }}
-{{- $datadogApiKey := "" }}
 {{- $kmsKeyName := "" }}
 {{- $projectId := "" }}
 {{- $location := "" }}
@@ -37,9 +36,6 @@
     {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_L1_GLOBAL_EXIT_ROOT_CONTRACT") }}
         {{- $l1GlobalExitRootContract = index $opSecrets.data "DATA_NODE_L1_GLOBAL_EXIT_ROOT_CONTRACT" | b64dec }}
-    {{- end }}
-    {{- if (index $opSecrets.data "datadog_api_key") }}
-        {{- $datadogApiKey = index $opSecrets.data "datadog_api_key" | b64dec }}
     {{- end }}
     {{- if (index $opSecrets.data "DATA_NODE_KMSKEYNAME") }}
         {{- $kmsKeyName = index $opSecrets.data "DATA_NODE_KMSKEYNAME" | b64dec }}

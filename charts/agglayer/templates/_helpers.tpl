@@ -38,9 +38,6 @@ helm.sh/chart: {{ include "agglayer.chart" . }}
 {{ include "agglayer.selectorLabels" . }}
 app.kubernetes.io/version: {{ .Values.image.tag }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-tags.datadoghq.com/env: {{ .Values.env }}
-tags.datadoghq.com/service: agglayer
-tags.datadoghq.com/version: {{ .Values.image.tag }}
 deployment: {{ htmlDateInZone (now) "UTC" }}
 {{- end }}
 
