@@ -27,19 +27,8 @@ spec:
         # https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/cloud-storage-fuse-csi-driver
         gke-gcsfuse/volumes: "true"
         gke-gcsfuse/ephemeral-storage-limit: 1Gi
-        ad.datadoghq.com/{{ .Chart.Name }}.checks: |
-          {
-            "openmetrics": {
-              "init_config": {},
-              "instances": [
-                {
-                  "openmetrics_endpoint": "http://%%host%%:{{ .Values.ports.telemetry }}/metrics",
-                  "namespace": "agglayer",
-                  "metrics": [".*"]
-                }
-              ]
-            }
-          }
+        prometheus.io/scrape: "true"
+        prometheus.io/port: {{ .Values.ports.telemetry | quote }}
       labels:
         {{- include "agglayer.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
