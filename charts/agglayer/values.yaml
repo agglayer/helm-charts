@@ -68,10 +68,10 @@ config:
 
   l1:
     maxReconnectionElapsedTime: "10s"
-    rpcTimeout: "100s"
+    rpcTimeout: "45s"
 
   l2:
-    rpcTimeout: "100s"
+    rpcTimeout: "45s"
 
   log:
     environment: development
