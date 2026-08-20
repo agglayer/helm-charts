@@ -38,6 +38,13 @@ gatewayAPI:
   gatewayClassName: gke-l7-global-external-managed
   hostname: agglayer.domain.com
   securityPolicy: ""
+  backendPolicy:
+    grpc:
+      timeoutSec: 30
+    app:
+      timeoutSec: 30
+    admin:
+      timeoutSec: 30
 
 config:
   debugMode: false
@@ -61,6 +68,10 @@ config:
 
   l1:
     maxReconnectionElapsedTime: "10s"
+    rpcTimeout: "45s"
+
+  l2:
+    rpcTimeout: "45s"
 
   log:
     environment: development
