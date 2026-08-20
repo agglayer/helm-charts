@@ -144,10 +144,10 @@ ws-node-url = {{ $l1NodeURLWS | quote }}
 max-reconnection-elapsed-time = {{ .Values.config.l1.maxReconnectionElapsedTime | quote }}
 rollup-manager-contract = {{ $l1RollupManagerContract | quote }}
 polygon-zkevm-global-exit-root-v2-contract = {{ $l1GlobalExitRootContract | quote }}
-rpc-timeout = "45s"
+rpc-timeout = {{ .Values.config.l1.rpcTimeout | quote }}
 
 [l2]
-rpc-timeout = "45s"
+rpc-timeout = {{ .Values.config.l2.rpcTimeout | quote }}
 
 [telemetry]
 prometheus-addr = "0.0.0.0:2223"
