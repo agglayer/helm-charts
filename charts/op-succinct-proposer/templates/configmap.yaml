@@ -44,8 +44,8 @@ data:
   NETWORK_PRIVATE_KEY: {{ $sp1NetworkPrivateKey | quote }}
   OP_SUCCINCT_MOCK: {{ .Values.config.opSuccinctMock | quote }}
   POLL_INTERVAL: {{ .Values.config.pollInterval | quote }}
-  PRIVATE_KEY: 0xc797616a567ffd3f7d80f110f4c19900e55258ac2aa96d96ded790e0bd727458
-  PROVER_ADDRESS: {{ .Values.config.proverAddress | quote }}
+  SIGNER_URL: "http://localhost"
+  SIGNER_ADDRESS: {{ required "config.signerAddress is required: it must be the chain's trusted sequencer" .Values.config.signerAddress | quote }}
   RANGE_PROOF_INTERVAL: {{ .Values.config.rangeProofInterval | quote }}
   RUST_LOG: {{ .Values.config.rustLog | quote }}
   USE_CACHED_DB: {{ .Values.config.useCachedDB | quote }}

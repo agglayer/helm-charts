@@ -12,8 +12,8 @@ replicas: 1
 container:
   image:
     pullPolicy: IfNotPresent
-    repository: ghcr.io/succinctlabs/op-succinct/op-proposer
-    tag: v3.1.0-agglayer
+    repository: ghcr.io/succinctlabs/op-succinct/op-succinct-agglayer
+    tag: v3.14.0
 
 ports:
   metrics: 7300
@@ -46,7 +46,10 @@ config:
   opSuccinctMock: false
   opSuccinctServerURL: http://op-succinct-server:3000
   pollInterval: 20s
-  proverAddress: "0x0000000000000000000000000000000000000000"
+  # Sent as SIGNER_ADDRESS. Must be the chain's trusted sequencer: it is committed
+  # into the aggregation proof, and agglayer re-derives it from the rollup contract
+  # when verifying, so a mismatch makes the proof unverifiable.
+  signerAddress: ""
   rangeProofInterval: "1800"
   rustLog: "info"
   useCachedDB: false
