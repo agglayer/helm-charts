@@ -15,10 +15,10 @@ spec:
     kind: Service
     name: {{ include "agglayer.fullname" . }}-grpc
   default:
-    checkIntervalSec: 30
-    timeoutSec: 5
-    healthyThreshold: 2
-    unhealthyThreshold: 5
+    checkIntervalSec: {{ .Values.gatewayAPI.healthCheck.grpc.checkIntervalSec }}
+    timeoutSec: {{ .Values.gatewayAPI.healthCheck.grpc.timeoutSec }}
+    healthyThreshold: {{ .Values.gatewayAPI.healthCheck.grpc.healthyThreshold }}
+    unhealthyThreshold: {{ .Values.gatewayAPI.healthCheck.grpc.unhealthyThreshold }}
     config:
       type: HTTP
       httpHealthCheck:
@@ -40,10 +40,10 @@ spec:
     kind: Service
     name: {{ include "agglayer.fullname" . }}-app
   default:
-    checkIntervalSec: 30
-    timeoutSec: 5
-    healthyThreshold: 2
-    unhealthyThreshold: 5
+    checkIntervalSec: {{ .Values.gatewayAPI.healthCheck.app.checkIntervalSec }}
+    timeoutSec: {{ .Values.gatewayAPI.healthCheck.app.timeoutSec }}
+    healthyThreshold: {{ .Values.gatewayAPI.healthCheck.app.healthyThreshold }}
+    unhealthyThreshold: {{ .Values.gatewayAPI.healthCheck.app.unhealthyThreshold }}
     config:
       type: HTTP
       httpHealthCheck:
@@ -65,10 +65,10 @@ spec:
     kind: Service
     name: {{ include "agglayer.fullname" . }}-admin
   default:
-    checkIntervalSec: 30
-    timeoutSec: 5
-    healthyThreshold: 2
-    unhealthyThreshold: 5
+    checkIntervalSec: {{ .Values.gatewayAPI.healthCheck.admin.checkIntervalSec }}
+    timeoutSec: {{ .Values.gatewayAPI.healthCheck.admin.timeoutSec }}
+    healthyThreshold: {{ .Values.gatewayAPI.healthCheck.admin.healthyThreshold }}
+    unhealthyThreshold: {{ .Values.gatewayAPI.healthCheck.admin.unhealthyThreshold }}
     config:
       type: HTTP
       httpHealthCheck:
@@ -96,6 +96,9 @@ spec:
       clientID: {{ index $opSecrets.data "admin_api_oauth_client_id" | b64dec }}
       oauth2ClientSecret:
         name: {{ include "agglayer.name" . }}-admin-oauth-gateway
+    {{- if .Values.gatewayAPI.securityPolicy }}
+    securityPolicy: {{ .Values.gatewayAPI.securityPolicy }}
+    {{- end }}
 ---
 apiVersion: networking.gke.io/v1
 kind: GCPBackendPolicy
@@ -133,4 +136,7 @@ spec:
     name: {{ include "agglayer.fullname" . }}-app
   default:
     timeoutSec: {{ .Values.gatewayAPI.backendPolicy.app.timeoutSec }}
+    {{- if .Values.gatewayAPI.securityPolicy }}
+    securityPolicy: {{ .Values.gatewayAPI.securityPolicy }}
+    {{- end }}
 {{- end }}

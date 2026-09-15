@@ -45,6 +45,22 @@ gatewayAPI:
       timeoutSec: 30
     admin:
       timeoutSec: 30
+  healthCheck:
+    grpc:
+      checkIntervalSec: 1
+      timeoutSec: 1
+      healthyThreshold: 1
+      unhealthyThreshold: 10
+    app:
+      checkIntervalSec: 1
+      timeoutSec: 1
+      healthyThreshold: 1
+      unhealthyThreshold: 10
+    admin:
+      checkIntervalSec: 1
+      timeoutSec: 1
+      healthyThreshold: 1
+      unhealthyThreshold: 10
 
 config:
   debugMode: false
@@ -168,3 +184,31 @@ autoscaling:
 
 dshm:
   sizeLimit: 4Gi
+
+gcsfuse:
+  sidecar:
+    ephemeralStorageLimit: 512Mi
+    cpuLimit: "0"
+    memoryLimit: 2Gi
+  metadataPrefetch:
+    cpuRequest: 250m
+    cpuLimit: "1"
+    memoryRequest: 256Mi
+    memoryLimit: 512Mi
+
+probes:
+  startup:
+    periodSeconds: 5
+    failureThreshold: 60
+  liveness:
+    periodSeconds: 45
+    failureThreshold: 3
+    timeoutSeconds: 40
+
+nodeSelector: {}
+
+tolerations:
+- key: group
+  operator: Equal
+  value: "agglayer"
+  effect: NoSchedule
