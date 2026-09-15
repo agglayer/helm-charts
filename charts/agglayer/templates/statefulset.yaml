@@ -26,7 +26,15 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
         # https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/cloud-storage-fuse-csi-driver
         gke-gcsfuse/volumes: "true"
-        gke-gcsfuse/ephemeral-storage-limit: 1Gi
+        gke-gcsfuse/ephemeral-storage-limit: {{ .Values.gcsfuse.sidecar.ephemeralStorageLimit | quote }}
+        # tuning
+        gke-gcsfuse/cpu-limit: {{ .Values.gcsfuse.sidecar.cpuLimit | quote }}
+        gke-gcsfuse/memory-limit: {{ .Values.gcsfuse.sidecar.memoryLimit | quote }}
+        gke-gcsfuse/metadata-prefetch-cpu-request: {{ .Values.gcsfuse.metadataPrefetch.cpuRequest | quote }}
+        gke-gcsfuse/metadata-prefetch-cpu-limit: {{ .Values.gcsfuse.metadataPrefetch.cpuLimit | quote }}
+        gke-gcsfuse/metadata-prefetch-memory-request: {{ .Values.gcsfuse.metadataPrefetch.memoryRequest | quote }}
+        gke-gcsfuse/metadata-prefetch-memory-limit: {{ .Values.gcsfuse.metadataPrefetch.memoryLimit | quote }}
+
         prometheus.io/scrape: "true"
         prometheus.io/port: {{ .Values.ports.telemetry | quote }}
       labels:
@@ -60,15 +68,19 @@ spec:
             - containerPort: {{ .Values.ports.readrpc }}
             - containerPort: {{ .Values.ports.admin }}
             - containerPort: {{ .Values.ports.telemetry }}
-          # TMP: disabling probes for now as the new version doesn't expose API until it's synced with l1
-          # livenessProbe:
-          #   httpGet:
-          #     path: /health
-          #     port: {{ .Values.ports.grpc }}
-          # readinessProbe:
-          #   httpGet:
-          #     path: /health
-          #     port: {{ .Values.ports.grpc }}
+          startupProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.ports.readrpc }}
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: {{ .Values.ports.readrpc }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -85,13 +97,14 @@ spec:
           env:
             - name: NETWORK_PRIVATE_KEY
               value: {{ $networkPrivateKey }}
+      {{- with .Values.tolerations }}
       tolerations:
-      - key: group
-        operator: Equal
-        value: "agglayer"
-        effect: NoSchedule
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
       nodeSelector:
-        group: "agglayer"
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       volumes:
         - name: dshm
           emptyDir:
@@ -104,9 +117,13 @@ spec:
               - key: "config.toml"
                 path: "config.toml"
         - name: backup
-          persistentVolumeClaim:
-            claimName: {{ include "agglayer.fullname" . }}-backup-pvc
+          csi:
+            driver: gcsfuse.csi.storage.gke.io
             readOnly: false
+            volumeAttributes:
+              bucketName: {{ .Values.backup.bucket | quote }}
+              mountOptions: "implicit-dirs,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,metadata-cache:ttl-secs:-1,metadata-cache:negative-ttl-secs:0,file-system:kernel-list-cache-ttl-secs:-1,gcs-connection:max-conns-per-host:100"
+              gcsfuseMetadataPrefetchOnMount: "true"
   volumeClaimTemplates:
     - metadata:
         name: data
