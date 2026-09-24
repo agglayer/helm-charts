@@ -1,0 +1,57 @@
+# For use in clusters with the 1P operator
+# onePasswordSecrets:
+#   <name>: <item-path>
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/agglayer/aggkit
+  pullPolicy: IfNotPresent
+  tag: "feat-exit-ceritificate-tool-docker-claimer_2026_07_08_08_44_e73ec6e-dev"
+  command: ["/usr/local/bin/exit_certificate_claimer"]
+  args: ["--exit-certificate-config", "/data/config.toml", "--address", "0.0.0.0", "--port", "8080"]
+
+gatewayAPI:
+  enabled: false
+  gatewayClassName: ""
+  hostname: ""
+
+httpRoute:
+  create: false
+  hostname: domain.example
+  healthCheckPath: /claimer/v1/health
+  parentRef:
+    name: gateway
+    namespace: gateways
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+service:
+  type: ClusterIP
+  http:
+    port: 8080
+
+existingSecret: "secretName"
+secretItem:
+  key: "config.toml"
+  path: "config.toml"
+
+data:
+  path: /data
+  size: 100Gi
+  bucket: "bucket-name"
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

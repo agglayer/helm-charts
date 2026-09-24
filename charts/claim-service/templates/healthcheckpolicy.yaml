@@ -1,0 +1,22 @@
+{{- if .Values.httpRoute.create }}
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: {{ include "claim-service.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  {{- with .Values.commonLabels }}
+  labels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  default:
+    config:
+      type: HTTP
+      httpHealthCheck:
+        port: {{ .Values.service.http.port }}
+        requestPath: {{ .Values.httpRoute.healthCheckPath }}
+  targetRef:
+    group: ""
+    kind: Service
+    name: {{ include "claim-service.fullname" . }}
+{{- end }}
