@@ -46,6 +46,9 @@ config:
     l2Url: "http://cdk-erigon-rpc:8123"
   claimTxManager:
     path: /etc/bridge/claimtx.keystore
+    # Whether the bridge service auto-claims bridges (ClaimTxManager). Defaults to true to
+    # preserve existing behavior; set to false to disable the legacy auto-claimer.
+    enabled: true
     areClaimsBetweenL2sEnabled: false
   network:
     l1GenBlockNumber: 0

@@ -107,6 +107,6 @@ data:
     [ClaimTxManager]
     FrequencyToMonitorTxs = "5s"
     PrivateKey = {Path = {{ .Values.config.claimTxManager.path | quote }}, Password = {{ $claimTxPrivateKeyPassword | quote }}}
-    Enabled = true
+    Enabled = {{ .Values.config.claimTxManager.enabled }}
     RetryInterval = "1s"
     AreClaimsBetweenL2sEnabled = {{ .Values.config.claimTxManager.areClaimsBetweenL2sEnabled }}
