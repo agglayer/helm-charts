@@ -46,9 +46,17 @@ spec:
             - --rpc.addr=0.0.0.0
             - --rpc.port=8548
             - --rpc.enable-admin
-            - --max-channel-duration=50
+            - --max-channel-duration={{ .Values.config.maxChannelDuration }}
             - --l1-eth-rpc={{ index $opSecrets.data "l1RpcURL" | b64dec }}
+            {{- if .Values.signer.remote.enabled }}
+            - --signer.endpoint={{ .Values.signer.remote.endpoint }}
+            - --signer.address={{ .Values.signer.remote.address }}
+            - --signer.tls.ca=/tls/ca.crt
+            - --signer.tls.cert=/tls/tls.crt
+            - --signer.tls.key=/tls/tls.key
+            {{- else }}
             - --private-key={{ index $opSecrets.data "batcher_private_key" | b64dec }}
+            {{- end }}
             {{- range .Values.config.extraOptions }}
             - --{{ . }}
             {{- end }}
@@ -60,3 +68,13 @@ spec:
               protocol: TCP
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.signer.remote.enabled }}
+          volumeMounts:
+            - name: signer-tls
+              mountPath: /tls
+              readOnly: true
+      volumes:
+        - name: signer-tls
+          secret:
+            secretName: {{ .Values.signer.remote.tls.secretName }}
+          {{- end }}

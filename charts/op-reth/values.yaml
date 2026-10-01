@@ -31,6 +31,7 @@ service:
   p2p:
     enabled: false
     port: 30303
+    trustedPeers: []
   metrics:
     enabled: true
     port: 9001

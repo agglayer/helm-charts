@@ -66,6 +66,7 @@ spec:
             - --datadir={{ .Values.storage.path }}/datadir
             - --proofs-history.storage-path={{ .Values.storage.path }}/proofs_history
             - --proofs-history.storage-version=v2
+            - --proofs-history.window={{ .Values.config.proof.historyWindow | int }}
           volumeMounts:
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
@@ -96,6 +97,9 @@ spec:
             - --disable-discovery
             {{- if .Values.service.p2p.enabled }}
             - --port={{ .Values.service.p2p.port }}
+            {{- range .Values.service.p2p.trustedPeers }}
+            - --trusted-peers={{ . }}
+            {{- end }}
             {{- else }}
             - --max-outbound-peers=0
             - --max-inbound-peers=0
