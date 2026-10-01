@@ -28,9 +28,6 @@ service:
     enabled: true
     port: 9222
     static: []
-  metrics:
-    enabled: true
-    port: 7300
   annotations: {}
 
 ingress:
