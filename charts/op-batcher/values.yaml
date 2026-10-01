@@ -24,12 +24,23 @@ service:
   clusterIP: None
   rpc:
     port: 8548
+  metrics:
+    enabled: true
+    port: 7300
   annotations: {}
 
 podSecurityContext: {}
 securityContext: {}
 
 existingSecret: "secretName"
+
+signer:
+  remote:
+    enabled: false
+    endpoint: ""
+    address: ""
+    tls:
+      secretName: ""
 
 config:
   extraOptions: {}
@@ -40,6 +51,7 @@ config:
   numConfirmations: 10
   checkRecentTxsDepth: 10
   resubmissionTimeout: 48s
+  maxChannelDuration: 50
 
   l2:
     opGethUrl: http://op-geth:8545

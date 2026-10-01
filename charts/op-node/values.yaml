@@ -7,7 +7,7 @@ podLabels:
   partner: Polygon
   network: mynetwork
 
-replicas: 1
+replicaCount: 1
 
 container:
   image:
@@ -27,6 +27,10 @@ service:
   p2p:
     enabled: true
     port: 9222
+    static: []
+  metrics:
+    enabled: true
+    port: 7300
   annotations: {}
 
 ingress:
@@ -66,3 +70,15 @@ resources:
   requests:
     cpu: 1
     memory: 2Gi
+
+autoRecover:
+  enabled: false
+  image: alpine:3.20
+  checkIntervalSeconds: 15
+  staleThresholdSeconds: 45
+  resources:
+    limits:
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi

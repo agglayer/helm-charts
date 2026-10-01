@@ -45,7 +45,8 @@ data:
   OP_SUCCINCT_MOCK: {{ .Values.config.opSuccinctMock | quote }}
   POLL_INTERVAL: {{ .Values.config.pollInterval | quote }}
   PRIVATE_KEY: 0xc797616a567ffd3f7d80f110f4c19900e55258ac2aa96d96ded790e0bd727458
-  PROVER_ADDRESS: {{ .Values.config.proverAddress | quote }}
+  SIGNER_ADDRESS: {{ .Values.config.proverAddress | quote }}
+  SIGNER_URL: "http://localhost"
   RANGE_PROOF_INTERVAL: {{ .Values.config.rangeProofInterval | quote }}
   RUST_LOG: {{ .Values.config.rustLog | quote }}
   USE_CACHED_DB: {{ .Values.config.useCachedDB | quote }}
@@ -53,3 +54,6 @@ data:
   NETWORK_RPC_URL: {{ $sp1NetworkRpcURL | quote }}
   OP_SUCCINCT_CONFIG_NAME: {{ .Values.config.opSuccinctConfigName | quote }}
   LOG_FORMAT: {{ .Values.config.logFormat | quote }}
+  LOOP_INTERVAL: {{ .Values.config.loopInterval | quote }}
+  L1_BLOCK_TAG: {{ .Values.config.l1BlockTag | quote }}
+  L1_CONFIRMATIONS: {{ .Values.config.l1Confirmations | quote }}

@@ -43,6 +43,10 @@ spec:
             - --p2p.disable={{ not .Values.service.p2p.enabled }}
             {{- if .Values.service.p2p.enabled }}
             - --p2p.listen.tcp={{ .Values.service.p2p.port }}
+            - --p2p.priv.path={{ .Values.storage.path }}/opnode_p2p_priv.txt
+            {{- range .Values.service.p2p.static }}
+            - --p2p.static={{ . }}
+            {{- end }}
             {{- end }}
             {{- if .Values.config.sequencer.enabled }}
             - --sequencer.l1-confs={{ .Values.config.sequencer.l1Confs }}
@@ -78,6 +82,63 @@ spec:
               readOnly: true
             - mountPath: {{ .Values.storage.path | quote }}
               name: data
+        {{- if .Values.autoRecover.enabled }}
+        - name: auto-recover
+          image: {{ .Values.autoRecover.image }}
+          env:
+            # Same pod, so this always reaches the local op-node regardless of Service DNS.
+            - name: RPC_URL
+              value: "http://localhost:{{ .Values.service.rpc.port }}"
+            - name: CHECK_INTERVAL_SECONDS
+              value: {{ .Values.autoRecover.checkIntervalSeconds | quote }}
+            - name: STALE_THRESHOLD_SECONDS
+              value: {{ .Values.autoRecover.staleThresholdSeconds | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              echo "$(date -u +%FT%TZ) auto-recover starting, installing curl+jq"
+              apk add --no-cache curl jq
+              echo "$(date -u +%FT%TZ) auto-recover ready, checking $RPC_URL every ${CHECK_INTERVAL_SECONDS}s (stale threshold ${STALE_THRESHOLD_SECONDS}s)"
+
+              last_number=""
+              last_change_time=$(date +%s)
+
+              while true; do
+                sleep "$CHECK_INTERVAL_SECONDS"
+
+                status=$(curl -s -m 10 -X POST -H "Content-Type: application/json" \
+                  --data '{"jsonrpc":"2.0","id":1,"method":"optimism_syncStatus","params":[]}' \
+                  "$RPC_URL" || echo "")
+                number=$(echo "$status" | jq -r '.result.unsafe_l2.number // empty')
+
+                if [ -z "$number" ]; then
+                  echo "$(date -u +%FT%TZ) failed to fetch sync status, skipping this round"
+                  continue
+                fi
+
+                now=$(date +%s)
+
+                if [ "$number" != "$last_number" ]; then
+                  echo "$(date -u +%FT%TZ) unsafe_l2 at block $number, advancing normally"
+                  last_number="$number"
+                  last_change_time="$now"
+                  continue
+                fi
+
+                stalled_for=$((now - last_change_time))
+                if [ "$stalled_for" -ge "$STALE_THRESHOLD_SECONDS" ]; then
+                  echo "$(date -u +%FT%TZ) unsafe_l2 stuck at block $number for ${stalled_for}s, calling admin_resetDerivationPipeline"
+                  curl -s -m 10 -X POST -H "Content-Type: application/json" \
+                    --data '{"jsonrpc":"2.0","id":1,"method":"admin_resetDerivationPipeline","params":[]}' \
+                    "$RPC_URL"
+                  echo ""
+                  last_change_time="$now"
+                fi
+              done
+          resources:
+            {{- toYaml .Values.autoRecover.resources | nindent 12 }}
+        {{- end }}
       volumes:
         - name: config
           projected:

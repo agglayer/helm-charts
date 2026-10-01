@@ -12,8 +12,8 @@ replicas: 1
 container:
   image:
     pullPolicy: IfNotPresent
-    repository: ghcr.io/succinctlabs/op-succinct/op-proposer
-    tag: v3.1.0-agglayer
+    repository: ghcr.io/succinctlabs/op-succinct/op-succinct-agglayer
+    tag: v3.14.1
 
 ports:
   metrics: 7300
@@ -46,6 +46,7 @@ config:
   opSuccinctMock: false
   opSuccinctServerURL: http://op-succinct-server:3000
   pollInterval: 20s
+  loopInterval: "30"
   proverAddress: "0x0000000000000000000000000000000000000000"
   rangeProofInterval: "1800"
   rustLog: "info"
@@ -53,6 +54,8 @@ config:
   witnessGenTimeout: "1200"
   opSuccinctConfigName: "opsuccinct_genesis"
   logFormat: "json"
+  l1BlockTag: "finalized"
+  l1Confirmations: 0
 
 resources:
   requests:
