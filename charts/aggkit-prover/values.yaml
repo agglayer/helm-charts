@@ -28,6 +28,7 @@ config:
   l2ExecutionLayerRpcEndpoint: "http://op-geth:8545"
   l2ConsensusLayerRpcEndpoint: "http://op-node:9545"
   mock: false
+  mode: "default"
   polygonRollupManager: "0x0000000000000000000000000000000000000000"
   globalExitRootManagerV2SovereignChain: "0x0000000000000000000000000000000000000000"
   proposerEndpoint: "http://op-succinct-proposer:50001"

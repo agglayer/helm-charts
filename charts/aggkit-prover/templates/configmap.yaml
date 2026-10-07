@@ -43,6 +43,7 @@ data:
     [aggchain-proof-service.aggchain-proof-builder]
     network-id = {{ .Values.config.networkId | int }}
     proving-timeout = "1h"
+    mode = {{ .Values.config.mode | quote }}
 
     [aggchain-proof-service.aggchain-proof-builder.primary-prover.network-prover]
     proving-timeout = "1h"
