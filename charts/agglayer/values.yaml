@@ -82,6 +82,9 @@ config:
   fullNodeRPCs:
     # 1: "http://localhost:8123" # Commented out to avoid having it prepended to the list
 
+  succinctCluster:
+    # 1: "https://rpc.example/" # Commented out to avoid having it prepended to the list
+
   l1:
     maxReconnectionElapsedTime: "10s"
     rpcTimeout: "45s"
