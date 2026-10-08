@@ -66,6 +66,13 @@ debug-mode = {{ .Values.config.debugMode }}
 {{- range $key, $value := .Values.config.fullNodeRPCs }}
 {{ $key }} = {{ $value | quote }}
 {{- end }}
+{{- if .Values.config.succinctCluster }}
+
+[succinct-cluster]
+{{- range $key, $value := .Values.config.succinctCluster }}
+{{ $key }} = {{ $value | quote }}
+{{- end }}
+{{- end }}
 
 [proof-signers]
 {{- range split "\n" $proofSigners }}
