@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  lint-and-render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+
+      - name: helm lint
+        # The aggkit configmap reads secrets from the cluster via `lookup` when
+        # KMS mode / l1.rpcUrl are not set, which fails outside a cluster (helm
+        # lint/template have no cluster access). Use KMS-mode test values so the
+        # charts lint and render offline.
+        run: |
+          helm lint charts/aggkit \
+            --set config.l1.rpcUrl=http://localhost:8545 \
+            --set config.aggsender.privateKey.keyName=ci-test-key \
+            --set config.aggoracle.privateKey.keyName=ci-test-key
+          helm lint charts/bridge
+
+      - name: No aggkit autoclaim option (agglayer/issues#55)
+        shell: bash
+        # aggkit PR #1901 removed the autoclaim service: no [AutoClaim]
+        # section and no autoclaim component may be rendered or passed.
+        run: |
+          helm template aggkit charts/aggkit \
+            --set config.l1.rpcUrl=http://localhost:8545 \
+            --set config.aggsender.privateKey.keyName=ci-test-key \
+            --set config.aggoracle.privateKey.keyName=ci-test-key \
+            > rendered.yaml
+          if grep -inE "\[\s*AutoClaim\b|autoclaim" rendered.yaml; then
+            echo "::error aggkit chart rendered an autoclaim option or [AutoClaim] section (agglayer/issues#55)"
+            exit 1
+          fi
+          if grep -nE -- "--components[= ][^ \"']*autoclaim" rendered.yaml; then
+            echo "::error aggkit chart passes --components autoclaim"
+            exit 1
+          fi
