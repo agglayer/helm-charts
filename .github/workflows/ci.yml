@@ -50,3 +50,22 @@ jobs:
             echo "::error aggkit chart passes --components autoclaim"
             exit 1
           fi
+
+      - name: No aggkit autoclaim option in chart sources (agglayer/issues#55)
+        shell: bash
+        # The render check above only sees the default values, so an autoclaim
+        # value or template behind a disabled-by-default condition would still
+        # expose the removed feature. Scan charts/aggkit itself for the
+        # spellings used by the manual verification (autoclaim, auto_claim,
+        # auto-claim and the [AutoClaim] section) as well as autoclaim-named
+        # files. Scoped to charts/aggkit: the bridge chart's legacy
+        # ClaimTxManager "auto-claims" is a different feature.
+        run: |
+          if grep -rniE "auto[_-]?claim" charts/aggkit; then
+            echo "::error aggkit chart sources still mention the removed autoclaim option (agglayer/issues#55)"
+            exit 1
+          fi
+          if find charts/aggkit -type f | grep -inE "auto[_-]?claim"; then
+            echo "::error aggkit chart has a file named after the removed autoclaim option (agglayer/issues#55)"
+            exit 1
+          fi
