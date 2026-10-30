@@ -21,11 +21,6 @@ ports:
 
 existingSecret: op-secrets
 
-# Secret holding the mTLS client certificate files, mounted read-only at mountPath.
-succinctClusterMtlsSecret:
-  name: ""
-  mountPath: /etc/agglayer-mtls
-
 # deprecated
 domain: agglayer-test.polygon.technology
 createMigrationService: true
@@ -90,11 +85,12 @@ config:
   succinctCluster:
     # 1: "https://rpc.example/" # Commented out to avoid having it prepended to the list
 
-  # Client certificate per Succinct cluster endpoint. The endpoint must match exactly.
+  # Client certificate per Succinct cluster, keyed by a cluster name (letters, digits, underscores).
+  # The endpoint must match the cluster's URL exactly. The PEM cert and key are read from the
+  # existingSecret keys SUCCINCT_CLUSTER_MTLS_<NAME>_CERT and SUCCINCT_CLUSTER_MTLS_<NAME>_KEY.
   succinctClusterMtls: {}
-    # "https://rpc.example:8443/":
-    #   certPath: /etc/agglayer-mtls/cert.pem
-    #   keyPath: /etc/agglayer-mtls/key.pem
+    # EXAMPLE:
+    #   endpoint: "https://rpc.example:8443/"
 
   l1:
     maxReconnectionElapsedTime: "10s"

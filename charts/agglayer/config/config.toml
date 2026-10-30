@@ -73,11 +73,12 @@ debug-mode = {{ .Values.config.debugMode }}
 {{ $key }} = {{ $value | quote }}
 {{- end }}
 {{- end }}
-{{- range $endpoint, $mtls := .Values.config.succinctClusterMtls }}
+{{- include "agglayer.validateSuccinctClusterMtls" . }}
+{{- range $name, $cluster := .Values.config.succinctClusterMtls }}
 
-[succinct-cluster-mtls.{{ $endpoint | quote }}]
-cert-path = {{ $mtls.certPath | quote }}
-key-path = {{ $mtls.keyPath | quote }}
+[succinct-cluster-mtls.{{ $cluster.endpoint | quote }}]
+cert-path = "{{ include "agglayer.succinctClusterMtlsDir" $ }}/{{ $name }}/cert.pem"
+key-path = "{{ include "agglayer.succinctClusterMtlsDir" $ }}/{{ $name }}/key.pem"
 {{- end }}
 
 [proof-signers]

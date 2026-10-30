@@ -94,9 +94,9 @@ spec:
             - name: backup
               mountPath: {{ .Values.backup.path | quote }}
               readOnly: false
-            {{- if .Values.succinctClusterMtlsSecret.name }}
+            {{- if .Values.config.succinctClusterMtls }}
             - name: succinct-cluster-mtls
-              mountPath: {{ .Values.succinctClusterMtlsSecret.mountPath | quote }}
+              mountPath: {{ include "agglayer.succinctClusterMtlsDir" . | quote }}
               readOnly: true
             {{- end }}
           env:
@@ -129,10 +129,18 @@ spec:
               bucketName: {{ .Values.backup.bucket | quote }}
               mountOptions: "implicit-dirs,metadata-cache:stat-cache-max-size-mb:-1,metadata-cache:type-cache-max-size-mb:-1,metadata-cache:ttl-secs:-1,metadata-cache:negative-ttl-secs:0,file-system:kernel-list-cache-ttl-secs:-1,gcs-connection:max-conns-per-host:100"
               gcsfuseMetadataPrefetchOnMount: "true"
-        {{- if .Values.succinctClusterMtlsSecret.name }}
+        {{- with .Values.config.succinctClusterMtls }}
         - name: succinct-cluster-mtls
           secret:
-            secretName: {{ .Values.succinctClusterMtlsSecret.name }}
+            secretName: {{ $.Values.existingSecret }}
+            defaultMode: 0400
+            items:
+              {{- range $name, $cluster := . }}
+              - key: SUCCINCT_CLUSTER_MTLS_{{ $name }}_CERT
+                path: {{ $name }}/cert.pem
+              - key: SUCCINCT_CLUSTER_MTLS_{{ $name }}_KEY
+                path: {{ $name }}/key.pem
+              {{- end }}
         {{- end }}
   volumeClaimTemplates:
     - metadata:

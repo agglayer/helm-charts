@@ -67,3 +67,28 @@ Parent domain of .Values.gatewayAPI.hostname (everything after the first label).
 {{- define "agglayer.hostnameBase" -}}
 {{- .Values.gatewayAPI.hostname | splitList "." | rest | join "." -}}
 {{- end }}
+
+{{/*
+Directory where the Succinct cluster mTLS certs are mounted, one subdirectory per cluster name.
+*/}}
+{{- define "agglayer.succinctClusterMtlsDir" -}}
+/etc/agglayer-mtls
+{{- end }}
+
+{{/*
+Fail the render if a config.succinctClusterMtls entry has an invalid name, no endpoint,
+or an endpoint already used by another entry.
+*/}}
+{{- define "agglayer.validateSuccinctClusterMtls" -}}
+{{- $endpoints := list }}
+{{- range $name, $cluster := .Values.config.succinctClusterMtls }}
+{{- if not (regexMatch "^[A-Za-z0-9_]+$" $name) }}
+{{- fail (printf "config.succinctClusterMtls.%s: name must contain only letters, digits and underscores" $name) }}
+{{- end }}
+{{- $endpoint := required (printf "config.succinctClusterMtls.%s.endpoint is required" $name) $cluster.endpoint }}
+{{- if has $endpoint $endpoints }}
+{{- fail (printf "config.succinctClusterMtls.%s: endpoint %s is already used by another entry" $name $endpoint) }}
+{{- end }}
+{{- $endpoints = append $endpoints $endpoint }}
+{{- end }}
+{{- end }}
