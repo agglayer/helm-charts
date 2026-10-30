@@ -73,6 +73,12 @@ debug-mode = {{ .Values.config.debugMode }}
 {{ $key }} = {{ $value | quote }}
 {{- end }}
 {{- end }}
+{{- range $endpoint, $mtls := .Values.config.succinctClusterMtls }}
+
+[succinct-cluster-mtls.{{ $endpoint | quote }}]
+cert-path = {{ $mtls.certPath | quote }}
+key-path = {{ $mtls.keyPath | quote }}
+{{- end }}
 
 [proof-signers]
 {{- range split "\n" $proofSigners }}
