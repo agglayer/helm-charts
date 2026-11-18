@@ -36,6 +36,9 @@ tls:
 
 # deprecated
 ingress:
+  # Set to false to stop rendering the nginx gRPC Ingresses
+  # (grpc-<domain>, proxy-grpc-<domain>), e.g. once gatewayAPI serves gRPC.
+  nginxEnabled: true
   nginxProxyBodySize: 10m
 
 gatewayAPI:
